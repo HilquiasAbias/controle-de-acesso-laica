@@ -1,0 +1,64 @@
+generator client {
+  provider = "prisma-client-js"
+}
+
+datasource db {
+  provider = "postgres"
+  url      = env("DATABASE_URL")
+}
+
+enum Roles {
+  ADMIN
+  FREQUENTER
+}
+
+model Tag {
+  id        Int      @id @default(autoincrement())
+  content   String   @unique
+  User      User?    @relation(fields: [userId], references: [id])
+  userId    Int?     @unique
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+}
+
+model Bluetooth {
+  id        Int      @id @default(autoincrement())
+  content   String   @unique
+  User      User?    @relation(fields: [userId], references: [id])
+  userId    Int?     @unique
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+}
+
+model User {
+  id                      Int          @id @default(autoincrement())
+  name                    String
+  registration            String       @unique
+  password                String
+  role                    Roles
+  tag                     Tag?
+  bluetooth               Bluetooth?
+  adminEnvironment        Environment? @relation("admins", fields: [environmentAdminId], references: [id])
+  environmentAdminId      Int?
+  frequenterEnvironment   Environment? @relation("frequenters", fields: [environmentFrequenterId], references: [id])
+  environmentFrequenterId Int?
+  createdAt               DateTime     @default(now())
+  updatedAt               DateTime     @updatedAt
+}
+
+model Environment {
+  id          Int       @id @default(autoincrement())
+  name        String    @unique
+  description String?
+  admins      User[]    @relation("admins")
+  frequenters User[]    @relation("frequenters")
+  triggers    Trigger[]
+  createdAt   DateTime  @default(now())
+  updatedAt   DateTime  @updatedAt
+}
+
+model Trigger {
+  ip            String       @id
+  Environment   Environment? @relation(fields: [environmentId], references: [id])
+  environmentId Int?
+}
