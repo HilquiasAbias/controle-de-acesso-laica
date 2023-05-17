@@ -3,14 +3,14 @@ generator client {
 }
 
 datasource db {
-  provider = "postgres"
+  provider = "sqlite" // postgres
   url      = env("DATABASE_URL")
 }
 
-enum Roles {
-  ADMIN
-  FREQUENTER
-}
+// enum Roles {
+//   ADMIN
+//   FREQUENTER
+// }
 
 model Tag {
   id        Int      @id @default(autoincrement())
@@ -35,7 +35,7 @@ model User {
   name                    String
   registration            String       @unique
   password                String
-  role                    Roles
+  role                    String // Roles
   tag                     Tag?
   bluetooth               Bluetooth?
   adminEnvironment        Environment? @relation("admins", fields: [environmentAdminId], references: [id])
@@ -55,10 +55,18 @@ model Environment {
   triggers    Trigger[]
   createdAt   DateTime  @default(now())
   updatedAt   DateTime  @updatedAt
+  // Caronte     Caronte?  @relation(fields: [caronteId], references: [id])
+  // caronteId   Int?
 }
 
 model Trigger {
   ip            String       @id
+  password      String
   Environment   Environment? @relation(fields: [environmentId], references: [id])
   environmentId Int?
 }
+
+// model Caronte {
+//   id           Int           @id @default(autoincrement())
+//   environments Environment[]
+// }

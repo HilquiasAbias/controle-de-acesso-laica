@@ -13,143 +13,128 @@ exports.UsersService = exports.roundsOfHashing = void 0;
 const common_1 = require("@nestjs/common");
 const prisma_service_1 = require("../prisma/prisma.service");
 const bcrypt = require("bcrypt");
+const tags_service_1 = require("../tags/tags.service");
 exports.roundsOfHashing = 10;
 let UsersService = class UsersService {
-    constructor(prisma) {
+    constructor(prisma, Tags = new tags_service_1.TagsService(prisma)) {
         this.prisma = prisma;
+        this.Tags = Tags;
     }
     async create(createUserDto) {
         const hashedPassword = await bcrypt.hash(createUserDto.password, exports.roundsOfHashing);
-        let user;
+        const user = await this.prisma.user.create({
+            data: {
+                name: createUserDto.name,
+                registration: createUserDto.registration,
+                role: createUserDto.role,
+                password: hashedPassword
+            }
+        });
         let tag;
         let bluetooth;
-        try {
-            if (createUserDto.tag) {
-                tag = await this.prisma.tag.create({
-                    data: { content: createUserDto.tag }
-                });
-            }
-            if (createUserDto.bluetooth) {
-                bluetooth = await this.prisma.bluetooth.create({
-                    data: { content: createUserDto.bluetooth }
-                });
-            }
-            user = await this.prisma.user.create({
-                data: Object.assign(Object.assign({}, createUserDto), { tag: createUserDto.tag ? { connect: { id: tag.id } } : undefined, bluetooth: createUserDto.bluetooth ? { connect: { id: bluetooth.id } } : undefined, password: hashedPassword }),
+        if (createUserDto.bluetooth) {
+            bluetooth = await this.prisma.bluetooth.create({
+                data: { content: createUserDto.bluetooth }
             });
-            return user;
         }
-        catch (error) {
-            throw new Error('Erro ao criar usuário.');
+        if (createUserDto.tag) {
+            tag = await this.Tags.create({ content: createUserDto.tag, userId: user.id });
         }
+        return user;
+    }
+    async createAndLinkEnvironment(createUserDto, envId) {
+        const hashedPassword = await bcrypt.hash(createUserDto.password, exports.roundsOfHashing);
+        const user = await this.prisma.user.create({
+            data: {
+                name: createUserDto.name,
+                registration: createUserDto.registration,
+                role: createUserDto.role,
+                password: hashedPassword,
+                adminEnvironment: createUserDto.role === 'ADMIN' ? { connect: { id: envId } } : undefined,
+                frequenterEnvironment: createUserDto.role === 'FREQUENTER' ? { connect: { id: envId } } : undefined
+            },
+        });
+        let tag;
+        let bluetooth;
+        if (createUserDto.bluetooth) {
+            bluetooth = await this.prisma.bluetooth.create({
+                data: { content: createUserDto.bluetooth }
+            });
+        }
+        if (createUserDto.tag) {
+            tag = await this.Tags.create({ content: createUserDto.tag });
+        }
+        return user;
     }
     async findAll() {
-        try {
-            return await this.prisma.user.findMany({
-                include: {
-                    adminEnvironment: true,
-                    frequenterEnvironment: true,
-                    tag: true,
-                    bluetooth: true
-                }
-            });
-        }
-        catch (error) {
-            throw new Error('Erro ao buscar usuários.');
-        }
+        return await this.prisma.user.findMany({
+            include: {
+                adminEnvironment: true,
+                frequenterEnvironment: true,
+                tag: true,
+                bluetooth: true
+            }
+        });
+    }
+    async findAllFrequenters() {
+        return await this.prisma.user.findMany({
+            where: { role: 'FREQUENTER' }
+        });
+    }
+    async findAllAdmins() {
+        return await this.prisma.user.findMany({
+            where: { role: 'ADMIN' }
+        });
     }
     async findOne(id) {
-        try {
-            const user = await this.prisma.user.findFirst({
-                where: { id },
-                include: {
-                    adminEnvironment: true,
-                    frequenterEnvironment: true,
-                    tag: true,
-                    bluetooth: true
-                }
-            });
-            if (!user) {
-                throw new common_1.NotFoundException('Usuário não encontrado.');
+        if (!id) {
+            throw new common_1.BadRequestException('Invalid Input. ID must be sent.');
+        }
+        const user = await this.prisma.user.findUniqueOrThrow({
+            where: { id },
+            include: {
+                adminEnvironment: true,
+                frequenterEnvironment: true,
+                tag: true,
+                bluetooth: true
             }
-            return user;
-        }
-        catch (error) {
-            throw new Error('Erro ao buscar usuário.');
-        }
+        });
+        return user;
     }
     async update(id, updateUserDto) {
         if (updateUserDto.password) {
             updateUserDto.password = await bcrypt.hash(updateUserDto.password, exports.roundsOfHashing);
         }
-        const user = await this.prisma.user.findUnique({
-            where: { id },
-            include: { tag: true, bluetooth: true },
-        });
-        if (!user) {
-            throw new common_1.HttpException('User not found.', common_1.HttpStatus.NOT_FOUND);
-        }
-        let tag;
-        let bluetooth;
-        if (updateUserDto.tag) {
-            if (!user.tag) {
-                tag = await this.prisma.tag.create({
-                    data: { content: updateUserDto.tag },
-                });
-            }
-            else {
-                tag = await this.prisma.tag.update({
-                    where: { id: user.tag.id },
-                    data: { content: updateUserDto.tag },
-                });
-            }
-        }
-        if (!tag) {
-            throw new common_1.HttpException("Can't update tag.", common_1.HttpStatus.FORBIDDEN);
-        }
-        if (updateUserDto.bluetooth) {
-            if (!user.bluetooth) {
-                bluetooth = await this.prisma.bluetooth.create({
-                    data: { content: updateUserDto.bluetooth },
-                });
-            }
-            else {
-                bluetooth = await this.prisma.bluetooth.update({
-                    where: { id: user.bluetooth.id },
-                    data: { content: updateUserDto.bluetooth },
-                });
-            }
-        }
-        if (!bluetooth) {
-            throw new common_1.HttpException("Can't update bluetooth.", common_1.HttpStatus.FORBIDDEN);
+        const validFields = ['name', 'registration', 'password', 'role'];
+        const invalidFields = Object.keys(updateUserDto).filter(field => !validFields.includes(field));
+        if (invalidFields.length > 0) {
+            throw new common_1.BadRequestException(`Invalid fields provided: ${invalidFields.join(', ')}`);
         }
         const updatedUser = await this.prisma.user.update({
-            data: Object.assign(Object.assign({}, updateUserDto), { tag: tag ? { connect: { id: tag.id } } : undefined, bluetooth: bluetooth ? { connect: { id: bluetooth.id } } : undefined }),
+            data: {
+                name: updateUserDto.name,
+                registration: updateUserDto.registration,
+                password: updateUserDto.password,
+                role: updateUserDto.role
+            },
             where: { id }
         });
-        if (!updatedUser) {
-            throw new common_1.HttpException("Can't update user.", common_1.HttpStatus.FORBIDDEN);
-        }
         return updatedUser;
     }
     async remove(id) {
-        try {
-            const deletedUser = await this.prisma.user.delete({
-                where: { id }
-            });
-            if (!deletedUser) {
-                throw new common_1.NotFoundException('Usuário não encontrado.');
-            }
-            return deletedUser;
+        if (isNaN(id)) {
+            throw new common_1.BadRequestException('Invalid input. ID must be a number.');
         }
-        catch (error) {
-            throw new Error('Erro ao deletar usuário.');
-        }
+        const deletedUser = await this.prisma.user.delete({
+            where: { id }
+        });
+        return deletedUser;
     }
 };
 UsersService = __decorate([
     (0, common_1.Injectable)(),
-    __metadata("design:paramtypes", [prisma_service_1.PrismaService])
+    __metadata("design:paramtypes", [prisma_service_1.PrismaService,
+        tags_service_1.TagsService])
 ], UsersService);
 exports.UsersService = UsersService;
 //# sourceMappingURL=users.service.js.map

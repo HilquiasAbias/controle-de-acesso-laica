@@ -5,34 +5,54 @@ import { UpdateEnvironmentDto } from './dto/update-environment.dto';
 import { RolesGuard } from 'src/auth/guards/roles.guard';
 import { JwtAuthGuard } from 'src/auth/guards/jwt-auth.guard';
 import { Roles } from 'src/auth/decorators/roles.decorator';
-import { Roles as UserRoles } from '@prisma/client';
+import { UsersService } from 'src/users/users.service';
+import { CreateUserDto } from 'src/users/dto/create-user.dto';
+//import { Roles as UserRoles } from '@prisma/client';
 
-@Roles(UserRoles.ADMIN)
-@UseGuards(JwtAuthGuard, RolesGuard)
 @Controller('environments')
 export class EnvironmentsController {
-  constructor(private readonly environmentsService: EnvironmentsService) {}
+  constructor(
+    private readonly environmentsService: EnvironmentsService,
+    private readonly usersService: UsersService
+    ) {}
 
+  @Roles('ADMIN') // UserRoles.ADMIN
+  @UseGuards(JwtAuthGuard, RolesGuard)
   @Post()
   create(@Body() createEnvironmentDto: CreateEnvironmentDto) {
     return this.environmentsService.create(createEnvironmentDto);
   }
 
+  @Roles('ADMIN') // UserRoles.ADMIN
+  @UseGuards(JwtAuthGuard, RolesGuard)
+  @Post()
+  createUserAndLinkEnvironment(@Body() createUserDto: CreateUserDto, envId: number) {
+    return this.usersService.createAndLinkEnvironment(createUserDto, envId);
+  }
+
+  @Roles('ADMIN') // UserRoles.ADMIN
+  @UseGuards(JwtAuthGuard, RolesGuard)
   @Get()
   findAll() {
     return this.environmentsService.findAll();
   }
 
+  @Roles('ADMIN') // UserRoles.ADMIN
+  @UseGuards(JwtAuthGuard, RolesGuard)
   @Get(':id')
   findOne(@Param('id') id: string) {
     return this.environmentsService.findOne(+id);
   }
 
+  @Roles('ADMIN') // UserRoles.ADMIN
+  @UseGuards(JwtAuthGuard, RolesGuard)
   @Patch(':id')
   update(@Param('id') id: string, @Body() updateEnvironmentDto: UpdateEnvironmentDto) {
     return this.environmentsService.update(+id, updateEnvironmentDto);
   }
 
+  @Roles('ADMIN') // UserRoles.ADMIN
+  @UseGuards(JwtAuthGuard, RolesGuard)
   @Delete(':id')
   remove(@Param('id') id: string) {
     return this.environmentsService.remove(+id);

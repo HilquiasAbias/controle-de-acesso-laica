@@ -1,5 +1,5 @@
 import { IsString, IsStrongPassword, Length } from "class-validator"
-import { Roles } from "@prisma/client"
+//import { Roles } from "@prisma/client"
 
 export class CreateUserDto {
   @IsString()
@@ -12,7 +12,7 @@ export class CreateUserDto {
   password: string
 
   @IsString()
-  role: Roles
+  role: string // Roles
 
   @IsString()
   tag?: string

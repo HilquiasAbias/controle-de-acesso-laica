@@ -17,7 +17,12 @@ let RolesGuard = class RolesGuard {
         this.reflector = reflector;
     }
     matchRoles(roles, userRole) {
-        return roles.some((role) => role === userRole);
+        if (roles.some((role) => role === userRole)) {
+            return true;
+        }
+        else {
+            throw new common_1.UnauthorizedException();
+        }
     }
     canActivate(context) {
         const roles = this.reflector.get('roles', context.getHandler());

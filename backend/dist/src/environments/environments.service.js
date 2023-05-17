@@ -16,13 +16,23 @@ let EnvironmentsService = class EnvironmentsService {
     constructor(prisma) {
         this.prisma = prisma;
     }
-    create(createEnvironmentDto) {
-        return this.prisma.environment.create({
-            data: createEnvironmentDto
+    async create(createEnvironmentDto) {
+        const env = await this.prisma.environment.create({
+            data: {
+                name: createEnvironmentDto.name,
+                description: createEnvironmentDto.description,
+                admins: createEnvironmentDto.adminId ? { connect: { id: createEnvironmentDto.adminId } } : undefined
+            }
+        });
+        return env;
+    }
+    async createAndAddUser(data, envId) {
+        const user = await this.prisma.user.create({
+            data
         });
     }
-    findAll() {
-        return this.prisma.environment.findMany({
+    async findAll() {
+        return await this.prisma.environment.findMany({
             include: {
                 admins: true,
                 frequenters: true,
@@ -30,8 +40,8 @@ let EnvironmentsService = class EnvironmentsService {
             }
         });
     }
-    findOne(id) {
-        return this.prisma.environment.findFirst({
+    async findOne(id) {
+        return await this.prisma.environment.findFirst({
             where: { id },
             include: {
                 admins: true,
@@ -40,14 +50,14 @@ let EnvironmentsService = class EnvironmentsService {
             }
         });
     }
-    update(id, updateEnvironmentDto) {
-        return this.prisma.environment.update({
+    async update(id, updateEnvironmentDto) {
+        return await this.prisma.environment.update({
             data: updateEnvironmentDto,
             where: { id }
         });
     }
-    remove(id) {
-        return this.prisma.environment.delete({
+    async remove(id) {
+        return await this.prisma.environment.delete({
             where: { id }
         });
         ;

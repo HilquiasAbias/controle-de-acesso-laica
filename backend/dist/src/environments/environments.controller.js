@@ -20,13 +20,18 @@ const update_environment_dto_1 = require("./dto/update-environment.dto");
 const roles_guard_1 = require("../auth/guards/roles.guard");
 const jwt_auth_guard_1 = require("../auth/guards/jwt-auth.guard");
 const roles_decorator_1 = require("../auth/decorators/roles.decorator");
-const client_1 = require("@prisma/client");
+const users_service_1 = require("../users/users.service");
+const create_user_dto_1 = require("../users/dto/create-user.dto");
 let EnvironmentsController = class EnvironmentsController {
-    constructor(environmentsService) {
+    constructor(environmentsService, usersService) {
         this.environmentsService = environmentsService;
+        this.usersService = usersService;
     }
     create(createEnvironmentDto) {
         return this.environmentsService.create(createEnvironmentDto);
+    }
+    createUserAndLinkEnvironment(createUserDto, envId) {
+        return this.usersService.createAndLinkEnvironment(createUserDto, envId);
     }
     findAll() {
         return this.environmentsService.findAll();
@@ -42,6 +47,8 @@ let EnvironmentsController = class EnvironmentsController {
     }
 };
 __decorate([
+    (0, roles_decorator_1.Roles)('ADMIN'),
+    (0, common_1.UseGuards)(jwt_auth_guard_1.JwtAuthGuard, roles_guard_1.RolesGuard),
     (0, common_1.Post)(),
     __param(0, (0, common_1.Body)()),
     __metadata("design:type", Function),
@@ -49,12 +56,25 @@ __decorate([
     __metadata("design:returntype", void 0)
 ], EnvironmentsController.prototype, "create", null);
 __decorate([
+    (0, roles_decorator_1.Roles)('ADMIN'),
+    (0, common_1.UseGuards)(jwt_auth_guard_1.JwtAuthGuard, roles_guard_1.RolesGuard),
+    (0, common_1.Post)(),
+    __param(0, (0, common_1.Body)()),
+    __metadata("design:type", Function),
+    __metadata("design:paramtypes", [create_user_dto_1.CreateUserDto, Number]),
+    __metadata("design:returntype", void 0)
+], EnvironmentsController.prototype, "createUserAndLinkEnvironment", null);
+__decorate([
+    (0, roles_decorator_1.Roles)('ADMIN'),
+    (0, common_1.UseGuards)(jwt_auth_guard_1.JwtAuthGuard, roles_guard_1.RolesGuard),
     (0, common_1.Get)(),
     __metadata("design:type", Function),
     __metadata("design:paramtypes", []),
     __metadata("design:returntype", void 0)
 ], EnvironmentsController.prototype, "findAll", null);
 __decorate([
+    (0, roles_decorator_1.Roles)('ADMIN'),
+    (0, common_1.UseGuards)(jwt_auth_guard_1.JwtAuthGuard, roles_guard_1.RolesGuard),
     (0, common_1.Get)(':id'),
     __param(0, (0, common_1.Param)('id')),
     __metadata("design:type", Function),
@@ -62,6 +82,8 @@ __decorate([
     __metadata("design:returntype", void 0)
 ], EnvironmentsController.prototype, "findOne", null);
 __decorate([
+    (0, roles_decorator_1.Roles)('ADMIN'),
+    (0, common_1.UseGuards)(jwt_auth_guard_1.JwtAuthGuard, roles_guard_1.RolesGuard),
     (0, common_1.Patch)(':id'),
     __param(0, (0, common_1.Param)('id')),
     __param(1, (0, common_1.Body)()),
@@ -70,6 +92,8 @@ __decorate([
     __metadata("design:returntype", void 0)
 ], EnvironmentsController.prototype, "update", null);
 __decorate([
+    (0, roles_decorator_1.Roles)('ADMIN'),
+    (0, common_1.UseGuards)(jwt_auth_guard_1.JwtAuthGuard, roles_guard_1.RolesGuard),
     (0, common_1.Delete)(':id'),
     __param(0, (0, common_1.Param)('id')),
     __metadata("design:type", Function),
@@ -77,10 +101,9 @@ __decorate([
     __metadata("design:returntype", void 0)
 ], EnvironmentsController.prototype, "remove", null);
 EnvironmentsController = __decorate([
-    (0, roles_decorator_1.Roles)(client_1.Roles.ADMIN),
-    (0, common_1.UseGuards)(jwt_auth_guard_1.JwtAuthGuard, roles_guard_1.RolesGuard),
     (0, common_1.Controller)('environments'),
-    __metadata("design:paramtypes", [environments_service_1.EnvironmentsService])
+    __metadata("design:paramtypes", [environments_service_1.EnvironmentsService,
+        users_service_1.UsersService])
 ], EnvironmentsController);
 exports.EnvironmentsController = EnvironmentsController;
 //# sourceMappingURL=environments.controller.js.map

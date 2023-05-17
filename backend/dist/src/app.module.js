@@ -12,6 +12,8 @@ const prisma_module_1 = require("./prisma/prisma.module");
 const users_module_1 = require("./users/users.module");
 const environments_module_1 = require("./environments/environments.module");
 const auth_module_1 = require("./auth/auth.module");
+const tags_module_1 = require("./tags/tags.module");
+const bluetooth_module_1 = require("./bluetooth/bluetooth.module");
 let AppModule = class AppModule {
 };
 AppModule = __decorate([
@@ -19,7 +21,7 @@ AppModule = __decorate([
         imports: [
             prisma_module_1.PrismaModule,
             users_module_1.UsersModule,
-            environments_module_1.EnvironmentsModule, auth_module_1.AuthModule
+            environments_module_1.EnvironmentsModule, auth_module_1.AuthModule, tags_module_1.TagsModule, bluetooth_module_1.BluetoothModule
         ]
     })
 ], AppModule);
