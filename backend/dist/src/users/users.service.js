@@ -22,59 +22,38 @@ let UsersService = class UsersService {
     }
     async create(createUserDto) {
         const hashedPassword = await bcrypt.hash(createUserDto.password, exports.roundsOfHashing);
-        const user = await this.prisma.user.create({
-            data: {
-                name: createUserDto.name,
-                registration: createUserDto.registration,
-                role: createUserDto.role,
-                password: hashedPassword
-            }
-        });
-        let tag;
-        let bluetooth;
+        let user;
+        if (createUserDto.role === 'ADMIN') {
+            user = await this.prisma.user.create({
+                data: {
+                    name: createUserDto.name,
+                    registration: createUserDto.registration,
+                    role: createUserDto.role,
+                    password: hashedPassword,
+                    adminEnvironment: createUserDto.envId ? { connect: { id: createUserDto.envId } } : undefined
+                }
+            });
+        }
+        else {
+            user = await this.prisma.user.create({
+                data: {
+                    name: createUserDto.name,
+                    registration: createUserDto.registration,
+                    role: createUserDto.role,
+                    password: hashedPassword,
+                    frequenterEnvironment: createUserDto.envId ? { connect: { id: createUserDto.envId } } : undefined
+                }
+            });
+        }
         if (createUserDto.bluetooth) {
-            bluetooth = await this.prisma.bluetooth.create({
+            await this.prisma.bluetooth.create({
                 data: { content: createUserDto.bluetooth }
             });
         }
         if (createUserDto.tag) {
-            tag = await this.Tags.create({ content: createUserDto.tag, userId: user.id });
+            await this.Tags.create({ content: createUserDto.tag, userId: user.id });
         }
         return user;
-    }
-    async createAndLinkEnvironment(createUserDto, envId) {
-        const hashedPassword = await bcrypt.hash(createUserDto.password, exports.roundsOfHashing);
-        const user = await this.prisma.user.create({
-            data: {
-                name: createUserDto.name,
-                registration: createUserDto.registration,
-                role: createUserDto.role,
-                password: hashedPassword,
-                adminEnvironment: createUserDto.role === 'ADMIN' ? { connect: { id: envId } } : undefined,
-                frequenterEnvironment: createUserDto.role === 'FREQUENTER' ? { connect: { id: envId } } : undefined
-            },
-        });
-        let tag;
-        let bluetooth;
-        if (createUserDto.bluetooth) {
-            bluetooth = await this.prisma.bluetooth.create({
-                data: { content: createUserDto.bluetooth }
-            });
-        }
-        if (createUserDto.tag) {
-            tag = await this.Tags.create({ content: createUserDto.tag });
-        }
-        return user;
-    }
-    async findAll() {
-        return await this.prisma.user.findMany({
-            include: {
-                adminEnvironment: true,
-                frequenterEnvironment: true,
-                tag: true,
-                bluetooth: true
-            }
-        });
     }
     async findAllFrequenters() {
         return await this.prisma.user.findMany({
@@ -101,14 +80,20 @@ let UsersService = class UsersService {
         });
         return user;
     }
-    async update(id, updateUserDto) {
-        if (updateUserDto.password) {
-            updateUserDto.password = await bcrypt.hash(updateUserDto.password, exports.roundsOfHashing);
+    async update(id, role, updateUserDto, requestUser) {
+        if (requestUser.role === 'FREQUENTER' && requestUser.id !== id) {
+            throw new common_1.UnauthorizedException("Can't update");
+        }
+        if (requestUser.role === 'ADMIN' && role === 'ADMIN' && requestUser.id !== id) {
+            throw new common_1.UnauthorizedException("A admin can't update other admin");
         }
         const validFields = ['name', 'registration', 'password', 'role'];
         const invalidFields = Object.keys(updateUserDto).filter(field => !validFields.includes(field));
         if (invalidFields.length > 0) {
             throw new common_1.BadRequestException(`Invalid fields provided: ${invalidFields.join(', ')}`);
+        }
+        if (updateUserDto.password) {
+            updateUserDto.password = await bcrypt.hash(updateUserDto.password, exports.roundsOfHashing);
         }
         const updatedUser = await this.prisma.user.update({
             data: {

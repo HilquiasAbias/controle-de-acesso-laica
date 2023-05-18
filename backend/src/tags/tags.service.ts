@@ -1,4 +1,4 @@
-import { Injectable, HttpException, HttpStatus } from '@nestjs/common';
+import { Injectable, HttpException, HttpStatus, BadRequestException } from '@nestjs/common';
 import { CreateTagDto } from './dto/create-tag.dto';
 import { UpdateTagDto } from './dto/update-tag.dto';
 import { PrismaService } from 'src/prisma/prisma.service';
@@ -11,20 +11,14 @@ export class TagsService {
   async create(createTagDto: CreateTagDto) {
     let tag: Tag
     
-    if (createTagDto.userId) {
-      tag = await this.prisma.tag.create({
-        data: { 
-          content: createTagDto.content, 
-          User: {connect: { id: createTagDto.userId }} 
-        },
-      })
-    } else {
-      tag = await this.prisma.tag.create({
-        data: { 
-          content: createTagDto.content
-        },
-      })
-    }
+
+    tag = await this.prisma.tag.create({
+      data: { 
+        content: createTagDto.content, 
+        User: {connect: { id: createTagDto.userId }} 
+      },
+    })
+
 
     // if (!tag) {
     //   throw new HttpException("Can't create tag.", HttpStatus.FORBIDDEN);
@@ -38,7 +32,11 @@ export class TagsService {
   }
 
   findOne(id: number) {
-    return this.prisma.tag.findFirst({
+    if (!id) {
+      throw new BadRequestException('Invalid Input. ID must be sent.');
+    }
+
+    return this.prisma.tag.findUniqueOrThrow({
       where: { id }
     });
   }

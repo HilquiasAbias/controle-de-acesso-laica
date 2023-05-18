@@ -1,10 +1,11 @@
-import { Controller, Get, Post, Body, Patch, Param, Delete, UseGuards } from '@nestjs/common';
+import { Controller, Get, Post, Body, Patch, Param, Delete, UseGuards, Req } from '@nestjs/common';
 import { UsersService } from './users.service';
 import { CreateUserDto } from './dto/create-user.dto';
 import { UpdateUserDto } from './dto/update-user.dto';
 import { JwtAuthGuard } from 'src/auth/guards/jwt-auth.guard';
 import { Roles } from 'src/auth/decorators/roles.decorator';
 import { RolesGuard } from 'src/auth/guards/roles.guard';
+import { UserRequest } from './interfaces/req-user';
 //import { Roles as UserRoles } from '@prisma/client';
 
 @Controller('users')
@@ -20,9 +21,16 @@ export class UsersController {
 
   @Roles('ADMIN') // UserRoles.ADMIN
   @UseGuards(JwtAuthGuard, RolesGuard)
-  @Get()
-  findAll() {
-    return this.usersService.findAll();
+  @Get('admins')
+  findAllAdmins() {
+    return this.usersService.findAllAdmins();
+  }
+
+  @Roles('ADMIN') // UserRoles.ADMIN
+  @UseGuards(JwtAuthGuard, RolesGuard)
+  @Get('frequenters')
+  findAllFrequenters() {
+    return this.usersService.findAllFrequenters();
   }
 
   @Roles('ADMIN') // UserRoles.ADMIN
@@ -33,9 +41,10 @@ export class UsersController {
   }
 
   @UseGuards(JwtAuthGuard)
-  @Patch(':id')
-  update(@Param('id') id: string, @Body() updateUserDto: UpdateUserDto) {
-    return this.usersService.update(+id, updateUserDto);
+  @Patch('/:role/:id')
+  update(@Param('id') id: string, @Param('role') role: string, @Body() updateUserDto: UpdateUserDto, @Req() req: UserRequest) {
+    const requestUser = req.user
+    return this.usersService.update(+id, role, updateUserDto, requestUser);
   }
 
   @Roles('ADMIN') // UserRoles.ADMIN

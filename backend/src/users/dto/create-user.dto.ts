@@ -19,4 +19,6 @@ export class CreateUserDto {
 
   @IsString()
   bluetooth?: string
+
+  envId?: number
 }

@@ -25,13 +25,6 @@ export class EnvironmentsController {
 
   @Roles('ADMIN') // UserRoles.ADMIN
   @UseGuards(JwtAuthGuard, RolesGuard)
-  @Post()
-  createUserAndLinkEnvironment(@Body() createUserDto: CreateUserDto, envId: number) {
-    return this.usersService.createAndLinkEnvironment(createUserDto, envId);
-  }
-
-  @Roles('ADMIN') // UserRoles.ADMIN
-  @UseGuards(JwtAuthGuard, RolesGuard)
   @Get()
   findAll() {
     return this.environmentsService.findAll();

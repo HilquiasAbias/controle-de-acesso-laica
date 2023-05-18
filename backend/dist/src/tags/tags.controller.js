@@ -17,6 +17,9 @@ const common_1 = require("@nestjs/common");
 const tags_service_1 = require("./tags.service");
 const create_tag_dto_1 = require("./dto/create-tag.dto");
 const update_tag_dto_1 = require("./dto/update-tag.dto");
+const roles_decorator_1 = require("../auth/decorators/roles.decorator");
+const jwt_auth_guard_1 = require("../auth/guards/jwt-auth.guard");
+const roles_guard_1 = require("../auth/guards/roles.guard");
 let TagsController = class TagsController {
     constructor(tagsService) {
         this.tagsService = tagsService;
@@ -73,6 +76,8 @@ __decorate([
     __metadata("design:returntype", void 0)
 ], TagsController.prototype, "remove", null);
 TagsController = __decorate([
+    (0, roles_decorator_1.Roles)('ADMIN'),
+    (0, common_1.UseGuards)(jwt_auth_guard_1.JwtAuthGuard, roles_guard_1.RolesGuard),
     (0, common_1.Controller)('tags'),
     __metadata("design:paramtypes", [tags_service_1.TagsService])
 ], TagsController);

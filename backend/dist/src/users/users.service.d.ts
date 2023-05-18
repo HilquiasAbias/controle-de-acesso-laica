@@ -9,13 +9,6 @@ export declare class UsersService {
     private readonly Tags;
     constructor(prisma: PrismaService, Tags?: TagsService);
     create(createUserDto: CreateUserDto): Promise<User>;
-    createAndLinkEnvironment(createUserDto: CreateUserDto, envId: number): Promise<User>;
-    findAll(): Promise<(User & {
-        tag: Tag;
-        bluetooth: Bluetooth;
-        adminEnvironment: import(".prisma/client").Environment;
-        frequenterEnvironment: import(".prisma/client").Environment;
-    })[]>;
     findAllFrequenters(): Promise<User[]>;
     findAllAdmins(): Promise<User[]>;
     findOne(id: number): Promise<User & {
@@ -24,6 +17,6 @@ export declare class UsersService {
         adminEnvironment: import(".prisma/client").Environment;
         frequenterEnvironment: import(".prisma/client").Environment;
     }>;
-    update(id: number, updateUserDto: UpdateUserDto): Promise<User>;
+    update(id: number, role: string, updateUserDto: UpdateUserDto, requestUser: User): Promise<User>;
     remove(id: number): Promise<User>;
 }

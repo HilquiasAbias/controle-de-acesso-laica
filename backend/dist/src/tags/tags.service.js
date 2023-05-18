@@ -18,28 +18,22 @@ let TagsService = class TagsService {
     }
     async create(createTagDto) {
         let tag;
-        if (createTagDto.userId) {
-            tag = await this.prisma.tag.create({
-                data: {
-                    content: createTagDto.content,
-                    User: { connect: { id: createTagDto.userId } }
-                },
-            });
-        }
-        else {
-            tag = await this.prisma.tag.create({
-                data: {
-                    content: createTagDto.content
-                },
-            });
-        }
+        tag = await this.prisma.tag.create({
+            data: {
+                content: createTagDto.content,
+                User: { connect: { id: createTagDto.userId } }
+            },
+        });
         return tag;
     }
     findAll() {
         return this.prisma.tag.findMany();
     }
     findOne(id) {
-        return this.prisma.tag.findFirst({
+        if (!id) {
+            throw new common_1.BadRequestException('Invalid Input. ID must be sent.');
+        }
+        return this.prisma.tag.findUniqueOrThrow({
             where: { id }
         });
     }

@@ -4,5 +4,5 @@ export class CreateTagDto {
     @IsString()
     content: string
     
-    userId?: number
+    userId: number
 }

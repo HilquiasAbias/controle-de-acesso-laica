@@ -1,4 +1,4 @@
-import { HttpException, HttpStatus, Injectable, NotFoundException, BadRequestException } from '@nestjs/common';
+import { HttpException, HttpStatus, Injectable, NotFoundException, BadRequestException, UnauthorizedException } from '@nestjs/common';
 import { CreateUserDto } from './dto/create-user.dto';
 import { UpdateUserDto } from './dto/update-user.dto';
 import { PrismaService } from 'src/prisma/prisma.service';
@@ -13,81 +13,49 @@ export class UsersService {
   constructor(
     private readonly prisma: PrismaService,
     private readonly Tags: TagsService = new TagsService(prisma)
-    ) {}
+  ) {}
 
   async create(createUserDto: CreateUserDto): Promise<User> {
     const hashedPassword = await bcrypt.hash(
       createUserDto.password,
       roundsOfHashing,
     );
-    
-    const user = await this.prisma.user.create({
-      data: {
-        name: createUserDto.name,
-        registration: createUserDto.registration,
-        role: createUserDto.role,
-        password: hashedPassword
-      }
-    })
-    
-    let tag: Tag | undefined
-    let bluetooth: Bluetooth | undefined
+
+    let user: User
+
+    if (createUserDto.role === 'ADMIN') {
+      user = await this.prisma.user.create({
+        data: {
+          name: createUserDto.name,
+          registration: createUserDto.registration,
+          role: createUserDto.role,
+          password: hashedPassword,
+          adminEnvironment: createUserDto.envId ? { connect: { id:createUserDto.envId } } : undefined
+        }
+      })
+    } else {
+      user = await this.prisma.user.create({
+        data: {
+          name: createUserDto.name,
+          registration: createUserDto.registration,
+          role: createUserDto.role,
+          password: hashedPassword,
+          frequenterEnvironment: createUserDto.envId ? { connect: { id:createUserDto.envId } } : undefined
+        }
+      })
+    }
 
     if (createUserDto.bluetooth) {
-      bluetooth = await this.prisma.bluetooth.create({ 
+      await this.prisma.bluetooth.create({ 
         data: { content: createUserDto.bluetooth }
       }) 
     }
 
     if (createUserDto.tag) {
-      tag = await this.Tags.create({ content: createUserDto.tag, userId: user.id  })
+      await this.Tags.create({ content: createUserDto.tag, userId: user.id  })
     }
 
     return user;
-  }
-
-  async createAndLinkEnvironment(createUserDto: CreateUserDto, envId: number) {
-    const hashedPassword = await bcrypt.hash(
-      createUserDto.password,
-      roundsOfHashing,
-    );
-
-    const user = await this.prisma.user.create({
-      data: {
-        name: createUserDto.name,
-        registration: createUserDto.registration,
-        role: createUserDto.role,
-        password: hashedPassword,
-        adminEnvironment: createUserDto.role === 'ADMIN' ? { connect:{ id:envId } } : undefined,
-        frequenterEnvironment: createUserDto.role === 'FREQUENTER' ? { connect:{ id:envId } } : undefined
-      },
-    });
-
-    let tag: Tag
-    let bluetooth: Bluetooth
-
-    if (createUserDto.bluetooth) {
-      bluetooth = await this.prisma.bluetooth.create({ 
-        data: { content: createUserDto.bluetooth }
-      }) 
-    }
-
-    if (createUserDto.tag) {
-      tag = await this.Tags.create({ content: createUserDto.tag  })
-    }
-
-    return user;
-  }
-
-  async findAll() {
-    return await this.prisma.user.findMany({
-      include: {
-        adminEnvironment: true,
-        frequenterEnvironment: true,
-        tag: true,
-        bluetooth: true
-      }
-    });
   }
 
   async findAllFrequenters() {
@@ -120,12 +88,13 @@ export class UsersService {
     return user;
   }
 
-  async update(id: number, updateUserDto: UpdateUserDto) {
-    if (updateUserDto.password) {
-      updateUserDto.password = await bcrypt.hash(
-        updateUserDto.password,
-        roundsOfHashing,
-      );
+  async update(id: number, role: string, updateUserDto: UpdateUserDto, requestUser: User) {
+    if (requestUser.role === 'FREQUENTER' && requestUser.id !== id) {
+      throw new UnauthorizedException("Can't update");
+    }
+
+    if (requestUser.role === 'ADMIN' && role === 'ADMIN' && requestUser.id !== id) {
+      throw new UnauthorizedException("A admin can't update other admin");
     }
 
     const validFields = ['name', 'registration', 'password', 'role'];
@@ -133,11 +102,18 @@ export class UsersService {
       field => !validFields.includes(field),
     );
 
-  if (invalidFields.length > 0) {
-    throw new BadRequestException(
-      `Invalid fields provided: ${invalidFields.join(', ')}`,
-    );
-  }
+    if (invalidFields.length > 0) {
+      throw new BadRequestException(
+        `Invalid fields provided: ${invalidFields.join(', ')}`,
+      );
+    }
+
+    if (updateUserDto.password) {
+      updateUserDto.password = await bcrypt.hash(
+        updateUserDto.password,
+        roundsOfHashing,
+      );
+    }
 
     const updatedUser = await this.prisma.user.update({
       data: {

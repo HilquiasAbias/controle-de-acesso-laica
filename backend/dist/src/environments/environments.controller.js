@@ -21,7 +21,6 @@ const roles_guard_1 = require("../auth/guards/roles.guard");
 const jwt_auth_guard_1 = require("../auth/guards/jwt-auth.guard");
 const roles_decorator_1 = require("../auth/decorators/roles.decorator");
 const users_service_1 = require("../users/users.service");
-const create_user_dto_1 = require("../users/dto/create-user.dto");
 let EnvironmentsController = class EnvironmentsController {
     constructor(environmentsService, usersService) {
         this.environmentsService = environmentsService;
@@ -29,9 +28,6 @@ let EnvironmentsController = class EnvironmentsController {
     }
     create(createEnvironmentDto) {
         return this.environmentsService.create(createEnvironmentDto);
-    }
-    createUserAndLinkEnvironment(createUserDto, envId) {
-        return this.usersService.createAndLinkEnvironment(createUserDto, envId);
     }
     findAll() {
         return this.environmentsService.findAll();
@@ -55,15 +51,6 @@ __decorate([
     __metadata("design:paramtypes", [create_environment_dto_1.CreateEnvironmentDto]),
     __metadata("design:returntype", void 0)
 ], EnvironmentsController.prototype, "create", null);
-__decorate([
-    (0, roles_decorator_1.Roles)('ADMIN'),
-    (0, common_1.UseGuards)(jwt_auth_guard_1.JwtAuthGuard, roles_guard_1.RolesGuard),
-    (0, common_1.Post)(),
-    __param(0, (0, common_1.Body)()),
-    __metadata("design:type", Function),
-    __metadata("design:paramtypes", [create_user_dto_1.CreateUserDto, Number]),
-    __metadata("design:returntype", void 0)
-], EnvironmentsController.prototype, "createUserAndLinkEnvironment", null);
 __decorate([
     (0, roles_decorator_1.Roles)('ADMIN'),
     (0, common_1.UseGuards)(jwt_auth_guard_1.JwtAuthGuard, roles_guard_1.RolesGuard),
