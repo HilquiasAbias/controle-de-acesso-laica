@@ -20,6 +20,7 @@ const update_tag_dto_1 = require("./dto/update-tag.dto");
 const roles_decorator_1 = require("../auth/decorators/roles.decorator");
 const jwt_auth_guard_1 = require("../auth/guards/jwt-auth.guard");
 const roles_guard_1 = require("../auth/guards/roles.guard");
+const read_env_tags_dto_1 = require("./dto/read-env-tags.dto");
 let TagsController = class TagsController {
     constructor(tagsService) {
         this.tagsService = tagsService;
@@ -30,17 +31,23 @@ let TagsController = class TagsController {
     findAll() {
         return this.tagsService.findAll();
     }
+    findAllByEnv(body) {
+        return this.tagsService.findAllTagsByEnvironment(body);
+    }
     findOne(id) {
         return this.tagsService.findOne(+id);
     }
-    update(id, updateTagDto) {
-        return this.tagsService.update(+id, updateTagDto);
+    update(id, updateTagDto, req) {
+        const requestUser = req.user;
+        return this.tagsService.update(+id, updateTagDto, requestUser);
     }
     remove(id) {
         return this.tagsService.remove(+id);
     }
 };
 __decorate([
+    (0, roles_decorator_1.Roles)('ADMIN'),
+    (0, common_1.UseGuards)(jwt_auth_guard_1.JwtAuthGuard, roles_guard_1.RolesGuard),
     (0, common_1.Post)(),
     __param(0, (0, common_1.Body)()),
     __metadata("design:type", Function),
@@ -48,12 +55,25 @@ __decorate([
     __metadata("design:returntype", void 0)
 ], TagsController.prototype, "create", null);
 __decorate([
+    (0, roles_decorator_1.Roles)('ADMIN'),
+    (0, common_1.UseGuards)(jwt_auth_guard_1.JwtAuthGuard, roles_guard_1.RolesGuard),
     (0, common_1.Get)(),
     __metadata("design:type", Function),
     __metadata("design:paramtypes", []),
     __metadata("design:returntype", void 0)
 ], TagsController.prototype, "findAll", null);
 __decorate([
+    (0, roles_decorator_1.Roles)('ADMIN'),
+    (0, common_1.UseGuards)(jwt_auth_guard_1.JwtAuthGuard, roles_guard_1.RolesGuard),
+    (0, common_1.Get)('environment'),
+    __param(0, (0, common_1.Body)()),
+    __metadata("design:type", Function),
+    __metadata("design:paramtypes", [read_env_tags_dto_1.ReadEnvTagsDto]),
+    __metadata("design:returntype", void 0)
+], TagsController.prototype, "findAllByEnv", null);
+__decorate([
+    (0, roles_decorator_1.Roles)('ADMIN'),
+    (0, common_1.UseGuards)(jwt_auth_guard_1.JwtAuthGuard, roles_guard_1.RolesGuard),
     (0, common_1.Get)(':id'),
     __param(0, (0, common_1.Param)('id')),
     __metadata("design:type", Function),
@@ -61,14 +81,19 @@ __decorate([
     __metadata("design:returntype", void 0)
 ], TagsController.prototype, "findOne", null);
 __decorate([
+    (0, roles_decorator_1.Roles)('ADMIN'),
+    (0, common_1.UseGuards)(jwt_auth_guard_1.JwtAuthGuard, roles_guard_1.RolesGuard),
     (0, common_1.Patch)(':id'),
     __param(0, (0, common_1.Param)('id')),
     __param(1, (0, common_1.Body)()),
+    __param(2, (0, common_1.Req)()),
     __metadata("design:type", Function),
-    __metadata("design:paramtypes", [String, update_tag_dto_1.UpdateTagDto]),
+    __metadata("design:paramtypes", [String, update_tag_dto_1.UpdateTagDto, Object]),
     __metadata("design:returntype", void 0)
 ], TagsController.prototype, "update", null);
 __decorate([
+    (0, roles_decorator_1.Roles)('ADMIN'),
+    (0, common_1.UseGuards)(jwt_auth_guard_1.JwtAuthGuard, roles_guard_1.RolesGuard),
     (0, common_1.Delete)(':id'),
     __param(0, (0, common_1.Param)('id')),
     __metadata("design:type", Function),
@@ -76,8 +101,6 @@ __decorate([
     __metadata("design:returntype", void 0)
 ], TagsController.prototype, "remove", null);
 TagsController = __decorate([
-    (0, roles_decorator_1.Roles)('ADMIN'),
-    (0, common_1.UseGuards)(jwt_auth_guard_1.JwtAuthGuard, roles_guard_1.RolesGuard),
     (0, common_1.Controller)('tags'),
     __metadata("design:paramtypes", [tags_service_1.TagsService])
 ], TagsController);

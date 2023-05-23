@@ -1,4 +1,4 @@
-import { IsString, IsStrongPassword, Length } from "class-validator"
+import { IsHexadecimal, IsMACAddress, IsNumber, IsString, IsStrongPassword, Length } from "class-validator"
 //import { Roles } from "@prisma/client"
 
 export class CreateUserDto {
@@ -9,16 +9,18 @@ export class CreateUserDto {
   registration: string
 
   //@IsStrongPassword()
+  @IsString()
   password: string
 
   @IsString()
   role: string // Roles
 
   @IsString()
+  @IsHexadecimal()
+  @Length(4, 8)
   tag?: string
 
-  @IsString()
-  bluetooth?: string
-
+  @IsNumber()
   envId?: number
 }
+

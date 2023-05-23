@@ -15,8 +15,9 @@ export class UsersController {
   @Roles('ADMIN') // UserRoles.ADMIN
   @UseGuards(JwtAuthGuard, RolesGuard)
   @Post()
-  create(@Body() createUserDto: CreateUserDto) {
-    return this.usersService.create(createUserDto);
+  create(@Body() createUserDto: CreateUserDto, @Req() req: UserRequest) {
+    const requestUser = req.user
+    return this.usersService.create(createUserDto, requestUser);
   }
 
   @Roles('ADMIN') // UserRoles.ADMIN
@@ -31,6 +32,20 @@ export class UsersController {
   @Get('frequenters')
   findAllFrequenters() {
     return this.usersService.findAllFrequenters();
+  }
+
+  @Roles('ADMIN') // UserRoles.ADMIN
+  @UseGuards(JwtAuthGuard, RolesGuard)
+  @Get('frequenters/env/:envId')
+  findAllFrequentersByEnvironment(@Param('envId') envId: number) {
+    return this.usersService.findAllFrequentersByEnvironment(envId);
+  }
+
+  @Roles('ADMIN') // UserRoles.ADMIN
+  @UseGuards(JwtAuthGuard, RolesGuard)
+  @Get('admins/env/:envId')
+  findAllAdminsByEnvironment(@Param('envId') envId: number) {
+    return this.usersService.findAllAdminsByEnvironment(envId);
   }
 
   @Roles('ADMIN') // UserRoles.ADMIN

@@ -1,1 +1,1 @@
-{"version":3,"file":"create-tag.dto.js","sourceRoot":"","sources":["../../../../src/tags/dto/create-tag.dto.ts"],"names":[],"mappings":";;;;;;;;;;;;AAAA,qDAA0C;AAE1C,MAAa,YAAY;CAKxB;AAJG;IAAC,IAAA,0BAAQ,GAAE;;6CACI;AAFnB,oCAKC"}
+{"version":3,"file":"create-tag.dto.js","sourceRoot":"","sources":["../../../../src/tags/dto/create-tag.dto.ts"],"names":[],"mappings":";;;;;;;;;;;;AAAA,qDAAgH;AAEhH,MAAa,YAAY;CAQxB;AAPG;IAAC,IAAA,+BAAa,GAAE;IACf,IAAA,4BAAU,GAAE;IACZ,IAAA,wBAAM,EAAC,CAAC,EAAE,EAAE,CAAC;;6CACC;AAEf;IAAC,IAAA,0BAAQ,GAAE;;4CACG;AAPlB,oCAQC"}

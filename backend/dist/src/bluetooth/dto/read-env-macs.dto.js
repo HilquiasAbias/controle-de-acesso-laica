@@ -9,35 +9,13 @@ var __metadata = (this && this.__metadata) || function (k, v) {
     if (typeof Reflect === "object" && typeof Reflect.metadata === "function") return Reflect.metadata(k, v);
 };
 Object.defineProperty(exports, "__esModule", { value: true });
-exports.CreateUserDto = void 0;
+exports.ReadEnvMacsDto = void 0;
 const class_validator_1 = require("class-validator");
-class CreateUserDto {
+class ReadEnvMacsDto {
 }
-__decorate([
-    (0, class_validator_1.IsString)(),
-    __metadata("design:type", String)
-], CreateUserDto.prototype, "name", void 0);
-__decorate([
-    (0, class_validator_1.Length)(10, 14),
-    __metadata("design:type", String)
-], CreateUserDto.prototype, "registration", void 0);
-__decorate([
-    (0, class_validator_1.IsString)(),
-    __metadata("design:type", String)
-], CreateUserDto.prototype, "password", void 0);
-__decorate([
-    (0, class_validator_1.IsString)(),
-    __metadata("design:type", String)
-], CreateUserDto.prototype, "role", void 0);
-__decorate([
-    (0, class_validator_1.IsString)(),
-    (0, class_validator_1.IsHexadecimal)(),
-    (0, class_validator_1.Length)(4, 8),
-    __metadata("design:type", String)
-], CreateUserDto.prototype, "tag", void 0);
 __decorate([
     (0, class_validator_1.IsNumber)(),
     __metadata("design:type", Number)
-], CreateUserDto.prototype, "envId", void 0);
-exports.CreateUserDto = CreateUserDto;
-//# sourceMappingURL=create-user.dto.js.map
+], ReadEnvMacsDto.prototype, "envId", void 0);
+exports.ReadEnvMacsDto = ReadEnvMacsDto;
+//# sourceMappingURL=read-env-macs.dto.js.map

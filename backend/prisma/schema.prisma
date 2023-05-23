@@ -55,8 +55,6 @@ model Environment {
   triggers    Trigger[]
   createdAt   DateTime  @default(now())
   updatedAt   DateTime  @updatedAt
-  // Caronte     Caronte?  @relation(fields: [caronteId], references: [id])
-  // caronteId   Int?
 }
 
 model Trigger {
@@ -65,8 +63,3 @@ model Trigger {
   Environment   Environment? @relation(fields: [environmentId], references: [id])
   environmentId Int?
 }
-
-// model Caronte {
-//   id           Int           @id @default(autoincrement())
-//   environments Environment[]
-// }

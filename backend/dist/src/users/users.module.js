@@ -12,13 +12,15 @@ const users_service_1 = require("./users.service");
 const users_controller_1 = require("./users.controller");
 const prisma_module_1 = require("../prisma/prisma.module");
 const tags_module_1 = require("../tags/tags.module");
+const bluetooth_module_1 = require("../bluetooth/bluetooth.module");
 let UsersModule = class UsersModule {
 };
 UsersModule = __decorate([
     (0, common_1.Module)({
         imports: [
             prisma_module_1.PrismaModule,
-            tags_module_1.TagsModule
+            tags_module_1.TagsModule,
+            bluetooth_module_1.BluetoothModule
         ],
         controllers: [users_controller_1.UsersController],
         providers: [users_service_1.UsersService],

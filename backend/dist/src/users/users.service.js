@@ -14,13 +14,15 @@ const common_1 = require("@nestjs/common");
 const prisma_service_1 = require("../prisma/prisma.service");
 const bcrypt = require("bcrypt");
 const tags_service_1 = require("../tags/tags.service");
+const bluetooth_service_1 = require("../bluetooth/bluetooth.service");
 exports.roundsOfHashing = 10;
 let UsersService = class UsersService {
-    constructor(prisma, Tags = new tags_service_1.TagsService(prisma)) {
+    constructor(prisma, Tags = new tags_service_1.TagsService(prisma), Bluetooth = new bluetooth_service_1.BluetoothService(prisma)) {
         this.prisma = prisma;
         this.Tags = Tags;
+        this.Bluetooth = Bluetooth;
     }
-    async create(createUserDto) {
+    async create(createUserDto, requestUser) {
         const hashedPassword = await bcrypt.hash(createUserDto.password, exports.roundsOfHashing);
         let user;
         if (createUserDto.role === 'ADMIN') {
@@ -30,7 +32,8 @@ let UsersService = class UsersService {
                     registration: createUserDto.registration,
                     role: createUserDto.role,
                     password: hashedPassword,
-                    adminEnvironment: createUserDto.envId ? { connect: { id: createUserDto.envId } } : undefined
+                    adminEnvironment: createUserDto.envId ? { connect: { id: createUserDto.envId } } : undefined,
+                    tag: createUserDto.tag ? { create: { content: createUserDto.tag } } : undefined
                 }
             });
         }
@@ -41,23 +44,29 @@ let UsersService = class UsersService {
                     registration: createUserDto.registration,
                     role: createUserDto.role,
                     password: hashedPassword,
-                    frequenterEnvironment: createUserDto.envId ? { connect: { id: createUserDto.envId } } : undefined
+                    frequenterEnvironment: createUserDto.envId ? { connect: { id: createUserDto.envId } } : undefined,
+                    tag: createUserDto.tag ? { create: { content: createUserDto.tag } } : undefined
                 }
             });
-        }
-        if (createUserDto.bluetooth) {
-            await this.prisma.bluetooth.create({
-                data: { content: createUserDto.bluetooth }
-            });
-        }
-        if (createUserDto.tag) {
-            await this.Tags.create({ content: createUserDto.tag, userId: user.id });
         }
         return user;
     }
     async findAllFrequenters() {
         return await this.prisma.user.findMany({
-            where: { role: 'FREQUENTER' }
+            where: { role: 'FREQUENTER' },
+            include: { tag: true }
+        });
+    }
+    async findAllFrequentersByEnvironment(envId) {
+        return await this.prisma.user.findMany({
+            where: { role: 'FREQUENTER', environmentFrequenterId: Number(envId) },
+            include: { tag: true }
+        });
+    }
+    async findAllAdminsByEnvironment(envId) {
+        return await this.prisma.user.findMany({
+            where: { role: 'ADMIN', environmentAdminId: Number(envId) },
+            include: { tag: true }
         });
     }
     async findAllAdmins() {
@@ -85,7 +94,7 @@ let UsersService = class UsersService {
             throw new common_1.UnauthorizedException("Can't update");
         }
         if (requestUser.role === 'ADMIN' && role === 'ADMIN' && requestUser.id !== id) {
-            throw new common_1.UnauthorizedException("A admin can't update other admin");
+            throw new common_1.UnauthorizedException("An admin cannot update another admin");
         }
         const validFields = ['name', 'registration', 'password', 'role'];
         const invalidFields = Object.keys(updateUserDto).filter(field => !validFields.includes(field));
@@ -119,7 +128,8 @@ let UsersService = class UsersService {
 UsersService = __decorate([
     (0, common_1.Injectable)(),
     __metadata("design:paramtypes", [prisma_service_1.PrismaService,
-        tags_service_1.TagsService])
+        tags_service_1.TagsService,
+        bluetooth_service_1.BluetoothService])
 ], UsersService);
 exports.UsersService = UsersService;
 //# sourceMappingURL=users.service.js.map

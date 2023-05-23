@@ -5,6 +5,7 @@ import { PrismaService } from 'src/prisma/prisma.service';
 import * as bcrypt from 'bcrypt';
 import { Bluetooth, Tag, User } from '@prisma/client';
 import { TagsService } from 'src/tags/tags.service';
+import { BluetoothService } from 'src/bluetooth/bluetooth.service';
 
 export const roundsOfHashing = 10;
 
@@ -12,10 +13,11 @@ export const roundsOfHashing = 10;
 export class UsersService {
   constructor(
     private readonly prisma: PrismaService,
-    private readonly Tags: TagsService = new TagsService(prisma)
+    private readonly Tags: TagsService = new TagsService(prisma),
+    private readonly Bluetooth: BluetoothService = new BluetoothService(prisma)
   ) {}
 
-  async create(createUserDto: CreateUserDto): Promise<User> {
+  async create(createUserDto: CreateUserDto, requestUser: User): Promise<User> {
     const hashedPassword = await bcrypt.hash(
       createUserDto.password,
       roundsOfHashing,
@@ -30,7 +32,8 @@ export class UsersService {
           registration: createUserDto.registration,
           role: createUserDto.role,
           password: hashedPassword,
-          adminEnvironment: createUserDto.envId ? { connect: { id:createUserDto.envId } } : undefined
+          adminEnvironment: createUserDto.envId ? { connect: { id:createUserDto.envId } } : undefined,
+          tag: createUserDto.tag ? { create: { content: createUserDto.tag } } : undefined
         }
       })
     } else {
@@ -40,19 +43,10 @@ export class UsersService {
           registration: createUserDto.registration,
           role: createUserDto.role,
           password: hashedPassword,
-          frequenterEnvironment: createUserDto.envId ? { connect: { id:createUserDto.envId } } : undefined
+          frequenterEnvironment: createUserDto.envId ? { connect: { id:createUserDto.envId } } : undefined,
+          tag: createUserDto.tag ? { create: { content: createUserDto.tag } } : undefined
         }
       })
-    }
-
-    if (createUserDto.bluetooth) {
-      await this.prisma.bluetooth.create({ 
-        data: { content: createUserDto.bluetooth }
-      }) 
-    }
-
-    if (createUserDto.tag) {
-      await this.Tags.create({ content: createUserDto.tag, userId: user.id  })
     }
 
     return user;
@@ -60,7 +54,22 @@ export class UsersService {
 
   async findAllFrequenters() {
     return await this.prisma.user.findMany({
-      where: { role: 'FREQUENTER' }
+      where: { role: 'FREQUENTER' },
+      include: { tag: true }
+    });
+  }
+
+  async findAllFrequentersByEnvironment(envId: number) {
+    return await this.prisma.user.findMany({
+      where: { role: 'FREQUENTER', environmentFrequenterId: Number(envId) }, // 
+      include: { tag: true }
+    });
+  }
+
+  async findAllAdminsByEnvironment(envId: number) {
+    return await this.prisma.user.findMany({
+      where: { role: 'ADMIN', environmentAdminId: Number(envId) }, // role: 'FREQUENTER', 
+      include: { tag: true }
     });
   }
 
@@ -94,7 +103,7 @@ export class UsersService {
     }
 
     if (requestUser.role === 'ADMIN' && role === 'ADMIN' && requestUser.id !== id) {
-      throw new UnauthorizedException("A admin can't update other admin");
+      throw new UnauthorizedException("An admin cannot update another admin");
     }
 
     const validFields = ['name', 'registration', 'password', 'role'];

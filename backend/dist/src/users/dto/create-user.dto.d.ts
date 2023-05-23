@@ -4,6 +4,5 @@ export declare class CreateUserDto {
     password: string;
     role: string;
     tag?: string;
-    bluetooth?: string;
     envId?: number;
 }

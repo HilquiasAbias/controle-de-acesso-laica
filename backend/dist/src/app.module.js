@@ -21,7 +21,10 @@ AppModule = __decorate([
         imports: [
             prisma_module_1.PrismaModule,
             users_module_1.UsersModule,
-            environments_module_1.EnvironmentsModule, auth_module_1.AuthModule, tags_module_1.TagsModule, bluetooth_module_1.BluetoothModule
+            environments_module_1.EnvironmentsModule,
+            auth_module_1.AuthModule,
+            tags_module_1.TagsModule,
+            bluetooth_module_1.BluetoothModule
         ]
     })
 ], AppModule);

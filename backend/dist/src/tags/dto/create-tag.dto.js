@@ -14,8 +14,14 @@ const class_validator_1 = require("class-validator");
 class CreateTagDto {
 }
 __decorate([
-    (0, class_validator_1.IsString)(),
+    (0, class_validator_1.IsHexadecimal)(),
+    (0, class_validator_1.IsNotEmpty)(),
+    (0, class_validator_1.Length)(8, 16),
     __metadata("design:type", String)
 ], CreateTagDto.prototype, "content", void 0);
+__decorate([
+    (0, class_validator_1.IsNumber)(),
+    __metadata("design:type", Number)
+], CreateTagDto.prototype, "userId", void 0);
 exports.CreateTagDto = CreateTagDto;
 //# sourceMappingURL=create-tag.dto.js.map

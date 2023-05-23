@@ -10,7 +10,10 @@ import { BluetoothModule } from './bluetooth/bluetooth.module';
   imports: [
     PrismaModule, 
     UsersModule, 
-    EnvironmentsModule, AuthModule, TagsModule, BluetoothModule
+    EnvironmentsModule, 
+    AuthModule, 
+    TagsModule, 
+    BluetoothModule
   ]
 })
 export class AppModule {}
