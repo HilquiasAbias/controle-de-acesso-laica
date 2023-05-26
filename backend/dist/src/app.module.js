@@ -13,7 +13,10 @@ const users_module_1 = require("./users/users.module");
 const environments_module_1 = require("./environments/environments.module");
 const auth_module_1 = require("./auth/auth.module");
 const tags_module_1 = require("./tags/tags.module");
-const bluetooth_module_1 = require("./bluetooth/bluetooth.module");
+const app_service_1 = require("./app.service");
+const app_controller_1 = require("./app.controller");
+const mac_module_1 = require("./mac/mac.module");
+const caronte_module_1 = require("./caronte/caronte.module");
 let AppModule = class AppModule {
 };
 AppModule = __decorate([
@@ -24,8 +27,10 @@ AppModule = __decorate([
             environments_module_1.EnvironmentsModule,
             auth_module_1.AuthModule,
             tags_module_1.TagsModule,
-            bluetooth_module_1.BluetoothModule
-        ]
+            mac_module_1.MacModule, caronte_module_1.CaronteModule,
+        ],
+        providers: [app_service_1.AppService],
+        controllers: [app_controller_1.AppController]
     })
 ], AppModule);
 exports.AppModule = AppModule;

@@ -4,7 +4,10 @@ import { UsersModule } from './users/users.module';
 import { EnvironmentsModule } from './environments/environments.module';
 import { AuthModule } from './auth/auth.module';
 import { TagsModule } from './tags/tags.module';
-import { BluetoothModule } from './bluetooth/bluetooth.module';
+import { AppService } from './app.service';
+import { AppController } from './app.controller';
+import { MacModule } from './mac/mac.module';
+import { CaronteModule } from './caronte/caronte.module';
 
 @Module({
   imports: [
@@ -13,7 +16,9 @@ import { BluetoothModule } from './bluetooth/bluetooth.module';
     EnvironmentsModule, 
     AuthModule, 
     TagsModule, 
-    BluetoothModule
-  ]
+    MacModule, CaronteModule,
+  ],
+  providers: [AppService],
+  controllers: [AppController]
 })
 export class AppModule {}

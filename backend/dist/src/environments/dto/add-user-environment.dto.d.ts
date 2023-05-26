@@ -1,2 +1,5 @@
-export declare class AddUserEnvironmentDto {
+export declare class AddUserInEnvironmentDto {
+    envId: number;
+    userId: number;
+    role: string;
 }

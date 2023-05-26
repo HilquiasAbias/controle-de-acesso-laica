@@ -10,6 +10,7 @@ datasource db {
 // enum Roles {
 //   ADMIN
 //   FREQUENTER
+//   EnvironmentManager
 // }
 
 model Tag {
@@ -21,7 +22,7 @@ model Tag {
   updatedAt DateTime @updatedAt
 }
 
-model Bluetooth {
+model Mac {
   id        Int      @id @default(autoincrement())
   content   String   @unique
   User      User?    @relation(fields: [userId], references: [id])
@@ -37,13 +38,14 @@ model User {
   password                String
   role                    String // Roles
   tag                     Tag?
-  bluetooth               Bluetooth?
+  mac                     Mac?
   adminEnvironment        Environment? @relation("admins", fields: [environmentAdminId], references: [id])
   environmentAdminId      Int?
   frequenterEnvironment   Environment? @relation("frequenters", fields: [environmentFrequenterId], references: [id])
   environmentFrequenterId Int?
   createdAt               DateTime     @default(now())
   updatedAt               DateTime     @updatedAt
+  Log                     Log[]
 }
 
 model Environment {
@@ -52,14 +54,27 @@ model Environment {
   description String?
   admins      User[]    @relation("admins")
   frequenters User[]    @relation("frequenters")
-  triggers    Trigger[]
+  triggers    Caronte[]
   createdAt   DateTime  @default(now())
   updatedAt   DateTime  @updatedAt
 }
 
-model Trigger {
-  ip            String       @id
+model Caronte {
+  id            Int          @id @default(autoincrement())
+  ip            String       @unique
+  esp           String       @unique
   password      String
   Environment   Environment? @relation(fields: [environmentId], references: [id])
   environmentId Int?
+  Log           Log[]
+}
+
+model Log {
+  id        Int      @id @default(autoincrement())
+  caronte   Caronte  @relation(fields: [caronteId], references: [id])
+  caronteId Int
+  user      User     @relation(fields: [userId], references: [id])
+  userId    Int
+  isPassed  Boolean
+  createdAt DateTime @default(now())
 }

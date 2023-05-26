@@ -9,30 +9,8 @@ var __metadata = (this && this.__metadata) || function (k, v) {
     if (typeof Reflect === "object" && typeof Reflect.metadata === "function") return Reflect.metadata(k, v);
 };
 Object.defineProperty(exports, "__esModule", { value: true });
-exports.CreateEnvironmentDto = exports.frequenterData = exports.triggerData = void 0;
+exports.CreateEnvironmentDto = void 0;
 const class_validator_1 = require("class-validator");
-class triggerData {
-}
-__decorate([
-    (0, class_validator_1.IsString)(),
-    __metadata("design:type", String)
-], triggerData.prototype, "ip", void 0);
-__decorate([
-    (0, class_validator_1.IsString)(),
-    __metadata("design:type", String)
-], triggerData.prototype, "password", void 0);
-exports.triggerData = triggerData;
-class frequenterData {
-}
-__decorate([
-    (0, class_validator_1.IsString)(),
-    __metadata("design:type", String)
-], frequenterData.prototype, "ip", void 0);
-__decorate([
-    (0, class_validator_1.IsString)(),
-    __metadata("design:type", String)
-], frequenterData.prototype, "password", void 0);
-exports.frequenterData = frequenterData;
 class CreateEnvironmentDto {
 }
 __decorate([
@@ -43,5 +21,9 @@ __decorate([
     (0, class_validator_1.IsString)(),
     __metadata("design:type", String)
 ], CreateEnvironmentDto.prototype, "description", void 0);
+__decorate([
+    (0, class_validator_1.IsNumber)(),
+    __metadata("design:type", Number)
+], CreateEnvironmentDto.prototype, "adminId", void 0);
 exports.CreateEnvironmentDto = CreateEnvironmentDto;
 //# sourceMappingURL=create-environment.dto.js.map

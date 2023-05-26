@@ -8,7 +8,7 @@ export declare class JwtStrategy extends JwtStrategy_base {
         userId: number;
     }): Promise<import(".prisma/client").User & {
         tag: import(".prisma/client").Tag;
-        bluetooth: import(".prisma/client").Bluetooth;
+        mac: import(".prisma/client").Mac;
         adminEnvironment: import(".prisma/client").Environment;
         frequenterEnvironment: import(".prisma/client").Environment;
     }>;

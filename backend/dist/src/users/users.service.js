@@ -14,13 +14,13 @@ const common_1 = require("@nestjs/common");
 const prisma_service_1 = require("../prisma/prisma.service");
 const bcrypt = require("bcrypt");
 const tags_service_1 = require("../tags/tags.service");
-const bluetooth_service_1 = require("../bluetooth/bluetooth.service");
+const mac_service_1 = require("../mac/mac.service");
 exports.roundsOfHashing = 10;
 let UsersService = class UsersService {
-    constructor(prisma, Tags = new tags_service_1.TagsService(prisma), Bluetooth = new bluetooth_service_1.BluetoothService(prisma)) {
+    constructor(prisma, Tags = new tags_service_1.TagsService(prisma), Macs = new mac_service_1.MacService(prisma)) {
         this.prisma = prisma;
         this.Tags = Tags;
-        this.Bluetooth = Bluetooth;
+        this.Macs = Macs;
     }
     async create(createUserDto, requestUser) {
         const hashedPassword = await bcrypt.hash(createUserDto.password, exports.roundsOfHashing);
@@ -84,7 +84,7 @@ let UsersService = class UsersService {
                 adminEnvironment: true,
                 frequenterEnvironment: true,
                 tag: true,
-                bluetooth: true
+                mac: true
             }
         });
         return user;
@@ -129,7 +129,7 @@ UsersService = __decorate([
     (0, common_1.Injectable)(),
     __metadata("design:paramtypes", [prisma_service_1.PrismaService,
         tags_service_1.TagsService,
-        bluetooth_service_1.BluetoothService])
+        mac_service_1.MacService])
 ], UsersService);
 exports.UsersService = UsersService;
 //# sourceMappingURL=users.service.js.map

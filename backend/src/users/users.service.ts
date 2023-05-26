@@ -3,9 +3,9 @@ import { CreateUserDto } from './dto/create-user.dto';
 import { UpdateUserDto } from './dto/update-user.dto';
 import { PrismaService } from 'src/prisma/prisma.service';
 import * as bcrypt from 'bcrypt';
-import { Bluetooth, Tag, User } from '@prisma/client';
+import { Mac, Tag, User } from '@prisma/client';
 import { TagsService } from 'src/tags/tags.service';
-import { BluetoothService } from 'src/bluetooth/bluetooth.service';
+import { MacService } from 'src/mac/mac.service';
 
 export const roundsOfHashing = 10;
 
@@ -14,7 +14,7 @@ export class UsersService {
   constructor(
     private readonly prisma: PrismaService,
     private readonly Tags: TagsService = new TagsService(prisma),
-    private readonly Bluetooth: BluetoothService = new BluetoothService(prisma)
+    private readonly Macs: MacService = new MacService(prisma)
   ) {}
 
   async create(createUserDto: CreateUserDto, requestUser: User): Promise<User> {
@@ -90,7 +90,7 @@ export class UsersService {
         adminEnvironment: true,
         frequenterEnvironment: true,
         tag: true,
-        bluetooth: true
+        mac: true
       }
     });
 

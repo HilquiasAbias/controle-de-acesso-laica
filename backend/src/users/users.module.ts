@@ -3,13 +3,13 @@ import { UsersService } from './users.service';
 import { UsersController } from './users.controller';
 import { PrismaModule } from 'src/prisma/prisma.module';
 import { TagsModule } from 'src/tags/tags.module';
-import { BluetoothModule } from 'src/bluetooth/bluetooth.module';
+import { MacModule } from 'src/mac/mac.module';
 
 @Module({
   imports: [
     PrismaModule,
     TagsModule,
-    BluetoothModule
+    MacModule
   ],
   controllers: [UsersController],
   providers: [UsersService],

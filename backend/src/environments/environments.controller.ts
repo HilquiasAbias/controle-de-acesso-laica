@@ -7,20 +7,25 @@ import { JwtAuthGuard } from 'src/auth/guards/jwt-auth.guard';
 import { Roles } from 'src/auth/decorators/roles.decorator';
 import { UsersService } from 'src/users/users.service';
 import { CreateUserDto } from 'src/users/dto/create-user.dto';
+import { AddUserInEnvironmentDto } from './dto/add-user-environment.dto';
 //import { Roles as UserRoles } from '@prisma/client';
 
 @Controller('environments')
 export class EnvironmentsController {
-  constructor(
-    private readonly environmentsService: EnvironmentsService,
-    private readonly usersService: UsersService
-    ) {}
+  constructor(private readonly environmentsService: EnvironmentsService) {}
 
   @Roles('ADMIN') // UserRoles.ADMIN
   @UseGuards(JwtAuthGuard, RolesGuard)
   @Post()
   create(@Body() createEnvironmentDto: CreateEnvironmentDto) {
     return this.environmentsService.create(createEnvironmentDto);
+  }
+
+  @Roles('ADMIN') // UserRoles.ADMIN
+  @UseGuards(JwtAuthGuard, RolesGuard)
+  @Post('add/user')
+  addUserInEnvironment(@Body() addUserInEnvironmentDto: AddUserInEnvironmentDto) {
+    return this.environmentsService.addUserInEnvironment(addUserInEnvironmentDto);
   }
 
   @Roles('ADMIN') // UserRoles.ADMIN

@@ -1,15 +1,15 @@
 import { CreateUserDto } from './dto/create-user.dto';
 import { UpdateUserDto } from './dto/update-user.dto';
 import { PrismaService } from 'src/prisma/prisma.service';
-import { Bluetooth, Tag, User } from '@prisma/client';
+import { Mac, Tag, User } from '@prisma/client';
 import { TagsService } from 'src/tags/tags.service';
-import { BluetoothService } from 'src/bluetooth/bluetooth.service';
+import { MacService } from 'src/mac/mac.service';
 export declare const roundsOfHashing = 10;
 export declare class UsersService {
     private readonly prisma;
     private readonly Tags;
-    private readonly Bluetooth;
-    constructor(prisma: PrismaService, Tags?: TagsService, Bluetooth?: BluetoothService);
+    private readonly Macs;
+    constructor(prisma: PrismaService, Tags?: TagsService, Macs?: MacService);
     create(createUserDto: CreateUserDto, requestUser: User): Promise<User>;
     findAllFrequenters(): Promise<(User & {
         tag: Tag;
@@ -23,7 +23,7 @@ export declare class UsersService {
     findAllAdmins(): Promise<User[]>;
     findOne(id: number): Promise<User & {
         tag: Tag;
-        bluetooth: Bluetooth;
+        mac: Mac;
         adminEnvironment: import(".prisma/client").Environment;
         frequenterEnvironment: import(".prisma/client").Environment;
     }>;

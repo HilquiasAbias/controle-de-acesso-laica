@@ -1,3 +1,0 @@
-environments {
-  - pegar todas as tags do ambiente
-}

@@ -20,14 +20,16 @@ const update_environment_dto_1 = require("./dto/update-environment.dto");
 const roles_guard_1 = require("../auth/guards/roles.guard");
 const jwt_auth_guard_1 = require("../auth/guards/jwt-auth.guard");
 const roles_decorator_1 = require("../auth/decorators/roles.decorator");
-const users_service_1 = require("../users/users.service");
+const add_user_environment_dto_1 = require("./dto/add-user-environment.dto");
 let EnvironmentsController = class EnvironmentsController {
-    constructor(environmentsService, usersService) {
+    constructor(environmentsService) {
         this.environmentsService = environmentsService;
-        this.usersService = usersService;
     }
     create(createEnvironmentDto) {
         return this.environmentsService.create(createEnvironmentDto);
+    }
+    addUserInEnvironment(addUserInEnvironmentDto) {
+        return this.environmentsService.addUserInEnvironment(addUserInEnvironmentDto);
     }
     findAll() {
         return this.environmentsService.findAll();
@@ -51,6 +53,15 @@ __decorate([
     __metadata("design:paramtypes", [create_environment_dto_1.CreateEnvironmentDto]),
     __metadata("design:returntype", void 0)
 ], EnvironmentsController.prototype, "create", null);
+__decorate([
+    (0, roles_decorator_1.Roles)('ADMIN'),
+    (0, common_1.UseGuards)(jwt_auth_guard_1.JwtAuthGuard, roles_guard_1.RolesGuard),
+    (0, common_1.Post)('add/user'),
+    __param(0, (0, common_1.Body)()),
+    __metadata("design:type", Function),
+    __metadata("design:paramtypes", [add_user_environment_dto_1.AddUserInEnvironmentDto]),
+    __metadata("design:returntype", void 0)
+], EnvironmentsController.prototype, "addUserInEnvironment", null);
 __decorate([
     (0, roles_decorator_1.Roles)('ADMIN'),
     (0, common_1.UseGuards)(jwt_auth_guard_1.JwtAuthGuard, roles_guard_1.RolesGuard),
@@ -89,8 +100,7 @@ __decorate([
 ], EnvironmentsController.prototype, "remove", null);
 EnvironmentsController = __decorate([
     (0, common_1.Controller)('environments'),
-    __metadata("design:paramtypes", [environments_service_1.EnvironmentsService,
-        users_service_1.UsersService])
+    __metadata("design:paramtypes", [environments_service_1.EnvironmentsService])
 ], EnvironmentsController);
 exports.EnvironmentsController = EnvironmentsController;
 //# sourceMappingURL=environments.controller.js.map
