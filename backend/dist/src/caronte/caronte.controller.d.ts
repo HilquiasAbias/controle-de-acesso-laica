@@ -8,5 +8,5 @@ export declare class CaronteController {
     findAll(): Promise<import(".prisma/client").Caronte[]>;
     findOne(id: string): Promise<import(".prisma/client").Caronte>;
     update(id: string, updateCaronteDto: UpdateCaronteDto): Promise<import(".prisma/client").Caronte>;
-    remove(id: string): Promise<string>;
+    remove(id: string): Promise<import(".prisma/client").Caronte>;
 }

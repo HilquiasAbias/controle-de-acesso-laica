@@ -9,6 +9,8 @@ import * as bcrypt from 'bcrypt';
 export class CaronteService {
   constructor(private readonly prisma: PrismaService) {}
 
+  async validateUser()
+
   async create(createCaronteDto: CreateCaronteDto) {
     const hashedPassword = await bcrypt.hash(
       createCaronteDto.password,
@@ -78,13 +80,29 @@ export class CaronteService {
       );
     }
 
-    return await this.prisma.caronte.update({
-      where: { id },
-      data: updateCaronteDto
-    });
+    try {
+      return await this.prisma.caronte.update({
+        where: { id },
+        data: updateCaronteDto
+      });
+    } catch (error) {
+      if (error.code === 'P2025') {
+        throw new HttpException("Environment not found", HttpStatus.NOT_FOUND);
+      } else if (error.code === 'P2002') {
+        throw new HttpException("This caronte already exists", HttpStatus.CONFLICT);
+      } else {
+        throw new HttpException("Can't update caronte.", HttpStatus.FORBIDDEN);
+      }
+    }
   }
 
   async remove(id: number) {
-    return `This action removes a #${id} caronte`;
+    if (isNaN(id)) {
+      throw new HttpException("Id must be a number", HttpStatus.BAD_REQUEST);
+    }
+
+    return await this.prisma.caronte.delete({
+      where: { id }
+    });
   }
 }

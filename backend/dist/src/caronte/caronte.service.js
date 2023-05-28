@@ -72,13 +72,31 @@ let CaronteService = class CaronteService {
         if (updateCaronteDto.password) {
             updateCaronteDto.password = await bcrypt.hash(updateCaronteDto.password, users_service_1.roundsOfHashing);
         }
-        return await this.prisma.caronte.update({
-            where: { id },
-            data: updateCaronteDto
-        });
+        try {
+            return await this.prisma.caronte.update({
+                where: { id },
+                data: updateCaronteDto
+            });
+        }
+        catch (error) {
+            if (error.code === 'P2025') {
+                throw new common_1.HttpException("Environment not found", common_1.HttpStatus.NOT_FOUND);
+            }
+            else if (error.code === 'P2002') {
+                throw new common_1.HttpException("This caronte already exists", common_1.HttpStatus.CONFLICT);
+            }
+            else {
+                throw new common_1.HttpException("Can't update caronte.", common_1.HttpStatus.FORBIDDEN);
+            }
+        }
     }
     async remove(id) {
-        return `This action removes a #${id} caronte`;
+        if (isNaN(id)) {
+            throw new common_1.HttpException("Id must be a number", common_1.HttpStatus.BAD_REQUEST);
+        }
+        return await this.prisma.caronte.delete({
+            where: { id }
+        });
     }
 };
 CaronteService = __decorate([

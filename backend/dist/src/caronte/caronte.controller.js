@@ -41,6 +41,8 @@ let CaronteController = class CaronteController {
     }
 };
 __decorate([
+    (0, roles_decorator_1.Roles)('ADMIN'),
+    (0, common_1.UseGuards)(jwt_auth_guard_1.JwtAuthGuard, roles_guard_1.RolesGuard),
     (0, common_1.Post)(),
     __param(0, (0, common_1.Body)()),
     __metadata("design:type", Function),
@@ -48,12 +50,16 @@ __decorate([
     __metadata("design:returntype", void 0)
 ], CaronteController.prototype, "create", null);
 __decorate([
+    (0, roles_decorator_1.Roles)('ADMIN'),
+    (0, common_1.UseGuards)(jwt_auth_guard_1.JwtAuthGuard, roles_guard_1.RolesGuard),
     (0, common_1.Get)(),
     __metadata("design:type", Function),
     __metadata("design:paramtypes", []),
     __metadata("design:returntype", void 0)
 ], CaronteController.prototype, "findAll", null);
 __decorate([
+    (0, roles_decorator_1.Roles)('ADMIN'),
+    (0, common_1.UseGuards)(jwt_auth_guard_1.JwtAuthGuard, roles_guard_1.RolesGuard),
     (0, common_1.Get)(':id'),
     __param(0, (0, common_1.Param)('id')),
     __metadata("design:type", Function),
@@ -61,6 +67,8 @@ __decorate([
     __metadata("design:returntype", void 0)
 ], CaronteController.prototype, "findOne", null);
 __decorate([
+    (0, roles_decorator_1.Roles)('ADMIN'),
+    (0, common_1.UseGuards)(jwt_auth_guard_1.JwtAuthGuard, roles_guard_1.RolesGuard),
     (0, common_1.Patch)(':id'),
     __param(0, (0, common_1.Param)('id')),
     __param(1, (0, common_1.Body)()),
@@ -69,6 +77,8 @@ __decorate([
     __metadata("design:returntype", void 0)
 ], CaronteController.prototype, "update", null);
 __decorate([
+    (0, roles_decorator_1.Roles)('ADMIN'),
+    (0, common_1.UseGuards)(jwt_auth_guard_1.JwtAuthGuard, roles_guard_1.RolesGuard),
     (0, common_1.Delete)(':id'),
     __param(0, (0, common_1.Param)('id')),
     __metadata("design:type", Function),
@@ -76,8 +86,6 @@ __decorate([
     __metadata("design:returntype", void 0)
 ], CaronteController.prototype, "remove", null);
 CaronteController = __decorate([
-    (0, roles_decorator_1.Roles)('ADMIN'),
-    (0, common_1.UseGuards)(jwt_auth_guard_1.JwtAuthGuard, roles_guard_1.RolesGuard),
     (0, common_1.Controller)('caronte'),
     __metadata("design:paramtypes", [caronte_service_1.CaronteService])
 ], CaronteController);

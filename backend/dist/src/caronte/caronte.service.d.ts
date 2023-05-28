@@ -4,9 +4,10 @@ import { PrismaService } from 'src/prisma/prisma.service';
 export declare class CaronteService {
     private readonly prisma;
     constructor(prisma: PrismaService);
+    validateUser(): any;
     create(createCaronteDto: CreateCaronteDto): Promise<import(".prisma/client").Caronte>;
     findAll(): Promise<import(".prisma/client").Caronte[]>;
     findOne(id: number): Promise<import(".prisma/client").Caronte>;
     update(id: number, updateCaronteDto: UpdateCaronteDto): Promise<import(".prisma/client").Caronte>;
-    remove(id: number): Promise<string>;
+    remove(id: number): Promise<import(".prisma/client").Caronte>;
 }
