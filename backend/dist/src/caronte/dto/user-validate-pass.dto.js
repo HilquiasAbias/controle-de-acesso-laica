@@ -9,34 +9,21 @@ var __metadata = (this && this.__metadata) || function (k, v) {
     if (typeof Reflect === "object" && typeof Reflect.metadata === "function") return Reflect.metadata(k, v);
 };
 Object.defineProperty(exports, "__esModule", { value: true });
-exports.UserValidatePassDto = void 0;
+exports.CaronteValidationDto = void 0;
 const class_validator_1 = require("class-validator");
-class UserValidatePassDto {
+class CaronteValidationDto {
 }
 __decorate([
     (0, class_validator_1.IsIP)(),
     __metadata("design:type", String)
-], UserValidatePassDto.prototype, "ip", void 0);
+], CaronteValidationDto.prototype, "ip", void 0);
 __decorate([
     (0, class_validator_1.IsMACAddress)(),
     __metadata("design:type", String)
-], UserValidatePassDto.prototype, "esp", void 0);
+], CaronteValidationDto.prototype, "esp", void 0);
 __decorate([
     (0, class_validator_1.IsString)(),
     __metadata("design:type", String)
-], UserValidatePassDto.prototype, "password", void 0);
-__decorate([
-    (0, class_validator_1.IsNumber)(),
-    __metadata("design:type", Number)
-], UserValidatePassDto.prototype, "userId", void 0);
-__decorate([
-    (0, class_validator_1.IsMACAddress)(),
-    __metadata("design:type", String)
-], UserValidatePassDto.prototype, "mac", void 0);
-__decorate([
-    (0, class_validator_1.IsHexadecimal)(),
-    (0, class_validator_1.Length)(8, 16),
-    __metadata("design:type", String)
-], UserValidatePassDto.prototype, "tag", void 0);
-exports.UserValidatePassDto = UserValidatePassDto;
+], CaronteValidationDto.prototype, "carontePassword", void 0);
+exports.CaronteValidationDto = CaronteValidationDto;
 //# sourceMappingURL=user-validate-pass.dto.js.map

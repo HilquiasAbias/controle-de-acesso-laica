@@ -1,6 +1,6 @@
 import { IsHexadecimal, IsIP, IsMACAddress, IsNumber, IsString, Length } from "class-validator";
 
-export class UserValidatePassDto {
+export class CaronteValidationDto {
   @IsIP()
   ip: string
 
@@ -8,16 +8,21 @@ export class UserValidatePassDto {
   esp: string
 
   @IsString()
-  password: string
-
-  @IsNumber()
-  userId: number
+  carontePassword: string
   
-  @IsMACAddress()
-  mac?: string
+  //@IsString()
+  userPassword?: string
 
-  @IsHexadecimal()
-  @Length(8, 16)
-  tag?: string
+  //@IsString()
+  userRegister?: string
+  
+  //@IsNumber()
+  userId?: number
+  
+  //@IsMACAddress()
+  userDeviceMac?: string
 
+  //@IsHexadecimal()
+  //@Length(8, 16)
+  userTagRFID?: string
 }

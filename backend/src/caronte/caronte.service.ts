@@ -1,15 +1,155 @@
-import { Injectable, HttpException, HttpStatus, BadRequestException } from '@nestjs/common';
+import { Injectable, HttpException, HttpStatus, BadRequestException, UnauthorizedException } from '@nestjs/common';
 import { CreateCaronteDto } from './dto/create-caronte.dto';
 import { UpdateCaronteDto } from './dto/update-caronte.dto';
 import { PrismaService } from 'src/prisma/prisma.service';
 import { roundsOfHashing } from 'src/users/users.service';
 import * as bcrypt from 'bcrypt';
+import { CaronteValidationDto } from './dto/user-validate-pass.dto';
+import { User } from '@prisma/client';
 
 @Injectable()
 export class CaronteService {
   constructor(private readonly prisma: PrismaService) {}
 
-  async validateUser()
+  async findUserByTag(tag: string, envId: number) {
+    const environment = await this.prisma.environment.findUnique({
+      where: {
+        id: envId
+      },
+      include: {
+        admins: {
+          where: {
+            tag: {
+              content: tag
+            }
+          },
+          take: 1
+        },
+        frequenters: {
+          where: {
+            tag: {
+              content: tag
+            }
+          },
+          take: 1
+        }
+      },
+    });
+
+    if (environment.admins.length === 1) {
+      return environment.admins.shift()
+    }
+  
+    return environment.frequenters.shift()
+  }
+
+  async findUserByMac(mac: string, envId: number) {
+    const environment = await this.prisma.environment.findUnique({
+      where: {
+        id: envId
+      },
+      include: {
+        admins: {
+          where: {
+            mac: {
+              content: mac
+            }
+          },
+          take: 1
+        },
+        frequenters: {
+          where: {
+            mac: {
+              content: mac
+            }
+          },
+          take: 1
+        }
+      },
+    });
+
+    if (environment.admins.length === 1) {
+      return environment.admins.shift()
+    }
+  
+    return environment.frequenters.shift()
+  }
+
+  async findUserByData(registration: string, password: string, envId: number) {
+    const environment = await this.prisma.environment.findUnique({
+      where: {
+        id: envId
+      },
+      include: {
+        admins: {
+          where: {
+            registration,
+          },
+          take: 1
+        },
+        frequenters: {
+          where: {
+            registration
+          },
+          take: 1
+        }
+      },
+    });
+
+    let user: User
+
+    if (environment.admins.length === 1) {
+      user = environment.admins.shift()
+    }
+  
+    user = environment.frequenters.shift()
+
+    const isPasswordValid = await bcrypt.compare(
+      password, user.password
+    )
+
+    return isPasswordValid ? user : undefined
+  }
+
+  async validateUser(userValidatePass: CaronteValidationDto) {
+    const caronte = await this.prisma.caronte.findFirst({
+      where: {
+        esp: userValidatePass.esp
+      }
+    })
+
+    if (!caronte) {
+      throw new UnauthorizedException('Unauthorized caronte access');
+    }
+
+    const isCarontePasswordValid = await bcrypt.compare(
+      userValidatePass.carontePassword, caronte.password
+    )
+
+    if (!isCarontePasswordValid) {
+      throw new UnauthorizedException('Unauthorized caronte access');
+    }
+    
+    let user: User
+    
+    if (userValidatePass.userTagRFID) {
+      user = await this.findUserByTag(userValidatePass.userTagRFID, caronte.environmentId)
+    }
+
+    if (userValidatePass.userDeviceMac) {
+      user = await this.findUserByTag(userValidatePass.userTagRFID, caronte.environmentId)
+    }
+
+    if (userValidatePass.userRegister) {
+      user = await this.findUserByData(userValidatePass.userRegister, userValidatePass.userPassword, caronte.environmentId)
+    }
+
+    console.log(user)
+
+    return {
+      access: 'valid'
+    }
+  }
 
   async create(createCaronteDto: CreateCaronteDto) {
     const hashedPassword = await bcrypt.hash(

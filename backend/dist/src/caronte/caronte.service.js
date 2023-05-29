@@ -18,6 +18,120 @@ let CaronteService = class CaronteService {
     constructor(prisma) {
         this.prisma = prisma;
     }
+    async findUserByTag(tag, envId) {
+        const environment = await this.prisma.environment.findUnique({
+            where: {
+                id: envId
+            },
+            include: {
+                admins: {
+                    where: {
+                        tag: {
+                            content: tag
+                        }
+                    },
+                    take: 1
+                },
+                frequenters: {
+                    where: {
+                        tag: {
+                            content: tag
+                        }
+                    },
+                    take: 1
+                }
+            },
+        });
+        if (environment.admins.length === 1) {
+            return environment.admins.shift();
+        }
+        return environment.frequenters.shift();
+    }
+    async findUserByMac(mac, envId) {
+        const environment = await this.prisma.environment.findUnique({
+            where: {
+                id: envId
+            },
+            include: {
+                admins: {
+                    where: {
+                        mac: {
+                            content: mac
+                        }
+                    },
+                    take: 1
+                },
+                frequenters: {
+                    where: {
+                        mac: {
+                            content: mac
+                        }
+                    },
+                    take: 1
+                }
+            },
+        });
+        if (environment.admins.length === 1) {
+            return environment.admins.shift();
+        }
+        return environment.frequenters.shift();
+    }
+    async findUserByData(registration, password, envId) {
+        const environment = await this.prisma.environment.findUnique({
+            where: {
+                id: envId
+            },
+            include: {
+                admins: {
+                    where: {
+                        registration,
+                    },
+                    take: 1
+                },
+                frequenters: {
+                    where: {
+                        registration
+                    },
+                    take: 1
+                }
+            },
+        });
+        let user;
+        if (environment.admins.length === 1) {
+            user = environment.admins.shift();
+        }
+        user = environment.frequenters.shift();
+        const isPasswordValid = await bcrypt.compare(password, user.password);
+        return isPasswordValid ? user : undefined;
+    }
+    async validateUser(userValidatePass) {
+        const caronte = await this.prisma.caronte.findFirst({
+            where: {
+                esp: userValidatePass.esp
+            }
+        });
+        if (!caronte) {
+            throw new common_1.UnauthorizedException('Unauthorized caronte access');
+        }
+        const isCarontePasswordValid = await bcrypt.compare(userValidatePass.carontePassword, caronte.password);
+        if (!isCarontePasswordValid) {
+            throw new common_1.UnauthorizedException('Unauthorized caronte access');
+        }
+        let user;
+        if (userValidatePass.userTagRFID) {
+            user = await this.findUserByTag(userValidatePass.userTagRFID, caronte.environmentId);
+        }
+        if (userValidatePass.userDeviceMac) {
+            user = await this.findUserByTag(userValidatePass.userTagRFID, caronte.environmentId);
+        }
+        if (userValidatePass.userRegister) {
+            user = await this.findUserByData(userValidatePass.userRegister, userValidatePass.userPassword, caronte.environmentId);
+        }
+        console.log(user);
+        return {
+            access: 'valid'
+        };
+    }
     async create(createCaronteDto) {
         const hashedPassword = await bcrypt.hash(createCaronteDto.password, users_service_1.roundsOfHashing);
         try {

@@ -1,8 +1,10 @@
-export declare class UserValidatePassDto {
+export declare class CaronteValidationDto {
     ip: string;
     esp: string;
-    password: string;
-    userId: number;
-    mac?: string;
-    tag?: string;
+    carontePassword: string;
+    userPassword?: string;
+    userRegister?: string;
+    userId?: number;
+    userDeviceMac?: string;
+    userTagRFID?: string;
 }

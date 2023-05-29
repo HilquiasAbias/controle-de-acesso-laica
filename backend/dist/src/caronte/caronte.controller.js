@@ -20,9 +20,13 @@ const update_caronte_dto_1 = require("./dto/update-caronte.dto");
 const roles_decorator_1 = require("../auth/decorators/roles.decorator");
 const jwt_auth_guard_1 = require("../auth/guards/jwt-auth.guard");
 const roles_guard_1 = require("../auth/guards/roles.guard");
+const user_validate_pass_dto_1 = require("./dto/user-validate-pass.dto");
 let CaronteController = class CaronteController {
     constructor(caronteService) {
         this.caronteService = caronteService;
+    }
+    validate(caronteValidationDto) {
+        return this.caronteService.validateUser(caronteValidationDto);
     }
     create(createCaronteDto) {
         return this.caronteService.create(createCaronteDto);
@@ -40,6 +44,13 @@ let CaronteController = class CaronteController {
         return this.caronteService.remove(+id);
     }
 };
+__decorate([
+    (0, common_1.Post)('validate'),
+    __param(0, (0, common_1.Body)()),
+    __metadata("design:type", Function),
+    __metadata("design:paramtypes", [user_validate_pass_dto_1.CaronteValidationDto]),
+    __metadata("design:returntype", void 0)
+], CaronteController.prototype, "validate", null);
 __decorate([
     (0, roles_decorator_1.Roles)('ADMIN'),
     (0, common_1.UseGuards)(jwt_auth_guard_1.JwtAuthGuard, roles_guard_1.RolesGuard),
