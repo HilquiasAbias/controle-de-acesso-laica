@@ -17,7 +17,11 @@ const app_service_1 = require("./app.service");
 const app_controller_1 = require("./app.controller");
 const mac_module_1 = require("./mac/mac.module");
 const caronte_module_1 = require("./caronte/caronte.module");
+const cors = require("cors");
 let AppModule = class AppModule {
+    configure(consumer) {
+        consumer.apply(cors()).forRoutes('*');
+    }
 };
 AppModule = __decorate([
     (0, common_1.Module)({

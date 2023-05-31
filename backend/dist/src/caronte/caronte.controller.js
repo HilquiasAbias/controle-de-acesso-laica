@@ -45,7 +45,7 @@ let CaronteController = class CaronteController {
     }
 };
 __decorate([
-    (0, common_1.Post)('validate'),
+    (0, common_1.Post)('obol'),
     __param(0, (0, common_1.Body)()),
     __metadata("design:type", Function),
     __metadata("design:paramtypes", [user_validate_pass_dto_1.CaronteValidationDto]),

@@ -5,7 +5,7 @@ import { PrismaService } from 'src/prisma/prisma.service';
 import { roundsOfHashing } from 'src/users/users.service';
 import * as bcrypt from 'bcrypt';
 import { CaronteValidationDto } from './dto/user-validate-pass.dto';
-import { User } from '@prisma/client';
+import { Log, User } from '@prisma/client';
 
 @Injectable()
 export class CaronteService {
@@ -97,12 +97,14 @@ export class CaronteService {
     });
 
     let user: User
-
+    
     if (environment.admins.length === 1) {
       user = environment.admins.shift()
+    } else {
+      user = environment.frequenters.shift()
     }
-  
-    user = environment.frequenters.shift()
+
+    if (!user) return undefined
 
     const isPasswordValid = await bcrypt.compare(
       password, user.password
@@ -112,6 +114,17 @@ export class CaronteService {
   }
 
   async validateUser(userValidatePass: CaronteValidationDto) {
+    const validFields = ['ip', 'esp', 'carontePassword', 'userPassword', 'userRegister', 'userId', 'userDeviceMac', 'userTagRFID'];
+    const invalidFields = Object.keys(userValidatePass).filter(
+      field => !validFields.includes(field),
+    );
+
+    if (invalidFields.length > 0) {
+      throw new BadRequestException(
+        `Invalid fields provided: ${invalidFields.join(', ')}`,
+      );
+    }
+
     const caronte = await this.prisma.caronte.findFirst({
       where: {
         esp: userValidatePass.esp
@@ -131,21 +144,41 @@ export class CaronteService {
     }
     
     let user: User
+    let log: Log
     
     if (userValidatePass.userTagRFID) {
       user = await this.findUserByTag(userValidatePass.userTagRFID, caronte.environmentId)
     }
 
-    if (userValidatePass.userDeviceMac) {
+    if (!user && userValidatePass.userDeviceMac) {
       user = await this.findUserByTag(userValidatePass.userTagRFID, caronte.environmentId)
     }
 
-    if (userValidatePass.userRegister) {
+    if (!user && userValidatePass.userRegister) {
       user = await this.findUserByData(userValidatePass.userRegister, userValidatePass.userPassword, caronte.environmentId)
     }
 
-    console.log(user)
+    if (!user) {
+      log = await this.prisma.log.create({
+        data: {
+          successful: false,
+          caronte: { connect: { id: caronte.id } }
+        }
+      })
+      console.log(log);
+      throw new UnauthorizedException('Unauthorized user access');
+    }
 
+    log = await this.prisma.log.create({
+      data: {
+        successful: true,
+        caronte: { connect: { id: caronte.id } },
+        user: { connect: { id: user.id } }
+      }
+    })
+
+    console.log(log);
+    
     return {
       access: 'valid'
     }

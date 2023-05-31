@@ -70,11 +70,11 @@ model Caronte {
 }
 
 model Log {
-  id        Int      @id @default(autoincrement())
-  caronte   Caronte  @relation(fields: [caronteId], references: [id])
-  caronteId Int
-  user      User?    @relation(fields: [userId], references: [id])
-  userId    Int?
-  isPassed  Boolean
-  createdAt DateTime @default(now())
+  id         Int      @id @default(autoincrement())
+  caronte    Caronte  @relation(fields: [caronteId], references: [id])
+  caronteId  Int
+  user       User?    @relation(fields: [userId], references: [id])
+  userId     Int?
+  successful Boolean
+  createdAt  DateTime @default(now())
 }

@@ -1,4 +1,4 @@
-import { Module } from '@nestjs/common';
+import { Module, NestModule, MiddlewareConsumer } from '@nestjs/common';
 import { PrismaModule } from './prisma/prisma.module';
 import { UsersModule } from './users/users.module';
 import { EnvironmentsModule } from './environments/environments.module';
@@ -8,6 +8,7 @@ import { AppService } from './app.service';
 import { AppController } from './app.controller';
 import { MacModule } from './mac/mac.module';
 import { CaronteModule } from './caronte/caronte.module';
+import * as cors from 'cors';
 
 @Module({
   imports: [
@@ -21,4 +22,8 @@ import { CaronteModule } from './caronte/caronte.module';
   providers: [AppService],
   controllers: [AppController]
 })
-export class AppModule {}
+export class AppModule implements NestModule {
+  configure(consumer: MiddlewareConsumer) {
+    consumer.apply(cors()).forRoutes('*');
+  }
+}

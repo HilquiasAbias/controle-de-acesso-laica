@@ -9,7 +9,7 @@ async function bootstrap() {
     const { httpAdapter } = app.get(core_1.HttpAdapterHost);
     app.useGlobalFilters(new prisma_client_exception_filter_1.PrismaClientExceptionFilter(httpAdapter));
     app.useGlobalPipes(new common_1.ValidationPipe());
-    await app.listen(3000);
+    await app.listen(3000, '0.0.0.0');
 }
 bootstrap();
 //# sourceMappingURL=main.js.map

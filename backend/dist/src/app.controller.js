@@ -19,37 +19,18 @@ let AppController = class AppController {
     constructor(appService) {
         this.appService = appService;
     }
-    teste(ip, params) {
-        return this.appService.teste(ip, params);
-    }
-    getIpAddress(request) {
-        const ip = request.ip;
-        console.log(ip);
-        if (ip.startsWith('::ffff')) {
-            return {
-                ip_client: ip.slice(7)
-            };
-        }
-        return {
-            ip_client: ip
-        };
+    getExample(request) {
+        const ip = request.headers['x-forwarded-for'] || request.socket.remoteAddress;
+        return { ip_client: ip };
     }
 };
 __decorate([
-    (0, common_1.Post)('keep-alive'),
-    __param(0, (0, common_1.Ip)()),
-    __param(1, (0, common_1.Param)()),
-    __metadata("design:type", Function),
-    __metadata("design:paramtypes", [Object, Array]),
-    __metadata("design:returntype", void 0)
-], AppController.prototype, "teste", null);
-__decorate([
-    (0, common_1.Get)("ip"),
+    (0, common_1.Get)('ip'),
     __param(0, (0, common_1.Req)()),
     __metadata("design:type", Function),
     __metadata("design:paramtypes", [Object]),
     __metadata("design:returntype", void 0)
-], AppController.prototype, "getIpAddress", null);
+], AppController.prototype, "getExample", null);
 AppController = __decorate([
     (0, common_1.Controller)('caronte'),
     __metadata("design:paramtypes", [app_service_1.AppService])

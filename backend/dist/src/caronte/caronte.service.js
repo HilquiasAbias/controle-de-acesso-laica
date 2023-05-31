@@ -100,11 +100,20 @@ let CaronteService = class CaronteService {
         if (environment.admins.length === 1) {
             user = environment.admins.shift();
         }
-        user = environment.frequenters.shift();
+        else {
+            user = environment.frequenters.shift();
+        }
+        if (!user)
+            return undefined;
         const isPasswordValid = await bcrypt.compare(password, user.password);
         return isPasswordValid ? user : undefined;
     }
     async validateUser(userValidatePass) {
+        const validFields = ['ip', 'esp', 'carontePassword', 'userPassword', 'userRegister', 'userId', 'userDeviceMac', 'userTagRFID'];
+        const invalidFields = Object.keys(userValidatePass).filter(field => !validFields.includes(field));
+        if (invalidFields.length > 0) {
+            throw new common_1.BadRequestException(`Invalid fields provided: ${invalidFields.join(', ')}`);
+        }
         const caronte = await this.prisma.caronte.findFirst({
             where: {
                 esp: userValidatePass.esp
@@ -118,16 +127,34 @@ let CaronteService = class CaronteService {
             throw new common_1.UnauthorizedException('Unauthorized caronte access');
         }
         let user;
+        let log;
         if (userValidatePass.userTagRFID) {
             user = await this.findUserByTag(userValidatePass.userTagRFID, caronte.environmentId);
         }
-        if (userValidatePass.userDeviceMac) {
+        if (!user && userValidatePass.userDeviceMac) {
             user = await this.findUserByTag(userValidatePass.userTagRFID, caronte.environmentId);
         }
-        if (userValidatePass.userRegister) {
+        if (!user && userValidatePass.userRegister) {
             user = await this.findUserByData(userValidatePass.userRegister, userValidatePass.userPassword, caronte.environmentId);
         }
-        console.log(user);
+        if (!user) {
+            log = await this.prisma.log.create({
+                data: {
+                    successful: false,
+                    caronte: { connect: { id: caronte.id } }
+                }
+            });
+            console.log(log);
+            throw new common_1.UnauthorizedException('Unauthorized user access');
+        }
+        log = await this.prisma.log.create({
+            data: {
+                successful: true,
+                caronte: { connect: { id: caronte.id } },
+                user: { connect: { id: user.id } }
+            }
+        });
+        console.log(log);
         return {
             access: 'valid'
         };

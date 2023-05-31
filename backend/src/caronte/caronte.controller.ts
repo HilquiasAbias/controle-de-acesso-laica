@@ -11,7 +11,7 @@ import { CaronteValidationDto } from './dto/user-validate-pass.dto';
 export class CaronteController {
   constructor(private readonly caronteService: CaronteService) {}
 
-  @Post('validate')
+  @Post('obol')
   validate(
     @Body() caronteValidationDto: CaronteValidationDto
     ) {
