@@ -108,34 +108,58 @@ let CaronteService = class CaronteService {
         const isPasswordValid = await bcrypt.compare(password, user.password);
         return isPasswordValid ? user : undefined;
     }
-    async validateUser(userValidatePass) {
+    async isCurrentTimeValidForUser(userId) {
+        const user = await this.prisma.user.findUnique({
+            where: { id: userId },
+            include: {
+                accessTimes: true,
+            },
+        });
+        if (!(user === null || user === void 0 ? void 0 : user.accessTimes)) {
+            return false;
+        }
+        const currentTime = new Date();
+        const currentDayOfWeek = this.getDayOfWeek(currentTime);
+        const isValidTime = user.accessTimes.some((accessTime) => accessTime.dayOfWeek === currentDayOfWeek &&
+            this.isTimeWithinRange(currentTime, accessTime.startTime, accessTime.endTime));
+        return isValidTime;
+    }
+    getDayOfWeek(date) {
+        const daysOfWeek = ['Domingo', 'Segunda', 'Terça', 'Quarta', 'Quinta', 'Sexta', 'Sábado'];
+        const dayIndex = date.getDay();
+        return daysOfWeek[dayIndex];
+    }
+    isTimeWithinRange(time, startTime, endTime) {
+        return time >= startTime && time <= endTime;
+    }
+    async anObolForCharon(obolForCharon) {
         const validFields = ['ip', 'esp', 'carontePassword', 'userPassword', 'userRegister', 'userId', 'userDeviceMac', 'userTagRFID'];
-        const invalidFields = Object.keys(userValidatePass).filter(field => !validFields.includes(field));
+        const invalidFields = Object.keys(obolForCharon).filter(field => !validFields.includes(field));
         if (invalidFields.length > 0) {
             throw new common_1.BadRequestException(`Invalid fields provided: ${invalidFields.join(', ')}`);
         }
         const caronte = await this.prisma.caronte.findFirst({
             where: {
-                esp: userValidatePass.esp
+                esp: obolForCharon.esp
             }
         });
         if (!caronte) {
             throw new common_1.UnauthorizedException('Unauthorized caronte access');
         }
-        const isCarontePasswordValid = await bcrypt.compare(userValidatePass.carontePassword, caronte.password);
+        const isCarontePasswordValid = await bcrypt.compare(obolForCharon.carontePassword, caronte.password);
         if (!isCarontePasswordValid) {
             throw new common_1.UnauthorizedException('Unauthorized caronte access');
         }
         let user;
         let log;
-        if (userValidatePass.userTagRFID) {
-            user = await this.findUserByTag(userValidatePass.userTagRFID, caronte.environmentId);
+        if (obolForCharon.userTagRFID) {
+            user = await this.findUserByTag(obolForCharon.userTagRFID, caronte.environmentId);
         }
-        if (!user && userValidatePass.userDeviceMac) {
-            user = await this.findUserByTag(userValidatePass.userTagRFID, caronte.environmentId);
+        if (!user && obolForCharon.userDeviceMac) {
+            user = await this.findUserByTag(obolForCharon.userTagRFID, caronte.environmentId);
         }
-        if (!user && userValidatePass.userRegister) {
-            user = await this.findUserByData(userValidatePass.userRegister, userValidatePass.userPassword, caronte.environmentId);
+        if (!user && obolForCharon.userRegister) {
+            user = await this.findUserByData(obolForCharon.userRegister, obolForCharon.userPassword, caronte.environmentId);
         }
         if (!user) {
             log = await this.prisma.log.create({

@@ -5,17 +5,17 @@ import { UpdateCaronteDto } from './dto/update-caronte.dto';
 import { Roles } from 'src/auth/decorators/roles.decorator';
 import { JwtAuthGuard } from 'src/auth/guards/jwt-auth.guard';
 import { RolesGuard } from 'src/auth/guards/roles.guard';
-import { CaronteValidationDto } from './dto/user-validate-pass.dto';
+import { ObolForCharonDto } from './dto/obol-for-caronte.dto';
 
 @Controller('caronte')
 export class CaronteController {
   constructor(private readonly caronteService: CaronteService) {}
 
   @Post('obol')
-  validate(
-    @Body() caronteValidationDto: CaronteValidationDto
+  obol(
+    @Body() obolForCharonDto: ObolForCharonDto
     ) {
-    return this.caronteService.validateUser(caronteValidationDto)
+    return this.caronteService.anObolForCharon(obolForCharonDto)
   }
 
   @Roles('ADMIN') // UserRoles.ADMIN

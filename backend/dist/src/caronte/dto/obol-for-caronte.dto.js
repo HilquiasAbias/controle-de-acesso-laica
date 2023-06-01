@@ -9,21 +9,21 @@ var __metadata = (this && this.__metadata) || function (k, v) {
     if (typeof Reflect === "object" && typeof Reflect.metadata === "function") return Reflect.metadata(k, v);
 };
 Object.defineProperty(exports, "__esModule", { value: true });
-exports.ObolRequestDto = void 0;
+exports.ObolForCharonDto = void 0;
 const class_validator_1 = require("class-validator");
-class ObolRequestDto {
+class ObolForCharonDto {
 }
 __decorate([
     (0, class_validator_1.IsIP)(),
     __metadata("design:type", String)
-], ObolRequestDto.prototype, "ip", void 0);
+], ObolForCharonDto.prototype, "ip", void 0);
 __decorate([
     (0, class_validator_1.IsMACAddress)(),
     __metadata("design:type", String)
-], ObolRequestDto.prototype, "esp", void 0);
+], ObolForCharonDto.prototype, "esp", void 0);
 __decorate([
     (0, class_validator_1.IsString)(),
     __metadata("design:type", String)
-], ObolRequestDto.prototype, "carontePassword", void 0);
-exports.ObolRequestDto = ObolRequestDto;
-//# sourceMappingURL=user-validate-pass.dto.js.map
+], ObolForCharonDto.prototype, "carontePassword", void 0);
+exports.ObolForCharonDto = ObolForCharonDto;
+//# sourceMappingURL=obol-for-caronte.dto.js.map

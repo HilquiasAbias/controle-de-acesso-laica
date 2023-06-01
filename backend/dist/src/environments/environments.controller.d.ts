@@ -13,12 +13,12 @@ export declare class EnvironmentsController {
     findAll(): Promise<(import(".prisma/client").Environment & {
         admins: import(".prisma/client").User[];
         frequenters: import(".prisma/client").User[];
-        triggers: import(".prisma/client").Caronte[];
+        carontes: import(".prisma/client").Caronte[];
     })[]>;
     findOne(id: string): Promise<import(".prisma/client").Environment & {
         admins: import(".prisma/client").User[];
         frequenters: import(".prisma/client").User[];
-        triggers: import(".prisma/client").Caronte[];
+        carontes: import(".prisma/client").Caronte[];
     }>;
     update(id: string, updateEnvironmentDto: UpdateEnvironmentDto): Promise<import(".prisma/client").Environment>;
     remove(id: string): Promise<import(".prisma/client").Environment>;

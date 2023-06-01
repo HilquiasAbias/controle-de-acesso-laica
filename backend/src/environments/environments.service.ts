@@ -66,7 +66,7 @@ export class EnvironmentsService {
       include: {
         admins: true,
         frequenters: true,
-        triggers: true
+        carontes: true
       }
     });
   }
@@ -81,7 +81,7 @@ export class EnvironmentsService {
       include: {
         admins: true,
         frequenters: true,
-        triggers: true
+        carontes: true
       }
     });
   }

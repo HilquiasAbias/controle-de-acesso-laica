@@ -4,7 +4,7 @@ import { UpdateCaronteDto } from './dto/update-caronte.dto';
 import { PrismaService } from 'src/prisma/prisma.service';
 import { roundsOfHashing } from 'src/users/users.service';
 import * as bcrypt from 'bcrypt';
-import { CaronteValidationDto } from './dto/user-validate-pass.dto';
+import { ObolForCharonDto } from './dto/obol-for-caronte.dto';
 import { Log, User } from '@prisma/client';
 
 @Injectable()
@@ -113,9 +113,45 @@ export class CaronteService {
     return isPasswordValid ? user : undefined
   }
 
-  async validateUser(userValidatePass: CaronteValidationDto) {
+  async isCurrentTimeValidForUser(userId: number): Promise<boolean> {
+    const user: User | null = await this.prisma.user.findUnique({
+      where: { id: userId },
+      include: {
+        accessTimes: true,
+      },
+    });
+
+    if (!user?.accessTimes) {
+      // O usuário não tem horários de acesso definidos
+      return false;
+    }
+
+    const currentTime = new Date();
+    const currentDayOfWeek = this.getDayOfWeek(currentTime);
+
+    // Verificar se o horário atual está dentro de algum AccessTime
+    const isValidTime = user.accessTimes.some(
+      (accessTime: AccessTime) =>
+        accessTime.dayOfWeek === currentDayOfWeek &&
+        this.isTimeWithinRange(currentTime, accessTime.startTime, accessTime.endTime),
+    );
+
+    return isValidTime;
+  }
+
+  private getDayOfWeek(date: Date): string {
+    const daysOfWeek = ['Domingo', 'Segunda', 'Terça', 'Quarta', 'Quinta', 'Sexta', 'Sábado'];
+    const dayIndex = date.getDay();
+    return daysOfWeek[dayIndex];
+  }
+
+  private isTimeWithinRange(time: Date, startTime: Date, endTime: Date): boolean {
+    return time >= startTime && time <= endTime;
+  }
+
+  async anObolForCharon(obolForCharon: ObolForCharonDto) {
     const validFields = ['ip', 'esp', 'carontePassword', 'userPassword', 'userRegister', 'userId', 'userDeviceMac', 'userTagRFID'];
-    const invalidFields = Object.keys(userValidatePass).filter(
+    const invalidFields = Object.keys(obolForCharon).filter(
       field => !validFields.includes(field),
     );
 
@@ -127,7 +163,7 @@ export class CaronteService {
 
     const caronte = await this.prisma.caronte.findFirst({
       where: {
-        esp: userValidatePass.esp
+        esp: obolForCharon.esp
       }
     })
 
@@ -136,7 +172,7 @@ export class CaronteService {
     }
 
     const isCarontePasswordValid = await bcrypt.compare(
-      userValidatePass.carontePassword, caronte.password
+      obolForCharon.carontePassword, caronte.password
     )
 
     if (!isCarontePasswordValid) {
@@ -146,16 +182,16 @@ export class CaronteService {
     let user: User
     let log: Log
     
-    if (userValidatePass.userTagRFID) {
-      user = await this.findUserByTag(userValidatePass.userTagRFID, caronte.environmentId)
+    if (obolForCharon.userTagRFID) {
+      user = await this.findUserByTag(obolForCharon.userTagRFID, caronte.environmentId)
     }
 
-    if (!user && userValidatePass.userDeviceMac) {
-      user = await this.findUserByTag(userValidatePass.userTagRFID, caronte.environmentId)
+    if (!user && obolForCharon.userDeviceMac) {
+      user = await this.findUserByTag(obolForCharon.userTagRFID, caronte.environmentId)
     }
 
-    if (!user && userValidatePass.userRegister) {
-      user = await this.findUserByData(userValidatePass.userRegister, userValidatePass.userPassword, caronte.environmentId)
+    if (!user && obolForCharon.userRegister) {
+      user = await this.findUserByData(obolForCharon.userRegister, obolForCharon.userPassword, caronte.environmentId)
     }
 
     if (!user) {

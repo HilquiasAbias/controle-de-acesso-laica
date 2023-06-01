@@ -1,6 +1,6 @@
 import { IsHexadecimal, IsIP, IsMACAddress, IsNumber, IsString, Length } from "class-validator";
 
-export class CaronteValidationDto {
+export class ObolForCharonDto {
   @IsIP()
   ip: string
 

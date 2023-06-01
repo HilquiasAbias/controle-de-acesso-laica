@@ -10,7 +10,7 @@ datasource db {
 // enum Roles {
 //   ADMIN
 //   FREQUENTER
-//   EnvironmentManager
+//   ENVIRONMENT-MANAGER
 // }
 
 model Tag {
@@ -31,6 +31,16 @@ model Mac {
   updatedAt DateTime @updatedAt
 }
 
+model AccessTime {
+  id        Int      @id @default(autoincrement())
+  something String?
+  dayOfWeek String
+  startTime DateTime
+  endTime   DateTime
+  User      User     @relation(fields: [userId], references: [id])
+  userId    Int
+}
+
 model User {
   id                      Int          @id @default(autoincrement())
   name                    String
@@ -46,6 +56,7 @@ model User {
   createdAt               DateTime     @default(now())
   updatedAt               DateTime     @updatedAt
   Log                     Log[]
+  accessTimes             AccessTime[]
 }
 
 model Environment {
@@ -54,7 +65,7 @@ model Environment {
   description String?
   admins      User[]    @relation("admins")
   frequenters User[]    @relation("frequenters")
-  triggers    Caronte[]
+  carontes    Caronte[]
   createdAt   DateTime  @default(now())
   updatedAt   DateTime  @updatedAt
 }

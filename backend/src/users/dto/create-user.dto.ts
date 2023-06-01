@@ -13,7 +13,7 @@ export class CreateUserDto {
   password: string
 
   @IsString()
-  role: string // Roles
+  role: 'ADMIN' | 'FREQUENTER' | 'ENVIRONMENT-MANAGER' // Roles
 
   @IsString()
   @IsHexadecimal()

@@ -1,4 +1,4 @@
-export declare class ObolRequestDto {
+export declare class ObolForCharonDto {
     ip: string;
     esp: string;
     carontePassword: string;

@@ -69,7 +69,7 @@ let EnvironmentsService = class EnvironmentsService {
             include: {
                 admins: true,
                 frequenters: true,
-                triggers: true
+                carontes: true
             }
         });
     }
@@ -82,7 +82,7 @@ let EnvironmentsService = class EnvironmentsService {
             include: {
                 admins: true,
                 frequenters: true,
-                triggers: true
+                carontes: true
             }
         });
     }

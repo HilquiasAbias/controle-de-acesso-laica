@@ -2,7 +2,7 @@ export declare class CreateUserDto {
     name: string;
     registration: string;
     password: string;
-    role: string;
+    role: 'ADMIN' | 'FREQUENTER' | 'ENVIRONMENT-MANAGER';
     tag?: string;
     envId?: number;
 }
