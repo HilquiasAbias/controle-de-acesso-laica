@@ -23,4 +23,3 @@ export class CreateUserDto {
   @IsNumber()
   envId?: number
 }
-
