@@ -8,11 +8,11 @@ export class JwtStrategy extends PassportStrategy(Strategy, 'jwt') {
   constructor(private usersService: UsersService) {
     super({
       jwtFromRequest: ExtractJwt.fromAuthHeaderAsBearerToken(),
-      secretOrKey: process.env.JWT_SECRET,
+      secretOrKey: "Who's for the Rest from every pain and ill? Who's for the Lethe's plain? the Donkey-shearings? Who's for Kerberia? Taenarum? or the Ravens?", //  process.env.JWT_SECRET
     });
   }
 
-  async validate(payload: { userId: number }) {
+  async validate(payload: { userId: string }) {
     const user = await this.usersService.findOne(payload.userId);
 
     if (!user) {

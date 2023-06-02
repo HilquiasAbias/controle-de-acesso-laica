@@ -3,7 +3,8 @@ import { CreateUserDto } from './dto/create-user.dto';
 import { UpdateUserDto } from './dto/update-user.dto';
 import { PrismaService } from 'src/prisma/prisma.service';
 import * as bcrypt from 'bcrypt';
-import { Mac, Tag, User } from '@prisma/client';
+import { Bluetooth, RFID, User } from '@prisma/client';
+import { isUUID } from 'class-validator';
 // import { TagsService } from 'src/tags/tags.service';
 // import { MacService } from 'src/mac/mac.service';
 
@@ -15,7 +16,7 @@ export class UsersService {
     private readonly prisma: PrismaService,
     // private readonly Tags: TagsService = new TagsService(prisma),
     // private readonly Macs: MacService = new MacService(prisma)
-  ) {}
+  ) { }
 
   async create(createUserDto: CreateUserDto, requestUser: User): Promise<User> {
     const hashedPassword = await bcrypt.hash(
@@ -32,8 +33,8 @@ export class UsersService {
           registration: createUserDto.registration,
           role: createUserDto.role,
           password: hashedPassword,
-          adminEnvironment: createUserDto.envId ? { connect: { id:createUserDto.envId } } : undefined,
-          tag: createUserDto.tag ? { create: { content: createUserDto.tag } } : undefined
+          adminEnvironment: createUserDto.envId ? { connect: { id: createUserDto.envId } } : undefined,
+          RFID: createUserDto.tag ? { create: { tag: createUserDto.tag } } : undefined
         }
       })
     } else {
@@ -43,8 +44,8 @@ export class UsersService {
           registration: createUserDto.registration,
           role: createUserDto.role,
           password: hashedPassword,
-          frequenterEnvironment: createUserDto.envId ? { connect: { id:createUserDto.envId } } : undefined,
-          tag: createUserDto.tag ? { create: { content: createUserDto.tag } } : undefined
+          frequenterEnvironment: createUserDto.envId ? { connect: { id: createUserDto.envId } } : undefined,
+          RFID: createUserDto.tag ? { create: { tag: createUserDto.tag } } : undefined
         }
       })
     }
@@ -55,21 +56,21 @@ export class UsersService {
   async findAllFrequenters() {
     return await this.prisma.user.findMany({
       where: { role: 'FREQUENTER' },
-      include: { tag: true }
+      include: { RFID: true }
     });
   }
 
-  async findAllFrequentersByEnvironment(envId: number) {
+  async findAllFrequentersByEnvironment(envId: string) {
     return await this.prisma.user.findMany({
-      where: { role: 'FREQUENTER', environmentFrequenterId: Number(envId) }, // 
-      include: { tag: true }
+      where: { role: 'FREQUENTER', environmentFrequenterId: envId }, // 
+      include: { RFID: true }
     });
   }
 
-  async findAllAdminsByEnvironment(envId: number) {
+  async findAllAdminsByEnvironment(envId: string) {
     return await this.prisma.user.findMany({
-      where: { role: 'ADMIN', environmentAdminId: Number(envId) }, // role: 'FREQUENTER', 
-      include: { tag: true }
+      where: { role: 'ADMIN', environmentAdminId: envId }, // role: 'FREQUENTER', 
+      include: { RFID: true }
     });
   }
 
@@ -79,25 +80,25 @@ export class UsersService {
     });
   }
 
-  async findOne(id: number) {
+  async findOne(id: string) {
     if (!id) {
       throw new BadRequestException('Invalid Input. ID must be sent.');
     }
 
-    const user = await this.prisma.user.findUniqueOrThrow({ 
+    const user = await this.prisma.user.findUniqueOrThrow({
       where: { id },
       include: {
         adminEnvironment: true,
         frequenterEnvironment: true,
-        tag: true,
-        mac: true
+        Bluetooth: true,
+        RFID: true
       }
     });
 
     return user;
   }
 
-  async update(id: number, role: string, updateUserDto: UpdateUserDto, requestUser: User) {
+  async update(id: string, role: string, updateUserDto: UpdateUserDto, requestUser: User) {
     if (requestUser.role === 'FREQUENTER' && requestUser.id !== id) {
       throw new UnauthorizedException("Can't update");
     }
@@ -137,11 +138,11 @@ export class UsersService {
     return updatedUser;
   }
 
-  async remove(id: number) {
-    if (isNaN(id)) {
-      throw new BadRequestException('Invalid input. ID must be a number.');
+  async remove(id: string) {
+    if (isUUID(id)) {
+      throw new BadRequestException('Invalid id input');
     }
-    
+
     const deletedUser = await this.prisma.user.delete({
       where: { id }
     });

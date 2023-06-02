@@ -8,4 +8,4 @@ import { RfidModule } from './rfid/rfid.module';
 @Module({
   imports: [PrismaModule, UsersModule, AuthModule, BluetoothModule, RfidModule]
 })
-export class AppModule {}
+export class AppModule { }
