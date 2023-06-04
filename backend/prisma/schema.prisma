@@ -13,7 +13,7 @@ datasource db {
 //   ENVIRONMENT-MANAGER
 // }
 
-model RFID {
+model Rfid {
   id        String   @id @default(uuid())
   tag       String   @unique
   User      User?    @relation(fields: [userId], references: [id])
@@ -47,7 +47,7 @@ model User {
   registration            String       @unique
   password                String
   role                    String // Roles
-  RFID                    RFID?
+  rfid                    Rfid?
   Bluetooth               Bluetooth?
   adminEnvironment        Environment? @relation("admins", fields: [environmentAdminId], references: [id])
   environmentAdminId      String?

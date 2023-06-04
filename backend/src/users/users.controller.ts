@@ -68,9 +68,9 @@ export class UsersController {
   @UseGuards(JwtAuthGuard)
   @Patch('/:role/:id')
   @ApiOkResponse({ type: UserEntity })
-  update(@Param('id') id: string, @Param('role') role: string, @Body() updateUserDto: UpdateUserDto, @Req() req: UserRequest) {
+  update(@Param('id') id: string, @Body() updateUserDto: UpdateUserDto, @Req() req: UserRequest) {
     const requestUser = req.user
-    return this.usersService.update(id, role, updateUserDto, requestUser);
+    return this.usersService.update(id, updateUserDto, requestUser);
   }
 
   @Roles('ADMIN') // UserRoles.ADMIN

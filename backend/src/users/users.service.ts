@@ -3,20 +3,16 @@ import { CreateUserDto } from './dto/create-user.dto';
 import { UpdateUserDto } from './dto/update-user.dto';
 import { PrismaService } from 'src/prisma/prisma.service';
 import * as bcrypt from 'bcrypt';
-import { Bluetooth, RFID, User } from '@prisma/client';
+import { Bluetooth, Rfid, User } from '@prisma/client';
 import { isUUID } from 'class-validator';
-// import { TagsService } from 'src/tags/tags.service';
+import { RfidService } from 'src/rfid/rfid.service';
 // import { MacService } from 'src/mac/mac.service';
 
 export const roundsOfHashing = 10;
 
 @Injectable()
 export class UsersService {
-  constructor(
-    private readonly prisma: PrismaService,
-    // private readonly Tags: TagsService = new TagsService(prisma),
-    // private readonly Macs: MacService = new MacService(prisma)
-  ) { }
+  constructor(private readonly prisma: PrismaService) {}
 
   async create(createUserDto: CreateUserDto, requestUser: User): Promise<User> {
     const hashedPassword = await bcrypt.hash(
@@ -34,7 +30,7 @@ export class UsersService {
           role: createUserDto.role,
           password: hashedPassword,
           adminEnvironment: createUserDto.envId ? { connect: { id: createUserDto.envId } } : undefined,
-          RFID: createUserDto.tag ? { create: { tag: createUserDto.tag } } : undefined
+          rfid: createUserDto.tag ? { create: { tag: createUserDto.tag } } : undefined
         }
       })
     } else {
@@ -45,7 +41,7 @@ export class UsersService {
           role: createUserDto.role,
           password: hashedPassword,
           frequenterEnvironment: createUserDto.envId ? { connect: { id: createUserDto.envId } } : undefined,
-          RFID: createUserDto.tag ? { create: { tag: createUserDto.tag } } : undefined
+          rfid: createUserDto.tag ? { create: { tag: createUserDto.tag } } : undefined
         }
       })
     }
@@ -56,27 +52,28 @@ export class UsersService {
   async findAllFrequenters() {
     return await this.prisma.user.findMany({
       where: { role: 'FREQUENTER' },
-      include: { RFID: true }
+      include: { rfid: true, Bluetooth: true }
     });
   }
 
   async findAllFrequentersByEnvironment(envId: string) {
     return await this.prisma.user.findMany({
       where: { role: 'FREQUENTER', environmentFrequenterId: envId }, // 
-      include: { RFID: true }
+      include: { rfid: true, Bluetooth: true }
     });
   }
 
   async findAllAdminsByEnvironment(envId: string) {
     return await this.prisma.user.findMany({
       where: { role: 'ADMIN', environmentAdminId: envId }, // role: 'FREQUENTER', 
-      include: { RFID: true }
+      include: { rfid: true, Bluetooth: true }
     });
   }
 
   async findAllAdmins() {
     return await this.prisma.user.findMany({
-      where: { role: 'ADMIN' }
+      where: { role: 'ADMIN' },
+      include: { rfid: true, Bluetooth: true }
     });
   }
 
@@ -91,19 +88,19 @@ export class UsersService {
         adminEnvironment: true,
         frequenterEnvironment: true,
         Bluetooth: true,
-        RFID: true
+        rfid: true
       }
     });
 
     return user;
   }
 
-  async update(id: string, role: string, updateUserDto: UpdateUserDto, requestUser: User) {
+  async update(id: string, updateUserDto: UpdateUserDto, requestUser: User) {
     if (requestUser.role === 'FREQUENTER' && requestUser.id !== id) {
       throw new UnauthorizedException("Can't update");
     }
 
-    if (requestUser.role === 'ADMIN' && role === 'ADMIN' && requestUser.id !== id) {
+    if (requestUser.role === 'ADMIN' && requestUser.id !== id) {
       throw new UnauthorizedException("An admin cannot update another admin");
     }
 
