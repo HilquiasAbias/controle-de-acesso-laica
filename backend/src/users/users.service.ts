@@ -3,10 +3,8 @@ import { CreateUserDto } from './dto/create-user.dto';
 import { UpdateUserDto } from './dto/update-user.dto';
 import { PrismaService } from 'src/prisma/prisma.service';
 import * as bcrypt from 'bcrypt';
-import { Rfid, User } from '@prisma/client';
+import { User } from '@prisma/client';
 import { isUUID } from 'class-validator';
-import { RfidService } from 'src/rfid/rfid.service';
-// import { MacService } from 'src/mac/mac.service';
 
 export const roundsOfHashing = 10;
 
@@ -25,7 +23,9 @@ export class UsersService {
     if (createUserDto.role === 'ADMIN' || createUserDto.role === 'ENVIRONMENT-MANAGER') {
       user = await this.prisma.user.create({
         data: {
-          ...createUserDto,
+          name: createUserDto.name,
+          registration: createUserDto.registration,
+          role: createUserDto.role,
           password: hashedPassword,
           adminEnvironment: createUserDto.envId ? { connect: { id: createUserDto.envId } } : undefined,
           rfid: createUserDto.tag ? { create: { tag: createUserDto.tag } } : undefined
@@ -34,7 +34,9 @@ export class UsersService {
     } else {
       user = await this.prisma.user.create({
         data: {
-          ...createUserDto,
+          name: createUserDto.name,
+          registration: createUserDto.registration,
+          role: createUserDto.role,
           password: hashedPassword,
           frequenterEnvironment: createUserDto.envId ? { connect: { id: createUserDto.envId } } : undefined,
           rfid: createUserDto.tag ? { create: { tag: createUserDto.tag } } : undefined
@@ -74,8 +76,8 @@ export class UsersService {
   }
 
   async findOne(id: string) {
-    if (!id) {
-      throw new BadRequestException('Invalid Input. ID must be sent.');
+    if (!isUUID(id)) {
+      throw new HttpException('Invalid id input', HttpStatus.BAD_REQUEST);
     }
 
     const user = await this.prisma.user.findUniqueOrThrow({
@@ -90,12 +92,66 @@ export class UsersService {
     return user;
   }
 
-  async update(id: string, updateUserDto: UpdateUserDto, requestUser: User) {
-    if (isUUID(id)) {
-      throw new BadRequestException('Invalid id input');
+  async updateWithoutCheckUser(id: string, updateUserDto: UpdateUserDto) {
+    try {
+      return await this.prisma.user.update({
+        data: { ...updateUserDto },
+        where: {
+          id
+        }
+      })
+    } catch (error) {
+      
+    }
+  }
+
+  async frequenterSelfUpdate(id: string, updateUserDto: UpdateUserDto, requestUser: User) {
+    if (!isUUID(id)) {
+      throw new HttpException('Invalid id input', HttpStatus.BAD_REQUEST);
     }
 
-    const validFields = ['name', 'registration', 'password', 'role'];
+    const validFields = ['name', 'registration', 'password', 'mac'];
+    const invalidFields = Object.keys(updateUserDto).filter(
+      field => !validFields.includes(field),
+    );
+
+    if (invalidFields.length > 0) {
+      throw new HttpException(`Invalid fields provided: ${invalidFields.join(', ')}`, HttpStatus.BAD_REQUEST);
+    }
+
+    if (requestUser.id !== id) { // TODO: adcionar à rota: requestUser.role === 'FREQUENTER'
+      throw new HttpException("Can't update", HttpStatus.UNAUTHORIZED);
+    }
+
+    if (updateUserDto.password) {
+      updateUserDto.password = await bcrypt.hash(
+        updateUserDto.password,
+        roundsOfHashing,
+      );
+    }
+
+    try {
+      return await this.prisma.user.update({
+        data: updateUserDto,
+        where: { id }
+      });
+    } catch (error) {
+      if (error.code === 'P2025') {
+        throw new HttpException('Not found', HttpStatus.NOT_FOUND);
+      } else if (error.code === 'P2002') {
+        throw new HttpException('Already exists', HttpStatus.CONFLICT);
+      } else {
+        throw new HttpException("Can't update tag.", HttpStatus.FORBIDDEN);
+      }
+    }
+  }
+
+  async update(id: string, role: string, updateUserDto: UpdateUserDto, requestUser: User) { // TODO: para adcionar mais papéis de usuários, precisa quebrar esta função em várias
+    if (!isUUID(id)) {
+      throw new HttpException('Invalid id input', HttpStatus.BAD_REQUEST);
+    }
+
+    const validFields = ['name', 'registration', 'password', 'role', 'mac'];
     const invalidFields = Object.keys(updateUserDto).filter(
       field => !validFields.includes(field),
     );
@@ -110,7 +166,7 @@ export class UsersService {
       throw new UnauthorizedException("Can't update");
     }
 
-    if (requestUser.role === 'ADMIN' && requestUser.id !== id) {
+    if (requestUser.role === 'ADMIN' && role === 'ADMIN' && requestUser.id !== id) {
       throw new UnauthorizedException("An admin cannot update another admin");
     }
 
@@ -120,8 +176,6 @@ export class UsersService {
         roundsOfHashing,
       );
     }
-
-    const user = await this.prisma.user.findFirstOrThrow({ where: { id } }) // TODO: verificar papel do usuário que vai ser atualizado
 
     const updatedUser = await this.prisma.user.update({
       data: {
@@ -136,9 +190,53 @@ export class UsersService {
     return updatedUser;
   }
 
+  // async update(id: string, updateUserDto: UpdateUserDto, requestUser: User) {
+  //   if (!isUUID(id)) {
+  //     throw new HttpException('Invalid id input', HttpStatus.BAD_REQUEST);
+  //   }
+
+  //   const validFields = ['name', 'registration', 'password', 'role'];
+  //   const invalidFields = Object.keys(updateUserDto).filter(
+  //     field => !validFields.includes(field),
+  //   );
+
+  //   if (invalidFields.length > 0) {
+  //     throw new HttpException(`Invalid fields provided: ${invalidFields.join(', ')}`, HttpStatus.BAD_REQUEST);
+  //   }
+
+  //   if (requestUser.role === 'FREQUENTER' && requestUser.id !== id) {
+  //     throw new HttpException("Can't update", HttpStatus.UNAUTHORIZED);
+  //   }
+
+  //   if (requestUser.role === 'ADMIN' && requestUser.id !== id) {
+  //     throw new HttpException("An admin cannot update another admin", HttpStatus.UNAUTHORIZED);
+  //   }
+
+  //   if (updateUserDto.password) {
+  //     updateUserDto.password = await bcrypt.hash(
+  //       updateUserDto.password,
+  //       roundsOfHashing,
+  //     );
+  //   }
+
+  //   const user = await this.prisma.user.findFirstOrThrow({ where: { id } }) // TODO: verificar papel do usuário que vai ser atualizado
+
+  //   const updatedUser = await this.prisma.user.update({
+  //     data: {
+  //       name: updateUserDto.name,
+  //       registration: updateUserDto.registration,
+  //       password: updateUserDto.password,
+  //       role: updateUserDto.role
+  //     },
+  //     where: { id }
+  //   });
+
+  //   return updatedUser;
+  // }
+
   async remove(id: string) {
-    if (isUUID(id)) {
-      throw new BadRequestException('Invalid id input');
+    if (!isUUID(id)) {
+      throw new HttpException('Invalid id input', HttpStatus.BAD_REQUEST);
     }
 
     const deletedUser = await this.prisma.user.delete({

@@ -1,4 +1,4 @@
-import { IsHexadecimal, IsMACAddress, IsNumber, IsString, IsStrongPassword, Length } from "class-validator"
+import { IsHexadecimal, IsMACAddress, IsString, IsStrongPassword, Length } from "class-validator"
 //import { Roles } from "@prisma/client"
 import { ApiProperty } from '@nestjs/swagger';
 
