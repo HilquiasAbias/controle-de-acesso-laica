@@ -7,9 +7,12 @@ import { JwtAuthGuard } from 'src/auth/guards/jwt-auth.guard';
 import { RolesGuard } from 'src/auth/guards/roles.guard';
 import { UserRequest } from 'src/users/interfaces/req-user';
 import { ReadEnvRfidDto } from './dto/read-env-rfid.dto';
+import { ApiBearerAuth, ApiTags } from '@nestjs/swagger';
 
 
 @Controller('rfid')
+@ApiBearerAuth()
+@ApiTags('/ rfid')
 export class RfidController {
   constructor(private readonly rfidService: RfidService) {}
 

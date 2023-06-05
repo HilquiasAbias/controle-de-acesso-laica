@@ -1,15 +1,15 @@
 import { ApiProperty } from "@nestjs/swagger";
-import { Rfid } from "@prisma/client";
+import { Environment } from "@prisma/client";
 
-export class RfidEntity implements Rfid {
+export class EnvironmentEntity implements Environment {
   @ApiProperty()
   id: string;
 
   @ApiProperty()
-  tag: string;
+  name: string;
 
   @ApiProperty({ required: false, nullable: true })
-  userId: string;
+  description: string;
 
   @ApiProperty()
   createdAt: Date;

@@ -6,23 +6,19 @@ var __decorate = (this && this.__decorate) || function (decorators, target, key,
     return c > 3 && r && Object.defineProperty(target, key, r), r;
 };
 Object.defineProperty(exports, "__esModule", { value: true });
-exports.AppModule = void 0;
+exports.EnvironmentsModule = void 0;
 const common_1 = require("@nestjs/common");
-const prisma_module_1 = require("./prisma/prisma.module");
-const users_module_1 = require("./users/users.module");
-const auth_module_1 = require("./auth/auth.module");
-const rfid_module_1 = require("./rfid/rfid.module");
-const environments_module_1 = require("./environments/environments.module");
-let AppModule = exports.AppModule = class AppModule {
+const environments_service_1 = require("./environments.service");
+const environments_controller_1 = require("./environments.controller");
+const prisma_module_1 = require("../prisma/prisma.module");
+let EnvironmentsModule = exports.EnvironmentsModule = class EnvironmentsModule {
 };
-exports.AppModule = AppModule = __decorate([
+exports.EnvironmentsModule = EnvironmentsModule = __decorate([
     (0, common_1.Module)({
-        imports: [
-            prisma_module_1.PrismaModule,
-            users_module_1.UsersModule,
-            auth_module_1.AuthModule,
-            rfid_module_1.RfidModule, environments_module_1.EnvironmentsModule
-        ]
+        imports: [prisma_module_1.PrismaModule],
+        controllers: [environments_controller_1.EnvironmentsController],
+        providers: [environments_service_1.EnvironmentsService],
+        exports: [environments_service_1.EnvironmentsService]
     })
-], AppModule);
-//# sourceMappingURL=app.module.js.map
+], EnvironmentsModule);
+//# sourceMappingURL=environments.module.js.map

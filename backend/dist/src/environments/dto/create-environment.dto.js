@@ -9,29 +9,26 @@ var __metadata = (this && this.__metadata) || function (k, v) {
     if (typeof Reflect === "object" && typeof Reflect.metadata === "function") return Reflect.metadata(k, v);
 };
 Object.defineProperty(exports, "__esModule", { value: true });
-exports.RfidEntity = void 0;
+exports.CreateEnvironmentDto = void 0;
+const class_validator_1 = require("class-validator");
 const swagger_1 = require("@nestjs/swagger");
-class RfidEntity {
+class CreateEnvironmentDto {
 }
-exports.RfidEntity = RfidEntity;
+exports.CreateEnvironmentDto = CreateEnvironmentDto;
 __decorate([
+    (0, class_validator_1.IsString)(),
+    (0, class_validator_1.IsNotEmpty)(),
     (0, swagger_1.ApiProperty)(),
     __metadata("design:type", String)
-], RfidEntity.prototype, "id", void 0);
+], CreateEnvironmentDto.prototype, "name", void 0);
 __decorate([
+    (0, class_validator_1.IsString)(),
     (0, swagger_1.ApiProperty)(),
     __metadata("design:type", String)
-], RfidEntity.prototype, "tag", void 0);
+], CreateEnvironmentDto.prototype, "description", void 0);
 __decorate([
-    (0, swagger_1.ApiProperty)({ required: false, nullable: true }),
+    (0, class_validator_1.IsUUID)(),
+    (0, swagger_1.ApiProperty)(),
     __metadata("design:type", String)
-], RfidEntity.prototype, "userId", void 0);
-__decorate([
-    (0, swagger_1.ApiProperty)(),
-    __metadata("design:type", Date)
-], RfidEntity.prototype, "createdAt", void 0);
-__decorate([
-    (0, swagger_1.ApiProperty)(),
-    __metadata("design:type", Date)
-], RfidEntity.prototype, "updatedAt", void 0);
-//# sourceMappingURL=rfid.entity.js.map
+], CreateEnvironmentDto.prototype, "adminId", void 0);
+//# sourceMappingURL=create-environment.dto.js.map

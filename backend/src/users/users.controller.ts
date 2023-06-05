@@ -7,7 +7,7 @@ import { Roles } from 'src/auth/decorators/roles.decorator';
 import { RolesGuard } from 'src/auth/guards/roles.guard';
 import { UserRequest } from './interfaces/req-user';
 //import { Roles as UserRoles } from '@prisma/client';
-import { ApiBearerAuth, ApiCreatedResponse, ApiOkResponse, ApiTags } from '@nestjs/swagger';
+import { ApiBearerAuth, ApiCreatedResponse, ApiOkResponse, ApiOperation, ApiTags } from '@nestjs/swagger';
 import { UserEntity } from './entities/user.entity';
 
 @Controller('users')
@@ -19,6 +19,7 @@ export class UsersController {
   @Roles('ADMIN') // UserRoles.ADMIN
   @UseGuards(JwtAuthGuard, RolesGuard)
   @Post()
+  @ApiOperation({ description: 'Endpoint para administradores cadastrarem usuários' })
   @ApiCreatedResponse({ type: UserEntity })
   create(@Body() createUserDto: CreateUserDto, @Req() req: UserRequest) {
     const requestUser = req.user
@@ -28,6 +29,7 @@ export class UsersController {
   @Roles('ADMIN') // UserRoles.ADMIN
   @UseGuards(JwtAuthGuard, RolesGuard)
   @Get('admins')
+  @ApiOperation({ description: 'Endpoint para buscar todos os admins' })
   @ApiOkResponse({ type: UserEntity, isArray: true })
   findAllAdmins() {
     return this.usersService.findAllAdmins();
@@ -36,6 +38,7 @@ export class UsersController {
   @Roles('ADMIN') // UserRoles.ADMIN
   @UseGuards(JwtAuthGuard, RolesGuard)
   @Get('frequenters')
+  @ApiOperation({ description: 'Endpoint para buscar todos os frequentadores' })
   @ApiOkResponse({ type: UserEntity, isArray: true })
   findAllFrequenters() {
     return this.usersService.findAllFrequenters();
@@ -44,6 +47,7 @@ export class UsersController {
   @Roles('ADMIN') // UserRoles.ADMIN
   @UseGuards(JwtAuthGuard, RolesGuard)
   @Get('frequenters/env/:envId')
+  @ApiOperation({ description: 'Endpoint para buscar todos os frequentadores de um ambiente' })
   @ApiOkResponse({ type: UserEntity, isArray: true })
   findAllFrequentersByEnvironment(@Param('envId') envId: string) {
     return this.usersService.findAllFrequentersByEnvironment(envId);
@@ -52,6 +56,7 @@ export class UsersController {
   @Roles('ADMIN') // UserRoles.ADMIN
   @UseGuards(JwtAuthGuard, RolesGuard)
   @Get('admins/env/:envId')
+  @ApiOperation({ description: 'Endpoint para buscar todos os administradores de um ambiente' })
   @ApiOkResponse({ type: UserEntity, isArray: true })
   findAllAdminsByEnvironment(@Param('envId') envId: string) {
     return this.usersService.findAllAdminsByEnvironment(envId);
@@ -60,6 +65,7 @@ export class UsersController {
   @Roles('ADMIN') // UserRoles.ADMIN
   @UseGuards(JwtAuthGuard, RolesGuard)
   @Get(':id')
+  @ApiOperation({ description: 'Endpoint para buscar um usuário' })
   @ApiOkResponse({ type: UserEntity })
   findOne(@Param('id') id: string) {
     return this.usersService.findOne(id);
@@ -67,6 +73,7 @@ export class UsersController {
 
   @UseGuards(JwtAuthGuard)
   @Patch('/:role/:id')
+  @ApiOperation({ description: 'Endpoint para atualizar um usuário' })
   @ApiOkResponse({ type: UserEntity })
   update(@Param('id') id: string, @Param('role') role: string, @Body() updateUserDto: UpdateUserDto, @Req() req: UserRequest) {
     const requestUser = req.user
@@ -76,6 +83,7 @@ export class UsersController {
   @Roles('ADMIN') // UserRoles.ADMIN
   @UseGuards(JwtAuthGuard, RolesGuard)
   @Delete(':id')
+  @ApiOperation({ description: 'Endpoint para remover um usuário' })
   @ApiOkResponse({ type: UserEntity })
   remove(@Param('id') id: string) {
     return this.usersService.remove(id);

@@ -80,8 +80,8 @@ export class RfidService {
   }
 
   async findOne(id: string) {
-    if (!id) {
-      throw new BadRequestException('Invalid Input. ID must be sent.');
+    if (!isUUID(id)) {
+      throw new HttpException("Invalid id input", HttpStatus.BAD_REQUEST);
     }
 
     return await this.prisma.rfid.findUnique({

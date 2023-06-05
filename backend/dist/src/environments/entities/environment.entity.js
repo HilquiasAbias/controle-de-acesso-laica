@@ -9,29 +9,29 @@ var __metadata = (this && this.__metadata) || function (k, v) {
     if (typeof Reflect === "object" && typeof Reflect.metadata === "function") return Reflect.metadata(k, v);
 };
 Object.defineProperty(exports, "__esModule", { value: true });
-exports.RfidEntity = void 0;
+exports.EnvironmentEntity = void 0;
 const swagger_1 = require("@nestjs/swagger");
-class RfidEntity {
+class EnvironmentEntity {
 }
-exports.RfidEntity = RfidEntity;
+exports.EnvironmentEntity = EnvironmentEntity;
 __decorate([
     (0, swagger_1.ApiProperty)(),
     __metadata("design:type", String)
-], RfidEntity.prototype, "id", void 0);
+], EnvironmentEntity.prototype, "id", void 0);
 __decorate([
     (0, swagger_1.ApiProperty)(),
     __metadata("design:type", String)
-], RfidEntity.prototype, "tag", void 0);
+], EnvironmentEntity.prototype, "name", void 0);
 __decorate([
     (0, swagger_1.ApiProperty)({ required: false, nullable: true }),
     __metadata("design:type", String)
-], RfidEntity.prototype, "userId", void 0);
+], EnvironmentEntity.prototype, "description", void 0);
 __decorate([
     (0, swagger_1.ApiProperty)(),
     __metadata("design:type", Date)
-], RfidEntity.prototype, "createdAt", void 0);
+], EnvironmentEntity.prototype, "createdAt", void 0);
 __decorate([
     (0, swagger_1.ApiProperty)(),
     __metadata("design:type", Date)
-], RfidEntity.prototype, "updatedAt", void 0);
-//# sourceMappingURL=rfid.entity.js.map
+], EnvironmentEntity.prototype, "updatedAt", void 0);
+//# sourceMappingURL=environment.entity.js.map
