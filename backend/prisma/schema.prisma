@@ -22,15 +22,6 @@ model Rfid {
   updatedAt DateTime @updatedAt
 }
 
-model Bluetooth {
-  id        String   @id @default(uuid())
-  mac       String   @unique
-  User      User?    @relation(fields: [userId], references: [id])
-  userId    String?  @unique
-  createdAt DateTime @default(now())
-  updatedAt DateTime @updatedAt
-}
-
 model AccessTime {
   id        String   @id @default(uuid())
   something String?
@@ -48,7 +39,7 @@ model User {
   password                String
   role                    String // Roles
   rfid                    Rfid?
-  Bluetooth               Bluetooth?
+  mac                     String?
   adminEnvironment        Environment? @relation("admins", fields: [environmentAdminId], references: [id])
   environmentAdminId      String?
   frequenterEnvironment   Environment? @relation("frequenters", fields: [environmentFrequenterId], references: [id])

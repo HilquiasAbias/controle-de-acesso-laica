@@ -27,6 +27,10 @@ export class CreateUserDto {
   tag?: string
 
   @ApiProperty()
+  @IsMACAddress()
+  mac?: string
+
+  @ApiProperty()
   @IsString()
   envId?: string
 }

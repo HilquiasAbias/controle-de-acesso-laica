@@ -14,6 +14,9 @@ export class UserEntity implements User {
   @ApiProperty()
   registration: string;
 
+  @ApiProperty({ required: false, nullable: true })
+  mac: string | null;
+
   @ApiProperty()
   role: string;
 
