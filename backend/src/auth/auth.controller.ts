@@ -5,7 +5,7 @@ import { ApiOkResponse, ApiTags } from '@nestjs/swagger';
 import { AuthEntity } from './entities/auth.entity';
 
 @Controller('auth')
-@ApiTags('/ auth')
+@ApiTags('Auth')
 export class AuthController {
   constructor(private readonly authService: AuthService) { }
 

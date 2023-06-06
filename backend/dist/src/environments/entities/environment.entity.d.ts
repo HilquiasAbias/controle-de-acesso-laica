@@ -6,3 +6,6 @@ export declare class EnvironmentEntity implements Environment {
     createdAt: Date;
     updatedAt: Date;
 }
+export declare class UserAddedEntity {
+    successful: true;
+}

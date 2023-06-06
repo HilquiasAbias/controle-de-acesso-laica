@@ -1,4 +1,4 @@
-import { IsHexadecimal, IsMACAddress, IsString, IsStrongPassword, Length } from "class-validator"
+import { IsHexadecimal, IsMACAddress, IsOptional, IsString, IsStrongPassword, Length } from "class-validator"
 //import { Roles } from "@prisma/client"
 import { ApiProperty } from '@nestjs/swagger';
 
@@ -24,13 +24,16 @@ export class CreateUserDto {
   @IsString()
   @IsHexadecimal()
   @Length(4, 8)
+  @IsOptional()
   tag?: string
 
   @ApiProperty()
   @IsMACAddress()
+  @IsOptional()
   mac?: string
 
   @ApiProperty()
   @IsString()
+  @IsOptional()
   envId?: string
 }

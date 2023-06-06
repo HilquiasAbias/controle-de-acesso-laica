@@ -17,3 +17,7 @@ export class EnvironmentEntity implements Environment {
   @ApiProperty()
   updatedAt: Date;
 }
+
+export class UserAddedEntity {
+  successful: true
+}

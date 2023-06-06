@@ -20,8 +20,8 @@ const update_rfid_dto_1 = require("./dto/update-rfid.dto");
 const roles_decorator_1 = require("../auth/decorators/roles.decorator");
 const jwt_auth_guard_1 = require("../auth/guards/jwt-auth.guard");
 const roles_guard_1 = require("../auth/guards/roles.guard");
-const read_env_rfid_dto_1 = require("./dto/read-env-rfid.dto");
 const swagger_1 = require("@nestjs/swagger");
+const rfid_entity_1 = require("./entities/rfid.entity");
 let RfidController = exports.RfidController = class RfidController {
     constructor(rfidService) {
         this.rfidService = rfidService;
@@ -32,8 +32,8 @@ let RfidController = exports.RfidController = class RfidController {
     findAll() {
         return this.rfidService.findAll();
     }
-    findAllByEnv(body) {
-        return this.rfidService.findAllTagsByEnvironment(body);
+    findAllByEnv(envId) {
+        return this.rfidService.findAllTagsByEnvironment(envId);
     }
     findOne(id) {
         return this.rfidService.findOne(id);
@@ -50,6 +50,8 @@ __decorate([
     (0, roles_decorator_1.Roles)('ADMIN'),
     (0, common_1.UseGuards)(jwt_auth_guard_1.JwtAuthGuard, roles_guard_1.RolesGuard),
     (0, common_1.Post)(),
+    (0, swagger_1.ApiOperation)({ description: 'Endpoint para cadastrar tag rfid' }),
+    (0, swagger_1.ApiCreatedResponse)({ type: rfid_entity_1.RfidEntity }),
     __param(0, (0, common_1.Body)()),
     __metadata("design:type", Function),
     __metadata("design:paramtypes", [create_rfid_dto_1.CreateRfidDto]),
@@ -59,6 +61,8 @@ __decorate([
     (0, roles_decorator_1.Roles)('ADMIN'),
     (0, common_1.UseGuards)(jwt_auth_guard_1.JwtAuthGuard, roles_guard_1.RolesGuard),
     (0, common_1.Get)(),
+    (0, swagger_1.ApiOperation)({ description: 'Endpoint para buscar todas as tags rfid' }),
+    (0, swagger_1.ApiOkResponse)({ type: rfid_entity_1.RfidEntity, isArray: true }),
     __metadata("design:type", Function),
     __metadata("design:paramtypes", []),
     __metadata("design:returntype", void 0)
@@ -66,16 +70,20 @@ __decorate([
 __decorate([
     (0, roles_decorator_1.Roles)('ADMIN'),
     (0, common_1.UseGuards)(jwt_auth_guard_1.JwtAuthGuard, roles_guard_1.RolesGuard),
-    (0, common_1.Get)('environment'),
-    __param(0, (0, common_1.Body)()),
+    (0, common_1.Get)('environment/:envId'),
+    (0, swagger_1.ApiOperation)({ description: 'Endpoint para buscar todas as tags rfid de um ambiente' }),
+    (0, swagger_1.ApiOkResponse)({ type: rfid_entity_1.RfidEntity, isArray: true }),
+    __param(0, (0, common_1.Param)('envId')),
     __metadata("design:type", Function),
-    __metadata("design:paramtypes", [read_env_rfid_dto_1.ReadEnvRfidDto]),
+    __metadata("design:paramtypes", [String]),
     __metadata("design:returntype", void 0)
 ], RfidController.prototype, "findAllByEnv", null);
 __decorate([
     (0, roles_decorator_1.Roles)('ADMIN'),
     (0, common_1.UseGuards)(jwt_auth_guard_1.JwtAuthGuard, roles_guard_1.RolesGuard),
     (0, common_1.Get)(':id'),
+    (0, swagger_1.ApiOperation)({ description: 'Endpoint para buscar uma tag rfid' }),
+    (0, swagger_1.ApiOkResponse)({ type: rfid_entity_1.RfidEntity }),
     __param(0, (0, common_1.Param)('id')),
     __metadata("design:type", Function),
     __metadata("design:paramtypes", [String]),
@@ -85,6 +93,8 @@ __decorate([
     (0, roles_decorator_1.Roles)('ADMIN'),
     (0, common_1.UseGuards)(jwt_auth_guard_1.JwtAuthGuard, roles_guard_1.RolesGuard),
     (0, common_1.Patch)(':id'),
+    (0, swagger_1.ApiOperation)({ description: 'Endpoint para atualizar uma tag rfid' }),
+    (0, swagger_1.ApiOkResponse)({ type: rfid_entity_1.RfidEntity }),
     __param(0, (0, common_1.Param)('id')),
     __param(1, (0, common_1.Body)()),
     __param(2, (0, common_1.Req)()),
@@ -96,6 +106,8 @@ __decorate([
     (0, roles_decorator_1.Roles)('ADMIN'),
     (0, common_1.UseGuards)(jwt_auth_guard_1.JwtAuthGuard, roles_guard_1.RolesGuard),
     (0, common_1.Delete)(':id'),
+    (0, swagger_1.ApiOperation)({ description: 'Endpoint para remover uma tag rfid' }),
+    (0, swagger_1.ApiOkResponse)({ type: rfid_entity_1.RfidEntity }),
     __param(0, (0, common_1.Param)('id')),
     __metadata("design:type", Function),
     __metadata("design:paramtypes", [String]),
@@ -104,7 +116,7 @@ __decorate([
 exports.RfidController = RfidController = __decorate([
     (0, common_1.Controller)('rfid'),
     (0, swagger_1.ApiBearerAuth)(),
-    (0, swagger_1.ApiTags)('/ rfid'),
+    (0, swagger_1.ApiTags)('RFID'),
     __metadata("design:paramtypes", [rfid_service_1.RfidService])
 ], RfidController);
 //# sourceMappingURL=rfid.controller.js.map

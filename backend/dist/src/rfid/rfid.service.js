@@ -46,15 +46,24 @@ let RfidService = exports.RfidService = class RfidService {
     }
     async findAll() {
         try {
-            return await this.prisma.rfid.findMany();
+            return await this.prisma.rfid.findMany({
+                include: {
+                    User: {
+                        select: { name: true }
+                    }
+                }
+            });
         }
         catch (error) {
             throw new Error();
         }
     }
-    async findAllTagsByEnvironment(body) {
+    async findAllTagsByEnvironment(envId) {
+        if (!(0, class_validator_1.isUUID)(envId)) {
+            throw new common_1.HttpException("Invalid id input", common_1.HttpStatus.BAD_REQUEST);
+        }
         const env = await this.prisma.environment.findFirst({
-            where: { id: body.envId },
+            where: { id: envId },
             include: {
                 admins: { include: { rfid: true } },
                 frequenters: { include: { rfid: true } }
@@ -83,17 +92,20 @@ let RfidService = exports.RfidService = class RfidService {
         if (!(0, class_validator_1.isUUID)(id)) {
             throw new common_1.HttpException("Invalid id input", common_1.HttpStatus.BAD_REQUEST);
         }
-        return await this.prisma.rfid.findUnique({
+        return await this.prisma.rfid.findFirstOrThrow({
             where: { id }
         });
     }
     async update(id, updateRfidDto, requestUser) {
-        const validFields = ['content', 'userId'];
+        if (!(0, class_validator_1.isUUID)(id)) {
+            throw new common_1.HttpException('Invalid id input', common_1.HttpStatus.BAD_REQUEST);
+        }
+        const validFields = ['tag', 'userId'];
         const invalidFields = Object.keys(updateRfidDto).filter(field => !validFields.includes(field));
         if (invalidFields.length > 0) {
             throw new common_1.BadRequestException(`Invalid fields provided: ${invalidFields.join(', ')}`);
         }
-        const rfid = await this.prisma.rfid.findFirst({
+        const rfid = await this.prisma.rfid.findFirstOrThrow({
             where: { id },
             include: { User: true }
         });

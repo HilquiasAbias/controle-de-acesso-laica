@@ -4,7 +4,7 @@ import { ApiProperty } from '@nestjs/swagger';
 export class CreateRfidDto {
   @IsHexadecimal()
   @IsNotEmpty()
-  @Length(8, 16)
+  @Length(8, 16) // 
   @ApiProperty()
   tag: string
   

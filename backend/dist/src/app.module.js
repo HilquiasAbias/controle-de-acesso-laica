@@ -13,7 +13,11 @@ const users_module_1 = require("./users/users.module");
 const auth_module_1 = require("./auth/auth.module");
 const rfid_module_1 = require("./rfid/rfid.module");
 const environments_module_1 = require("./environments/environments.module");
+const cors = require("cors");
 let AppModule = exports.AppModule = class AppModule {
+    configure(consumer) {
+        consumer.apply(cors()).forRoutes('*');
+    }
 };
 exports.AppModule = AppModule = __decorate([
     (0, common_1.Module)({

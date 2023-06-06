@@ -40,16 +40,19 @@ __decorate([
     (0, class_validator_1.IsString)(),
     (0, class_validator_1.IsHexadecimal)(),
     (0, class_validator_1.Length)(4, 8),
+    (0, class_validator_1.IsOptional)(),
     __metadata("design:type", String)
 ], CreateUserDto.prototype, "tag", void 0);
 __decorate([
     (0, swagger_1.ApiProperty)(),
     (0, class_validator_1.IsMACAddress)(),
+    (0, class_validator_1.IsOptional)(),
     __metadata("design:type", String)
 ], CreateUserDto.prototype, "mac", void 0);
 __decorate([
     (0, swagger_1.ApiProperty)(),
     (0, class_validator_1.IsString)(),
+    (0, class_validator_1.IsOptional)(),
     __metadata("design:type", String)
 ], CreateUserDto.prototype, "envId", void 0);
 //# sourceMappingURL=create-user.dto.js.map

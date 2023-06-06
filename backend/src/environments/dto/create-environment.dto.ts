@@ -1,4 +1,4 @@
-import { IsNotEmpty, IsString, IsUUID } from "class-validator"
+import { IsNotEmpty, IsOptional, IsString, IsUUID } from "class-validator"
 import { ApiProperty } from '@nestjs/swagger';
 
 export class CreateEnvironmentDto {
@@ -13,5 +13,6 @@ export class CreateEnvironmentDto {
 
   @IsUUID()
   @ApiProperty()
+  @IsOptional()
   adminId?: string
 }

@@ -3,7 +3,6 @@ import { CreateRfidDto } from './dto/create-rfid.dto';
 import { UpdateRfidDto } from './dto/update-rfid.dto';
 import { PrismaService } from 'src/prisma/prisma.service';
 import { Rfid, User } from '@prisma/client';
-import { ReadEnvRfidDto } from './dto/read-env-rfid.dto';
 import { isUUID } from 'class-validator';
 
 @Injectable()
@@ -43,15 +42,25 @@ export class RfidService {
 
   async findAll() {
     try {
-      return await this.prisma.rfid.findMany();
+      return await this.prisma.rfid.findMany({
+        include: {
+          User: {
+            select: { name: true }
+          }
+        }
+      });
     } catch (error) {
       throw new Error()
     }
   }
 
-  async findAllTagsByEnvironment(body: ReadEnvRfidDto) {
+  async findAllTagsByEnvironment(envId: string) {
+    if (!isUUID(envId)) {
+      throw new HttpException("Invalid id input", HttpStatus.BAD_REQUEST);
+    }
+
     const env = await this.prisma.environment.findFirst({
-      where: { id: body.envId },
+      where: { id: envId },
       include: { 
         admins: { include: { rfid: true } },
         frequenters: { include: { rfid: true } }
@@ -84,13 +93,17 @@ export class RfidService {
       throw new HttpException("Invalid id input", HttpStatus.BAD_REQUEST);
     }
 
-    return await this.prisma.rfid.findUnique({
+    return await this.prisma.rfid.findFirstOrThrow({
       where: { id }
     });
   }
 
   async update(id: string, updateRfidDto: UpdateRfidDto, requestUser: User) {
-    const validFields = ['content', 'userId'];
+    if (!isUUID(id)) {
+      throw new HttpException('Invalid id input', HttpStatus.BAD_REQUEST);
+    }
+
+    const validFields = ['tag', 'userId'];
     const invalidFields = Object.keys(updateRfidDto).filter(
       field => !validFields.includes(field),
     );
@@ -101,7 +114,7 @@ export class RfidService {
       );
     }
 
-    const rfid = await this.prisma.rfid.findFirst({
+    const rfid = await this.prisma.rfid.findFirstOrThrow({
       where: { id },
       include: { User: true }
     })

@@ -29,6 +29,7 @@ __decorate([
 __decorate([
     (0, class_validator_1.IsUUID)(),
     (0, swagger_1.ApiProperty)(),
+    (0, class_validator_1.IsOptional)(),
     __metadata("design:type", String)
 ], CreateEnvironmentDto.prototype, "adminId", void 0);
 //# sourceMappingURL=create-environment.dto.js.map
