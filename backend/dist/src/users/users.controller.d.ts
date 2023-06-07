@@ -18,7 +18,7 @@ export declare class UsersController {
     findAllAdminsByEnvironment(envId: string): Promise<(import(".prisma/client").User & {
         rfid: import(".prisma/client").Rfid;
     })[]>;
-    findOne(id: string): Promise<import(".prisma/client").User & {
+    findOne(id: string, req: UserRequest): Promise<import(".prisma/client").User & {
         rfid: import(".prisma/client").Rfid;
         adminEnvironment: import(".prisma/client").Environment;
         frequenterEnvironment: import(".prisma/client").Environment;

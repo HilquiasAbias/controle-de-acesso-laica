@@ -5,6 +5,7 @@ import { PrismaService } from 'src/prisma/prisma.service';
 import * as bcrypt from 'bcrypt';
 import { User } from '@prisma/client';
 import { isUUID } from 'class-validator';
+import { DateTime } from 'luxon';
 
 export const roundsOfHashing = 10;
 
@@ -44,6 +45,23 @@ export class UsersService {
       })
     }
 
+    if (createUserDto.accessTime) {
+      await Promise.all(
+        createUserDto.accessTime.map(async (accessTime) => {
+          const { day, startTime, endTime } = accessTime;
+
+          await this.prisma.accessTime.create({
+            data: {
+              userId: user.id,
+              dayOfWeek: day,
+              startTime: DateTime.fromFormat(startTime, 'HH:mm:ss').toISO(),
+              endTime: DateTime.fromFormat(endTime, 'HH:mm:ss').toISO(),
+            }
+          })
+        })
+      );
+    }
+
     return user;
   }
 
@@ -75,7 +93,7 @@ export class UsersService {
     });
   }
 
-  async findOne(id: string) {
+  async getOneForLogin(id: string) {
     if (!isUUID(id)) {
       throw new HttpException('Invalid id input', HttpStatus.BAD_REQUEST);
     }
@@ -88,6 +106,27 @@ export class UsersService {
         rfid: true
       }
     });
+
+    return user;
+  }
+
+  async findOne(id: string, requestUserId: string) {
+    if (!isUUID(id)) {
+      throw new HttpException('Invalid id input', HttpStatus.BAD_REQUEST);
+    }
+
+    const user = await this.prisma.user.findUniqueOrThrow({
+      where: { id },
+      include: {
+        adminEnvironment: true,
+        frequenterEnvironment: true,
+        rfid: true
+      }
+    });
+
+    if (user.role === 'FREQUENTER' && user.id !== requestUserId) {
+      throw new HttpException("A frequenter only sees their own data", HttpStatus.UNAUTHORIZED);
+    }
 
     return user;
   }

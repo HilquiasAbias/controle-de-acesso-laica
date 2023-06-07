@@ -4,6 +4,7 @@ import { UsersModule } from './users/users.module';
 import { AuthModule } from './auth/auth.module';
 import { RfidModule } from './rfid/rfid.module';
 import { EnvironmentsModule } from './environments/environments.module';
+import { CaronteModule } from './caronte/caronte.module';
 import * as cors from 'cors';
 
 @Module({
@@ -11,7 +12,9 @@ import * as cors from 'cors';
     PrismaModule, 
     UsersModule, 
     AuthModule, 
-    RfidModule, EnvironmentsModule
+    RfidModule, 
+    EnvironmentsModule, 
+    CaronteModule
   ]
 })
 export class AppModule implements NestModule {

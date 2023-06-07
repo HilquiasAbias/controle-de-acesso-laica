@@ -14,6 +14,7 @@ const common_1 = require("@nestjs/common");
 const prisma_service_1 = require("../prisma/prisma.service");
 const bcrypt = require("bcrypt");
 const class_validator_1 = require("class-validator");
+const luxon_1 = require("luxon");
 exports.roundsOfHashing = 10;
 let UsersService = exports.UsersService = class UsersService {
     constructor(prisma) {
@@ -46,6 +47,19 @@ let UsersService = exports.UsersService = class UsersService {
                 }
             });
         }
+        if (createUserDto.accessTime) {
+            await Promise.all(createUserDto.accessTime.map(async (accessTime) => {
+                const { day, startTime, endTime } = accessTime;
+                await this.prisma.accessTime.create({
+                    data: {
+                        userId: user.id,
+                        dayOfWeek: day,
+                        startTime: luxon_1.DateTime.fromFormat(startTime, 'HH:mm:ss').toISO(),
+                        endTime: luxon_1.DateTime.fromFormat(endTime, 'HH:mm:ss').toISO(),
+                    }
+                });
+            }));
+        }
         return user;
     }
     async findAllFrequenters() {
@@ -72,7 +86,7 @@ let UsersService = exports.UsersService = class UsersService {
             include: { rfid: true }
         });
     }
-    async findOne(id) {
+    async getOneForLogin(id) {
         if (!(0, class_validator_1.isUUID)(id)) {
             throw new common_1.HttpException('Invalid id input', common_1.HttpStatus.BAD_REQUEST);
         }
@@ -84,6 +98,23 @@ let UsersService = exports.UsersService = class UsersService {
                 rfid: true
             }
         });
+        return user;
+    }
+    async findOne(id, requestUserId) {
+        if (!(0, class_validator_1.isUUID)(id)) {
+            throw new common_1.HttpException('Invalid id input', common_1.HttpStatus.BAD_REQUEST);
+        }
+        const user = await this.prisma.user.findUniqueOrThrow({
+            where: { id },
+            include: {
+                adminEnvironment: true,
+                frequenterEnvironment: true,
+                rfid: true
+            }
+        });
+        if (user.role === 'FREQUENTER' && user.id !== requestUserId) {
+            throw new common_1.HttpException("A frequenter only sees their own data", common_1.HttpStatus.UNAUTHORIZED);
+        }
         return user;
     }
     async updateWithoutCheckUser(id, updateUserDto) {

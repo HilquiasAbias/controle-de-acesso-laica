@@ -62,13 +62,13 @@ export class UsersController {
     return this.usersService.findAllAdminsByEnvironment(envId);
   }
 
-  @Roles('ADMIN') // UserRoles.ADMIN
-  @UseGuards(JwtAuthGuard, RolesGuard)
+  @UseGuards(JwtAuthGuard)
   @Get(':id')
   @ApiOperation({ description: 'Endpoint para buscar um usuário' })
   @ApiOkResponse({ type: UserEntity })
-  findOne(@Param('id') id: string) {
-    return this.usersService.findOne(id);
+  findOne(@Param('id') id: string, @Req() req: UserRequest) {
+    const userId = req.user.id
+    return this.usersService.findOne(id, userId);
   }
 
   @UseGuards(JwtAuthGuard)

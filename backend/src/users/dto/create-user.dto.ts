@@ -1,6 +1,7 @@
 import { IsHexadecimal, IsMACAddress, IsOptional, IsString, IsStrongPassword, Length } from "class-validator"
 //import { Roles } from "@prisma/client"
 import { ApiProperty } from '@nestjs/swagger';
+import { IAccessTime } from "../interfaces/access-time";
 
 export class CreateUserDto {
   @ApiProperty()
@@ -36,4 +37,8 @@ export class CreateUserDto {
   @IsString()
   @IsOptional()
   envId?: string
+
+  @ApiProperty()
+  @IsOptional()
+  accessTime?: IAccessTime[]
 }

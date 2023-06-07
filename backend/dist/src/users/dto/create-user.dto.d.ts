@@ -1,3 +1,4 @@
+import { IAccessTime } from "../interfaces/access-time";
 export declare class CreateUserDto {
     name: string;
     registration: string;
@@ -6,4 +7,5 @@ export declare class CreateUserDto {
     tag?: string;
     mac?: string;
     envId?: string;
+    accessTime?: IAccessTime[];
 }

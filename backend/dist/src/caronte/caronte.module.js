@@ -5,17 +5,19 @@ var __decorate = (this && this.__decorate) || function (decorators, target, key,
     else for (var i = decorators.length - 1; i >= 0; i--) if (d = decorators[i]) r = (c < 3 ? d(r) : c > 3 ? d(target, key, r) : d(target, key)) || r;
     return c > 3 && r && Object.defineProperty(target, key, r), r;
 };
-var __metadata = (this && this.__metadata) || function (k, v) {
-    if (typeof Reflect === "object" && typeof Reflect.metadata === "function") return Reflect.metadata(k, v);
-};
 Object.defineProperty(exports, "__esModule", { value: true });
-exports.ReadEnvRfidDto = void 0;
-const class_validator_1 = require("class-validator");
-class ReadEnvRfidDto {
-}
-exports.ReadEnvRfidDto = ReadEnvRfidDto;
-__decorate([
-    (0, class_validator_1.IsNumber)(),
-    __metadata("design:type", String)
-], ReadEnvRfidDto.prototype, "envId", void 0);
-//# sourceMappingURL=read-env-rfid.dto.js.map
+exports.CaronteModule = void 0;
+const common_1 = require("@nestjs/common");
+const caronte_service_1 = require("./caronte.service");
+const caronte_controller_1 = require("./caronte.controller");
+const prisma_module_1 = require("../prisma/prisma.module");
+let CaronteModule = exports.CaronteModule = class CaronteModule {
+};
+exports.CaronteModule = CaronteModule = __decorate([
+    (0, common_1.Module)({
+        imports: [prisma_module_1.PrismaModule],
+        controllers: [caronte_controller_1.CaronteController],
+        providers: [caronte_service_1.CaronteService]
+    })
+], CaronteModule);
+//# sourceMappingURL=caronte.module.js.map

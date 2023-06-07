@@ -19,7 +19,12 @@ export declare class UsersService {
     findAllAdmins(): Promise<(User & {
         rfid: import(".prisma/client").Rfid;
     })[]>;
-    findOne(id: string): Promise<User & {
+    getOneForLogin(id: string): Promise<User & {
+        rfid: import(".prisma/client").Rfid;
+        adminEnvironment: import(".prisma/client").Environment;
+        frequenterEnvironment: import(".prisma/client").Environment;
+    }>;
+    findOne(id: string, requestUserId: string): Promise<User & {
         rfid: import(".prisma/client").Rfid;
         adminEnvironment: import(".prisma/client").Environment;
         frequenterEnvironment: import(".prisma/client").Environment;

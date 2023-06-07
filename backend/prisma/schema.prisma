@@ -16,15 +16,14 @@ datasource db {
 model Rfid {
   id        String   @id @default(uuid())
   tag       String   @unique
-  User      User?    @relation(fields: [userId], references: [id])
-  userId    String?  @unique
+  User      User     @relation(fields: [userId], references: [id])
+  userId    String   @unique
   createdAt DateTime @default(now())
   updatedAt DateTime @updatedAt
 }
 
 model AccessTime {
   id        String   @id @default(uuid())
-  something String?
   dayOfWeek String
   startTime DateTime
   endTime   DateTime
@@ -62,12 +61,12 @@ model Environment {
 }
 
 model Caronte {
-  id            String       @id @default(uuid())
-  ip            String       @unique
-  esp           String       @unique
+  id            String      @id @default(uuid())
+  ip            String      @unique
+  esp           String      @unique
   password      String
-  Environment   Environment? @relation(fields: [environmentId], references: [id])
-  environmentId String?
+  Environment   Environment @relation(fields: [environmentId], references: [id])
+  environmentId String
   Log           Log[]
 }
 

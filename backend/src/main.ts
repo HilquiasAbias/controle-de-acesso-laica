@@ -10,7 +10,7 @@ async function bootstrap() {
   const config = new DocumentBuilder()
     .setTitle('Laica: controle de acesso')
     .setDescription('Documentação da API de controle de acesso do Laica')
-    .setVersion('0.1')
+    .setVersion('1.1')
     .build();
 
   const document = SwaggerModule.createDocument(app, config);

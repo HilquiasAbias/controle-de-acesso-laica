@@ -42,8 +42,9 @@ let UsersController = exports.UsersController = class UsersController {
     findAllAdminsByEnvironment(envId) {
         return this.usersService.findAllAdminsByEnvironment(envId);
     }
-    findOne(id) {
-        return this.usersService.findOne(id);
+    findOne(id, req) {
+        const userId = req.user.id;
+        return this.usersService.findOne(id, userId);
     }
     update(id, role, updateUserDto, req) {
         const requestUser = req.user;
@@ -108,14 +109,14 @@ __decorate([
     __metadata("design:returntype", void 0)
 ], UsersController.prototype, "findAllAdminsByEnvironment", null);
 __decorate([
-    (0, roles_decorator_1.Roles)('ADMIN'),
-    (0, common_1.UseGuards)(jwt_auth_guard_1.JwtAuthGuard, roles_guard_1.RolesGuard),
+    (0, common_1.UseGuards)(jwt_auth_guard_1.JwtAuthGuard),
     (0, common_1.Get)(':id'),
     (0, swagger_1.ApiOperation)({ description: 'Endpoint para buscar um usuário' }),
     (0, swagger_1.ApiOkResponse)({ type: user_entity_1.UserEntity }),
     __param(0, (0, common_1.Param)('id')),
+    __param(1, (0, common_1.Req)()),
     __metadata("design:type", Function),
-    __metadata("design:paramtypes", [String]),
+    __metadata("design:paramtypes", [String, Object]),
     __metadata("design:returntype", void 0)
 ], UsersController.prototype, "findOne", null);
 __decorate([

@@ -23,7 +23,7 @@ let JwtStrategy = exports.JwtStrategy = class JwtStrategy extends (0, passport_1
         this.usersService = usersService;
     }
     async validate(payload) {
-        const user = await this.usersService.findOne(payload.userId);
+        const user = await this.usersService.getOneForLogin(payload.userId);
         if (!user) {
             throw new common_1.UnauthorizedException();
         }
