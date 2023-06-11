@@ -4,6 +4,7 @@ import { UpdateEnvironmentDto } from './dto/update-environment.dto';
 import { PrismaService } from 'src/prisma/prisma.service';
 import { AddUserInEnvironmentDto } from './dto/add-user-environment.dto';
 import { isUUID } from 'class-validator';
+import { DateTime } from 'luxon';
 
 @Injectable()
 export class EnvironmentsService {
@@ -46,6 +47,24 @@ export class EnvironmentsService {
           }
         })
       }
+
+      if (data.accessTime && data.role === 'FREQUENTER') {
+        await Promise.all(
+          data.accessTime.map(async (accessTime) => {
+            const { day, startTime, endTime } = accessTime;
+  
+            await this.prisma.accessTime.create({
+              data: {
+                userId: user.id,
+                dayOfWeek: day,
+                startTime: DateTime.fromFormat(startTime, 'HH:mm:ss').toISO(),
+                endTime: DateTime.fromFormat(endTime, 'HH:mm:ss').toISO(),
+              }
+            })
+          })
+        );
+      }
+  
 
       return {
         status: 201,

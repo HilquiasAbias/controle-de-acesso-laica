@@ -1,7 +1,7 @@
 import { RfidService } from './rfid.service';
 import { CreateRfidDto } from './dto/create-rfid.dto';
 import { UpdateRfidDto } from './dto/update-rfid.dto';
-import { UserRequest } from 'src/users/interfaces/req-user';
+import { UserRequest } from '../interfaces/req-user';
 export declare class RfidController {
     private readonly rfidService;
     constructor(rfidService: RfidService);

@@ -17,9 +17,13 @@ const common_1 = require("@nestjs/common");
 const caronte_service_1 = require("./caronte.service");
 const create_caronte_dto_1 = require("./dto/create-caronte.dto");
 const update_caronte_dto_1 = require("./dto/update-caronte.dto");
+const obol_caronte_dto_1 = require("./dto/obol-caronte.dto");
 let CaronteController = exports.CaronteController = class CaronteController {
     constructor(caronteService) {
         this.caronteService = caronteService;
+    }
+    obol(obolForCharonDto) {
+        return this.caronteService.anObolForCharon(obolForCharonDto);
     }
     create(createCaronteDto) {
         return this.caronteService.create(createCaronteDto);
@@ -40,6 +44,13 @@ let CaronteController = exports.CaronteController = class CaronteController {
         return this.caronteService.remove(id);
     }
 };
+__decorate([
+    (0, common_1.Post)('obol'),
+    __param(0, (0, common_1.Body)()),
+    __metadata("design:type", Function),
+    __metadata("design:paramtypes", [obol_caronte_dto_1.ObolForCharonDto]),
+    __metadata("design:returntype", void 0)
+], CaronteController.prototype, "obol", null);
 __decorate([
     (0, common_1.Post)(),
     __param(0, (0, common_1.Body)()),

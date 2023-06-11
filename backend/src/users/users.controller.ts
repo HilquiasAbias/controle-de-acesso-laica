@@ -5,7 +5,7 @@ import { UpdateUserDto } from './dto/update-user.dto';
 import { JwtAuthGuard } from 'src/auth/guards/jwt-auth.guard';
 import { Roles } from 'src/auth/decorators/roles.decorator';
 import { RolesGuard } from 'src/auth/guards/roles.guard';
-import { UserRequest } from './interfaces/req-user';
+import { UserRequest } from '../interfaces/req-user';
 //import { Roles as UserRoles } from '@prisma/client';
 import { ApiBearerAuth, ApiCreatedResponse, ApiOkResponse, ApiOperation, ApiTags } from '@nestjs/swagger';
 import { UserEntity } from './entities/user.entity';

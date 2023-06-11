@@ -2,10 +2,18 @@ import { Controller, Get, Post, Body, Patch, Param, Delete } from '@nestjs/commo
 import { CaronteService } from './caronte.service';
 import { CreateCaronteDto } from './dto/create-caronte.dto';
 import { UpdateCaronteDto } from './dto/update-caronte.dto';
+import { ObolForCharonDto } from './dto/obol-caronte.dto';
 
 @Controller('caronte')
 export class CaronteController {
   constructor(private readonly caronteService: CaronteService) {}
+
+  @Post('obol')
+  obol(
+    @Body() obolForCharonDto: ObolForCharonDto
+    ) {
+    return this.caronteService.anObolForCharon(obolForCharonDto)
+  }
 
   @Post()
   create(@Body() createCaronteDto: CreateCaronteDto) {

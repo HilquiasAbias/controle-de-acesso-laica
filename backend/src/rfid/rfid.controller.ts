@@ -5,7 +5,7 @@ import { UpdateRfidDto } from './dto/update-rfid.dto';
 import { Roles } from 'src/auth/decorators/roles.decorator';
 import { JwtAuthGuard } from 'src/auth/guards/jwt-auth.guard';
 import { RolesGuard } from 'src/auth/guards/roles.guard';
-import { UserRequest } from 'src/users/interfaces/req-user';
+import { UserRequest } from '../interfaces/req-user';
 import { ApiBearerAuth, ApiCreatedResponse, ApiOkResponse, ApiOperation, ApiTags } from '@nestjs/swagger';
 import { RfidEntity } from './entities/rfid.entity';
 

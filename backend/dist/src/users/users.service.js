@@ -14,7 +14,6 @@ const common_1 = require("@nestjs/common");
 const prisma_service_1 = require("../prisma/prisma.service");
 const bcrypt = require("bcrypt");
 const class_validator_1 = require("class-validator");
-const luxon_1 = require("luxon");
 exports.roundsOfHashing = 10;
 let UsersService = exports.UsersService = class UsersService {
     constructor(prisma) {
@@ -46,19 +45,6 @@ let UsersService = exports.UsersService = class UsersService {
                     rfid: createUserDto.tag ? { create: { tag: createUserDto.tag } } : undefined
                 }
             });
-        }
-        if (createUserDto.accessTime) {
-            await Promise.all(createUserDto.accessTime.map(async (accessTime) => {
-                const { day, startTime, endTime } = accessTime;
-                await this.prisma.accessTime.create({
-                    data: {
-                        userId: user.id,
-                        dayOfWeek: day,
-                        startTime: luxon_1.DateTime.fromFormat(startTime, 'HH:mm:ss').toISO(),
-                        endTime: luxon_1.DateTime.fromFormat(endTime, 'HH:mm:ss').toISO(),
-                    }
-                });
-            }));
         }
         return user;
     }

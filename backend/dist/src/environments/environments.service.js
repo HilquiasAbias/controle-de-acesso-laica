@@ -13,6 +13,7 @@ exports.EnvironmentsService = void 0;
 const common_1 = require("@nestjs/common");
 const prisma_service_1 = require("../prisma/prisma.service");
 const class_validator_1 = require("class-validator");
+const luxon_1 = require("luxon");
 let EnvironmentsService = exports.EnvironmentsService = class EnvironmentsService {
     constructor(prisma) {
         this.prisma = prisma;
@@ -50,6 +51,19 @@ let EnvironmentsService = exports.EnvironmentsService = class EnvironmentsServic
                         frequenters: { connect: { id: data.userId } }
                     }
                 });
+            }
+            if (data.accessTime && data.role === 'FREQUENTER') {
+                await Promise.all(data.accessTime.map(async (accessTime) => {
+                    const { day, startTime, endTime } = accessTime;
+                    await this.prisma.accessTime.create({
+                        data: {
+                            userId: user.id,
+                            dayOfWeek: day,
+                            startTime: luxon_1.DateTime.fromFormat(startTime, 'HH:mm:ss').toISO(),
+                            endTime: luxon_1.DateTime.fromFormat(endTime, 'HH:mm:ss').toISO(),
+                        }
+                    });
+                }));
             }
             return {
                 status: 201,

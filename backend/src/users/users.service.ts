@@ -45,23 +45,6 @@ export class UsersService {
       })
     }
 
-    if (createUserDto.accessTime) {
-      await Promise.all(
-        createUserDto.accessTime.map(async (accessTime) => {
-          const { day, startTime, endTime } = accessTime;
-
-          await this.prisma.accessTime.create({
-            data: {
-              userId: user.id,
-              dayOfWeek: day,
-              startTime: DateTime.fromFormat(startTime, 'HH:mm:ss').toISO(),
-              endTime: DateTime.fromFormat(endTime, 'HH:mm:ss').toISO(),
-            }
-          })
-        })
-      );
-    }
-
     return user;
   }
 

@@ -9,50 +9,51 @@ var __metadata = (this && this.__metadata) || function (k, v) {
     if (typeof Reflect === "object" && typeof Reflect.metadata === "function") return Reflect.metadata(k, v);
 };
 Object.defineProperty(exports, "__esModule", { value: true });
-exports.CreateUserDto = void 0;
-const class_validator_1 = require("class-validator");
+exports.ObolForCharonDto = void 0;
 const swagger_1 = require("@nestjs/swagger");
-class CreateUserDto {
+const class_validator_1 = require("class-validator");
+class ObolForCharonDto {
 }
-exports.CreateUserDto = CreateUserDto;
+exports.ObolForCharonDto = ObolForCharonDto;
+__decorate([
+    (0, swagger_1.ApiProperty)(),
+    (0, class_validator_1.IsIP)(),
+    __metadata("design:type", String)
+], ObolForCharonDto.prototype, "ip", void 0);
+__decorate([
+    (0, swagger_1.ApiProperty)(),
+    (0, class_validator_1.IsMACAddress)(),
+    __metadata("design:type", String)
+], ObolForCharonDto.prototype, "esp", void 0);
 __decorate([
     (0, swagger_1.ApiProperty)(),
     (0, class_validator_1.IsString)(),
-    __metadata("design:type", String)
-], CreateUserDto.prototype, "name", void 0);
-__decorate([
-    (0, swagger_1.ApiProperty)(),
-    (0, class_validator_1.Length)(10, 14),
-    __metadata("design:type", String)
-], CreateUserDto.prototype, "registration", void 0);
-__decorate([
-    (0, swagger_1.ApiProperty)(),
-    (0, class_validator_1.IsString)(),
-    __metadata("design:type", String)
-], CreateUserDto.prototype, "password", void 0);
-__decorate([
-    (0, swagger_1.ApiProperty)(),
-    (0, class_validator_1.IsString)(),
-    __metadata("design:type", String)
-], CreateUserDto.prototype, "role", void 0);
-__decorate([
-    (0, swagger_1.ApiProperty)(),
-    (0, class_validator_1.IsString)(),
-    (0, class_validator_1.IsHexadecimal)(),
-    (0, class_validator_1.Length)(4, 8),
     (0, class_validator_1.IsOptional)(),
     __metadata("design:type", String)
-], CreateUserDto.prototype, "tag", void 0);
+], ObolForCharonDto.prototype, "carontePassword", void 0);
+__decorate([
+    (0, swagger_1.ApiProperty)(),
+    (0, class_validator_1.IsString)(),
+    (0, class_validator_1.IsOptional)(),
+    __metadata("design:type", String)
+], ObolForCharonDto.prototype, "userRegistration", void 0);
+__decorate([
+    (0, swagger_1.ApiProperty)(),
+    (0, class_validator_1.IsString)(),
+    (0, class_validator_1.IsOptional)(),
+    __metadata("design:type", String)
+], ObolForCharonDto.prototype, "userPassword", void 0);
 __decorate([
     (0, swagger_1.ApiProperty)(),
     (0, class_validator_1.IsMACAddress)(),
     (0, class_validator_1.IsOptional)(),
     __metadata("design:type", String)
-], CreateUserDto.prototype, "mac", void 0);
+], ObolForCharonDto.prototype, "userDeviceMac", void 0);
 __decorate([
     (0, swagger_1.ApiProperty)(),
-    (0, class_validator_1.IsString)(),
+    (0, class_validator_1.IsHexadecimal)(),
+    (0, class_validator_1.Length)(8, 16),
     (0, class_validator_1.IsOptional)(),
     __metadata("design:type", String)
-], CreateUserDto.prototype, "envId", void 0);
-//# sourceMappingURL=create-user.dto.js.map
+], ObolForCharonDto.prototype, "userTagRFID", void 0);
+//# sourceMappingURL=obol-caronte.dto.js.map

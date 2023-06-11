@@ -33,4 +33,9 @@ __decorate([
     (0, swagger_1.ApiProperty)(),
     __metadata("design:type", String)
 ], AddUserInEnvironmentDto.prototype, "role", void 0);
+__decorate([
+    (0, swagger_1.ApiProperty)(),
+    (0, class_validator_1.IsOptional)(),
+    __metadata("design:type", Array)
+], AddUserInEnvironmentDto.prototype, "accessTime", void 0);
 //# sourceMappingURL=add-user-environment.dto.js.map
