@@ -1,15 +1,20 @@
-import { IsIP, IsMACAddress, IsNumber, IsString } from "class-validator";
+import { ApiProperty } from '@nestjs/swagger';
+import { IsIP, IsMACAddress, IsString, IsUUID } from 'class-validator';
 
 export class CreateCaronteDto {
+  @ApiProperty()
   @IsIP()
-  ip: string
+  ip: string;
 
+  @ApiProperty()
   @IsMACAddress()
   esp: string
 
+  @ApiProperty()
   @IsString()
   password: string
 
-  @IsNumber()
-  environmentId?: number
+  @ApiProperty()
+  @IsUUID()
+  environmentId: string
 }

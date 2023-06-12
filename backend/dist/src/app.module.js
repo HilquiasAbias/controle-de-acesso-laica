@@ -10,32 +10,26 @@ exports.AppModule = void 0;
 const common_1 = require("@nestjs/common");
 const prisma_module_1 = require("./prisma/prisma.module");
 const users_module_1 = require("./users/users.module");
-const environments_module_1 = require("./environments/environments.module");
 const auth_module_1 = require("./auth/auth.module");
-const tags_module_1 = require("./tags/tags.module");
-const app_service_1 = require("./app.service");
-const app_controller_1 = require("./app.controller");
-const mac_module_1 = require("./mac/mac.module");
+const rfid_module_1 = require("./rfid/rfid.module");
+const environments_module_1 = require("./environments/environments.module");
 const caronte_module_1 = require("./caronte/caronte.module");
 const cors = require("cors");
-let AppModule = class AppModule {
+let AppModule = exports.AppModule = class AppModule {
     configure(consumer) {
         consumer.apply(cors()).forRoutes('*');
     }
 };
-AppModule = __decorate([
+exports.AppModule = AppModule = __decorate([
     (0, common_1.Module)({
         imports: [
             prisma_module_1.PrismaModule,
             users_module_1.UsersModule,
-            environments_module_1.EnvironmentsModule,
             auth_module_1.AuthModule,
-            tags_module_1.TagsModule,
-            mac_module_1.MacModule, caronte_module_1.CaronteModule,
-        ],
-        providers: [app_service_1.AppService],
-        controllers: [app_controller_1.AppController]
+            rfid_module_1.RfidModule,
+            environments_module_1.EnvironmentsModule,
+            caronte_module_1.CaronteModule
+        ]
     })
 ], AppModule);
-exports.AppModule = AppModule;
 //# sourceMappingURL=app.module.js.map

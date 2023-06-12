@@ -11,18 +11,14 @@ const common_1 = require("@nestjs/common");
 const environments_service_1 = require("./environments.service");
 const environments_controller_1 = require("./environments.controller");
 const prisma_module_1 = require("../prisma/prisma.module");
-const users_module_1 = require("../users/users.module");
-let EnvironmentsModule = class EnvironmentsModule {
+let EnvironmentsModule = exports.EnvironmentsModule = class EnvironmentsModule {
 };
-EnvironmentsModule = __decorate([
+exports.EnvironmentsModule = EnvironmentsModule = __decorate([
     (0, common_1.Module)({
-        imports: [
-            prisma_module_1.PrismaModule,
-            users_module_1.UsersModule
-        ],
+        imports: [prisma_module_1.PrismaModule],
         controllers: [environments_controller_1.EnvironmentsController],
-        providers: [environments_service_1.EnvironmentsService]
+        providers: [environments_service_1.EnvironmentsService],
+        exports: [environments_service_1.EnvironmentsService]
     })
 ], EnvironmentsModule);
-exports.EnvironmentsModule = EnvironmentsModule;
 //# sourceMappingURL=environments.module.js.map

@@ -10,7 +10,7 @@ exports.PrismaClientExceptionFilter = void 0;
 const common_1 = require("@nestjs/common");
 const core_1 = require("@nestjs/core");
 const client_1 = require("@prisma/client");
-let PrismaClientExceptionFilter = class PrismaClientExceptionFilter extends core_1.BaseExceptionFilter {
+let PrismaClientExceptionFilter = exports.PrismaClientExceptionFilter = class PrismaClientExceptionFilter extends core_1.BaseExceptionFilter {
     catch(exception, host) {
         console.error(exception.message);
         const ctx = host.switchToHttp();
@@ -36,7 +36,7 @@ let PrismaClientExceptionFilter = class PrismaClientExceptionFilter extends core
                 const errorMessage = message.match(/`([^`]+)`\)$/);
                 response.status(status).json({
                     statusCode: status,
-                    message: entityName ? `The requested ${entityName} was not found.` : 'Record not found',
+                    message: entityName ? `The requested ${entityName} was not found.` : message,
                     error: 'Not found'
                 });
                 break;
@@ -91,8 +91,7 @@ let PrismaClientExceptionFilter = class PrismaClientExceptionFilter extends core
         }
     }
 };
-PrismaClientExceptionFilter = __decorate([
+exports.PrismaClientExceptionFilter = PrismaClientExceptionFilter = __decorate([
     (0, common_1.Catch)(client_1.Prisma.PrismaClientKnownRequestError)
 ], PrismaClientExceptionFilter);
-exports.PrismaClientExceptionFilter = PrismaClientExceptionFilter;
 //# sourceMappingURL=prisma-client-exception.filter.js.map

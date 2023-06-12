@@ -13,19 +13,16 @@ exports.UsersService = exports.roundsOfHashing = void 0;
 const common_1 = require("@nestjs/common");
 const prisma_service_1 = require("../prisma/prisma.service");
 const bcrypt = require("bcrypt");
-const tags_service_1 = require("../tags/tags.service");
-const mac_service_1 = require("../mac/mac.service");
+const class_validator_1 = require("class-validator");
 exports.roundsOfHashing = 10;
-let UsersService = class UsersService {
-    constructor(prisma, Tags = new tags_service_1.TagsService(prisma), Macs = new mac_service_1.MacService(prisma)) {
+let UsersService = exports.UsersService = class UsersService {
+    constructor(prisma) {
         this.prisma = prisma;
-        this.Tags = Tags;
-        this.Macs = Macs;
     }
     async create(createUserDto, requestUser) {
         const hashedPassword = await bcrypt.hash(createUserDto.password, exports.roundsOfHashing);
         let user;
-        if (createUserDto.role === 'ADMIN') {
+        if (createUserDto.role === 'ADMIN' || createUserDto.role === 'ENVIRONMENT-MANAGER') {
             user = await this.prisma.user.create({
                 data: {
                     name: createUserDto.name,
@@ -33,7 +30,7 @@ let UsersService = class UsersService {
                     role: createUserDto.role,
                     password: hashedPassword,
                     adminEnvironment: createUserDto.envId ? { connect: { id: createUserDto.envId } } : undefined,
-                    tag: createUserDto.tag ? { create: { content: createUserDto.tag } } : undefined
+                    rfid: createUserDto.tag ? { create: { tag: createUserDto.tag } } : undefined
                 }
             });
         }
@@ -45,7 +42,7 @@ let UsersService = class UsersService {
                     role: createUserDto.role,
                     password: hashedPassword,
                     frequenterEnvironment: createUserDto.envId ? { connect: { id: createUserDto.envId } } : undefined,
-                    tag: createUserDto.tag ? { create: { content: createUserDto.tag } } : undefined
+                    rfid: createUserDto.tag ? { create: { tag: createUserDto.tag } } : undefined
                 }
             });
         }
@@ -54,52 +51,117 @@ let UsersService = class UsersService {
     async findAllFrequenters() {
         return await this.prisma.user.findMany({
             where: { role: 'FREQUENTER' },
-            include: { tag: true }
+            include: { rfid: true }
         });
     }
     async findAllFrequentersByEnvironment(envId) {
         return await this.prisma.user.findMany({
-            where: { role: 'FREQUENTER', environmentFrequenterId: Number(envId) },
-            include: { tag: true }
+            where: { role: 'FREQUENTER', environmentFrequenterId: envId },
+            include: { rfid: true }
         });
     }
     async findAllAdminsByEnvironment(envId) {
         return await this.prisma.user.findMany({
-            where: { role: 'ADMIN', environmentAdminId: Number(envId) },
-            include: { tag: true }
+            where: { role: 'ADMIN', environmentAdminId: envId },
+            include: { rfid: true }
         });
     }
     async findAllAdmins() {
         return await this.prisma.user.findMany({
-            where: { role: 'ADMIN' }
+            where: { role: 'ADMIN' },
+            include: { rfid: true }
         });
     }
-    async findOne(id) {
-        if (!id) {
-            throw new common_1.BadRequestException('Invalid Input. ID must be sent.');
+    async getOneForLogin(id) {
+        if (!(0, class_validator_1.isUUID)(id)) {
+            throw new common_1.HttpException('Invalid id input', common_1.HttpStatus.BAD_REQUEST);
         }
         const user = await this.prisma.user.findUniqueOrThrow({
             where: { id },
             include: {
                 adminEnvironment: true,
                 frequenterEnvironment: true,
-                tag: true,
-                mac: true
+                rfid: true
             }
         });
         return user;
     }
+    async findOne(id, requestUserId) {
+        if (!(0, class_validator_1.isUUID)(id)) {
+            throw new common_1.HttpException('Invalid id input', common_1.HttpStatus.BAD_REQUEST);
+        }
+        const user = await this.prisma.user.findUniqueOrThrow({
+            where: { id },
+            include: {
+                adminEnvironment: true,
+                frequenterEnvironment: true,
+                rfid: true
+            }
+        });
+        if (user.role === 'FREQUENTER' && user.id !== requestUserId) {
+            throw new common_1.HttpException("A frequenter only sees their own data", common_1.HttpStatus.UNAUTHORIZED);
+        }
+        return user;
+    }
+    async updateWithoutCheckUser(id, updateUserDto) {
+        try {
+            return await this.prisma.user.update({
+                data: Object.assign({}, updateUserDto),
+                where: {
+                    id
+                }
+            });
+        }
+        catch (error) {
+        }
+    }
+    async frequenterSelfUpdate(id, updateUserDto, requestUser) {
+        if (!(0, class_validator_1.isUUID)(id)) {
+            throw new common_1.HttpException('Invalid id input', common_1.HttpStatus.BAD_REQUEST);
+        }
+        const validFields = ['name', 'registration', 'password', 'mac'];
+        const invalidFields = Object.keys(updateUserDto).filter(field => !validFields.includes(field));
+        if (invalidFields.length > 0) {
+            throw new common_1.HttpException(`Invalid fields provided: ${invalidFields.join(', ')}`, common_1.HttpStatus.BAD_REQUEST);
+        }
+        if (requestUser.id !== id) {
+            throw new common_1.HttpException("Can't update", common_1.HttpStatus.UNAUTHORIZED);
+        }
+        if (updateUserDto.password) {
+            updateUserDto.password = await bcrypt.hash(updateUserDto.password, exports.roundsOfHashing);
+        }
+        try {
+            return await this.prisma.user.update({
+                data: updateUserDto,
+                where: { id }
+            });
+        }
+        catch (error) {
+            if (error.code === 'P2025') {
+                throw new common_1.HttpException('Not found', common_1.HttpStatus.NOT_FOUND);
+            }
+            else if (error.code === 'P2002') {
+                throw new common_1.HttpException('Already exists', common_1.HttpStatus.CONFLICT);
+            }
+            else {
+                throw new common_1.HttpException("Can't update tag.", common_1.HttpStatus.FORBIDDEN);
+            }
+        }
+    }
     async update(id, role, updateUserDto, requestUser) {
+        if (!(0, class_validator_1.isUUID)(id)) {
+            throw new common_1.HttpException('Invalid id input', common_1.HttpStatus.BAD_REQUEST);
+        }
+        const validFields = ['name', 'registration', 'password', 'role', 'mac'];
+        const invalidFields = Object.keys(updateUserDto).filter(field => !validFields.includes(field));
+        if (invalidFields.length > 0) {
+            throw new common_1.BadRequestException(`Invalid fields provided: ${invalidFields.join(', ')}`);
+        }
         if (requestUser.role === 'FREQUENTER' && requestUser.id !== id) {
             throw new common_1.UnauthorizedException("Can't update");
         }
         if (requestUser.role === 'ADMIN' && role === 'ADMIN' && requestUser.id !== id) {
             throw new common_1.UnauthorizedException("An admin cannot update another admin");
-        }
-        const validFields = ['name', 'registration', 'password', 'role'];
-        const invalidFields = Object.keys(updateUserDto).filter(field => !validFields.includes(field));
-        if (invalidFields.length > 0) {
-            throw new common_1.BadRequestException(`Invalid fields provided: ${invalidFields.join(', ')}`);
         }
         if (updateUserDto.password) {
             updateUserDto.password = await bcrypt.hash(updateUserDto.password, exports.roundsOfHashing);
@@ -116,8 +178,8 @@ let UsersService = class UsersService {
         return updatedUser;
     }
     async remove(id) {
-        if (isNaN(id)) {
-            throw new common_1.BadRequestException('Invalid input. ID must be a number.');
+        if (!(0, class_validator_1.isUUID)(id)) {
+            throw new common_1.HttpException('Invalid id input', common_1.HttpStatus.BAD_REQUEST);
         }
         const deletedUser = await this.prisma.user.delete({
             where: { id }
@@ -125,11 +187,8 @@ let UsersService = class UsersService {
         return deletedUser;
     }
 };
-UsersService = __decorate([
+exports.UsersService = UsersService = __decorate([
     (0, common_1.Injectable)(),
-    __metadata("design:paramtypes", [prisma_service_1.PrismaService,
-        tags_service_1.TagsService,
-        mac_service_1.MacService])
+    __metadata("design:paramtypes", [prisma_service_1.PrismaService])
 ], UsersService);
-exports.UsersService = UsersService;
 //# sourceMappingURL=users.service.js.map

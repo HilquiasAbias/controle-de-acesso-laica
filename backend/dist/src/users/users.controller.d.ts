@@ -1,24 +1,25 @@
 import { UsersService } from './users.service';
 import { CreateUserDto } from './dto/create-user.dto';
 import { UpdateUserDto } from './dto/update-user.dto';
-import { UserRequest } from './interfaces/req-user';
+import { UserRequest } from '../interfaces/req-user';
 export declare class UsersController {
     private readonly usersService;
     constructor(usersService: UsersService);
     create(createUserDto: CreateUserDto, req: UserRequest): Promise<import(".prisma/client").User>;
-    findAllAdmins(): Promise<import(".prisma/client").User[]>;
+    findAllAdmins(): Promise<(import(".prisma/client").User & {
+        rfid: import(".prisma/client").Rfid;
+    })[]>;
     findAllFrequenters(): Promise<(import(".prisma/client").User & {
-        tag: import(".prisma/client").Tag;
+        rfid: import(".prisma/client").Rfid;
     })[]>;
-    findAllFrequentersByEnvironment(envId: number): Promise<(import(".prisma/client").User & {
-        tag: import(".prisma/client").Tag;
+    findAllFrequentersByEnvironment(envId: string): Promise<(import(".prisma/client").User & {
+        rfid: import(".prisma/client").Rfid;
     })[]>;
-    findAllAdminsByEnvironment(envId: number): Promise<(import(".prisma/client").User & {
-        tag: import(".prisma/client").Tag;
+    findAllAdminsByEnvironment(envId: string): Promise<(import(".prisma/client").User & {
+        rfid: import(".prisma/client").Rfid;
     })[]>;
-    findOne(id: string): Promise<import(".prisma/client").User & {
-        tag: import(".prisma/client").Tag;
-        mac: import(".prisma/client").Mac;
+    findOne(id: string, req: UserRequest): Promise<import(".prisma/client").User & {
+        rfid: import(".prisma/client").Rfid;
         adminEnvironment: import(".prisma/client").Environment;
         frequenterEnvironment: import(".prisma/client").Environment;
     }>;

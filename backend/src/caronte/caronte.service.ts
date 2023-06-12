@@ -1,17 +1,81 @@
-import { Injectable, HttpException, HttpStatus, BadRequestException, UnauthorizedException } from '@nestjs/common';
+import { Injectable, HttpException, HttpStatus } from '@nestjs/common';
 import { CreateCaronteDto } from './dto/create-caronte.dto';
 import { UpdateCaronteDto } from './dto/update-caronte.dto';
 import { PrismaService } from 'src/prisma/prisma.service';
-import { roundsOfHashing } from 'src/users/users.service';
+import { isUUID } from 'class-validator';
+import { AccessTime, Log, User } from '@prisma/client';
 import * as bcrypt from 'bcrypt';
-import { ObolForCharonDto } from './dto/obol-for-caronte.dto';
-import { Log, User } from '@prisma/client';
+import { ObolForCharonDto } from './dto/obol-caronte.dto';
+import { IEnvToFindUser } from 'src/interfaces/env-to-find-user';
+import { UserWithAccessTime } from 'src/interfaces/user-with-accesstime';
 
 @Injectable()
 export class CaronteService {
   constructor(private readonly prisma: PrismaService) {}
 
-  async findUserByTag(tag: string, envId: number) {
+  async create(createCaronteDto: CreateCaronteDto) {
+    try {
+      return await this.prisma.caronte.create({
+        data: createCaronteDto,
+      })
+    } catch (error) {
+      if (error.code === 'P2002') {
+        throw new HttpException("Caronte already exists", HttpStatus.CONFLICT);
+      } else if (error.code === 'P2003') {
+        throw new HttpException("Environment not found", HttpStatus.CONFLICT);
+      } else {
+        throw new HttpException("Something went wrong", HttpStatus.FORBIDDEN);
+      }
+    }
+  }
+
+  async findAll() {
+    return await this.prisma.caronte.findMany();
+  }
+
+  async findAllByEnvironment(envId: string) {
+    if (!isUUID(envId)) {
+      throw new HttpException("Invalid input id", HttpStatus.BAD_REQUEST);
+    }
+
+    return await this.prisma.caronte.findMany({
+      where: {
+        environmentId: envId
+      }
+    });
+  }
+
+  async findOne(id: string) {
+    if (!isUUID(id)) {
+      throw new HttpException("Invalid input id", HttpStatus.BAD_REQUEST);
+    }
+
+    return await this.prisma.caronte.findFirstOrThrow({
+      where: { id }
+    });
+  }
+
+  async update(id: string, updateCaronteDto: UpdateCaronteDto) {
+    return `This action updates a #${id} caronte`;
+  }
+
+  async remove(id: string) {
+    return `This action removes a #${id} caronte`;
+  }
+
+  async findUserByTag(tag: string, environment: IEnvToFindUser) { //
+    let user: UserWithAccessTime
+
+    user = environment.admins.find(admin => admin.rfid.tag === tag)
+
+    if (!user) {
+      user = environment.frequenters.find(frequenter => frequenter.rfid.tag === tag)
+    }
+
+    return user
+  }
+
+  async findUserByMac(mac: string, envId: string) {
     const environment = await this.prisma.environment.findUnique({
       where: {
         id: envId
@@ -19,17 +83,19 @@ export class CaronteService {
       include: {
         admins: {
           where: {
-            tag: {
-              content: tag
-            }
+            mac
+          },
+          include: {
+            accessTimes: true
           },
           take: 1
         },
         frequenters: {
           where: {
-            tag: {
-              content: tag
-            }
+            mac
+          },
+          include: {
+            accessTimes: true
           },
           take: 1
         }
@@ -43,39 +109,7 @@ export class CaronteService {
     return environment.frequenters.shift()
   }
 
-  async findUserByMac(mac: string, envId: number) {
-    const environment = await this.prisma.environment.findUnique({
-      where: {
-        id: envId
-      },
-      include: {
-        admins: {
-          where: {
-            mac: {
-              content: mac
-            }
-          },
-          take: 1
-        },
-        frequenters: {
-          where: {
-            mac: {
-              content: mac
-            }
-          },
-          take: 1
-        }
-      },
-    });
-
-    if (environment.admins.length === 1) {
-      return environment.admins.shift()
-    }
-  
-    return environment.frequenters.shift()
-  }
-
-  async findUserByData(registration: string, password: string, envId: number) {
+  async findUserByData(registration: string, password: string, envId: string) {
     const environment = await this.prisma.environment.findUnique({
       where: {
         id: envId
@@ -85,52 +119,59 @@ export class CaronteService {
           where: {
             registration,
           },
+          include: {
+            accessTimes: true
+          },
           take: 1
         },
         frequenters: {
           where: {
             registration
           },
+          include: {
+            accessTimes: true
+          },
           take: 1
         }
       },
     });
-
-    let user: User
+  
+    let user: User & { accessTimes: AccessTime[] };
     
     if (environment.admins.length === 1) {
-      user = environment.admins.shift()
+      user = { ...environment.admins[0], accessTimes: environment.admins[0].accessTimes };
     } else {
-      user = environment.frequenters.shift()
+      user = { ...environment.frequenters[0], accessTimes: environment.frequenters[0].accessTimes };
     }
-
-    if (!user) return undefined
-
-    const isPasswordValid = await bcrypt.compare(
-      password, user.password
-    )
-
-    return isPasswordValid ? user : undefined
+  
+    if (!user) return undefined;
+  
+    const isPasswordValid = await bcrypt.compare(password, user.password);
+  
+    return isPasswordValid ? user : undefined;
   }
 
-  async isCurrentTimeValidForUser(userId: number): Promise<boolean> {
-    const user: User | null = await this.prisma.user.findUnique({
-      where: { id: userId },
-      include: {
-        accessTimes: true,
-      },
-    });
+  async isCurrentTimeValidForUser(accessTimes: AccessTime[]): Promise<boolean> { // userId: string
+    // const user = await this.prisma.user.findUnique({
+    //   where: { id: userId },
+    //   include: {
+    //     accessTimes: true
+    //   },
+    // });
 
-    if (!user?.accessTimes) {
+    if (!accessTimes || accessTimes.length === 0) {
       // O usuário não tem horários de acesso definidos
       return false;
     }
 
     const currentTime = new Date();
+
+    console.log((await this.prisma.accessTime.findFirst()).startTime)
+    
     const currentDayOfWeek = this.getDayOfWeek(currentTime);
 
     // Verificar se o horário atual está dentro de algum AccessTime
-    const isValidTime = user.accessTimes.some(
+    const isValidTime = accessTimes.some(
       (accessTime: AccessTime) =>
         accessTime.dayOfWeek === currentDayOfWeek &&
         this.isTimeWithinRange(currentTime, accessTime.startTime, accessTime.endTime),
@@ -150,168 +191,103 @@ export class CaronteService {
   }
 
   async anObolForCharon(obolForCharon: ObolForCharonDto) {
-    const validFields = ['ip', 'esp', 'carontePassword', 'userPassword', 'userRegister', 'userId', 'userDeviceMac', 'userTagRFID'];
+    const validFields = ['ip', 'esp', 'carontePassword', 'userPassword', 'userRegistration', 'userId', 'userDeviceMac', 'userTagRFID'];
     const invalidFields = Object.keys(obolForCharon).filter(
       field => !validFields.includes(field),
     );
 
     if (invalidFields.length > 0) {
-      throw new BadRequestException(
-        `Invalid fields provided: ${invalidFields.join(', ')}`,
-      );
+      throw new HttpException(`Invalid fields provided: ${invalidFields.join(', ')}`, HttpStatus.BAD_REQUEST);
     }
 
-    const caronte = await this.prisma.caronte.findFirst({
+    const caronte = await this.prisma.caronte.findFirstOrThrow({
       where: {
-        esp: obolForCharon.esp
+        esp: obolForCharon.esp,
+        ip: obolForCharon.ip
+      },
+      include: {
+        Environment: {
+          select: {
+            admins: {
+              include: {
+                accessTimes: true,
+                rfid: true
+              }
+            },
+            frequenters: {
+              include: {
+                accessTimes: true,
+                rfid: true
+              }
+            }
+          }
+        }
       }
     })
-
-    if (!caronte) {
-      throw new UnauthorizedException('Unauthorized caronte access');
-    }
 
     const isCarontePasswordValid = await bcrypt.compare(
       obolForCharon.carontePassword, caronte.password
     )
 
     if (!isCarontePasswordValid) {
-      throw new UnauthorizedException('Unauthorized caronte access');
+      throw new HttpException('Unauthorized caronte access', HttpStatus.UNAUTHORIZED);
     }
     
-    let user: User
+    let user: User & { accessTimes: AccessTime[] }
     let log: Log
     
     if (obolForCharon.userTagRFID) {
-      user = await this.findUserByTag(obolForCharon.userTagRFID, caronte.environmentId)
+      user = await this.findUserByTag(obolForCharon.userTagRFID, caronte.Environment)
     }
 
     if (!user && obolForCharon.userDeviceMac) {
-      user = await this.findUserByTag(obolForCharon.userTagRFID, caronte.environmentId)
+      console.log('!user && obolForCharon.userDeviceMac');
+      
+      user = await this.findUserByMac(obolForCharon.userTagRFID, caronte.Environment)
     }
 
-    if (!user && obolForCharon.userRegister) {
-      user = await this.findUserByData(obolForCharon.userRegister, obolForCharon.userPassword, caronte.environmentId)
+    if (!user && obolForCharon.userRegistration) {
+      console.log('!user && obolForCharon.userRegistration');
+
+      user = await this.findUserByData(obolForCharon.userRegistration, obolForCharon.userPassword, caronte.environmentId)      
     }
 
     if (!user) {
-      log = await this.prisma.log.create({
-        data: {
-          successful: false,
-          caronte: { connect: { id: caronte.id } }
-        }
-      })
-      console.log(log);
-      throw new UnauthorizedException('Unauthorized user access');
+      console.log('!user');
+
+      throw new HttpException('Unauthorized user access', HttpStatus.UNAUTHORIZED);
     }
 
-    log = await this.prisma.log.create({
-      data: {
-        successful: true,
-        caronte: { connect: { id: caronte.id } },
-        user: { connect: { id: user.id } }
-      }
-    })
+    // if (!user) {
+    //   log = await this.prisma.log.create({
+    //     data: {
+    //       successful: false,
+    //       caronte: { connect: { id: caronte.id } }
+    //     }
+    //   })
+    //   console.log(log);
+    //   throw new UnauthorizedException('Unauthorized user access');
+    // }
 
-    console.log(log);
+    // log = await this.prisma.log.create({
+    //   data: {
+    //     successful: true,
+    //     caronte: { connect: { id: caronte.id } },
+    //     user: { connect: { id: user.id } }
+    //   }
+    // })
+
+    // console.log(log);
     
+
+    const isUserAccessTimeValid = await this.isCurrentTimeValidForUser(user.accessTimes)
+
+    if (!isUserAccessTimeValid) {
+      throw new HttpException('Unauthorized user access', HttpStatus.UNAUTHORIZED);
+    }
+
     return {
       access: 'valid'
     }
-  }
-
-  async create(createCaronteDto: CreateCaronteDto) {
-    const hashedPassword = await bcrypt.hash(
-      createCaronteDto.password,
-      roundsOfHashing,
-    );
-
-    try {
-      return await this.prisma.caronte.create({
-        data: {
-          ip: createCaronteDto.ip,
-          esp: createCaronteDto.esp,
-          password: hashedPassword,
-          Environment: {
-            connect: { id: createCaronteDto.environmentId }
-          }
-        }
-      }) 
-    } catch (error) {
-      if (error.code === 'P2002') {
-        throw new HttpException("Caronte alredy exists.", HttpStatus.CONFLICT);
-      } else if (error.code === 'P2025') {
-        throw new HttpException("Record not found", HttpStatus.NOT_FOUND);
-      } else {
-        throw new HttpException("Can't create caronte.", HttpStatus.FORBIDDEN);
-      }
-    }
-  }
-
-  async findAll() {
-    try {
-      return await this.prisma.caronte.findMany()
-    } catch (error) {
-      throw new HttpException("Something goes wrong", HttpStatus.BAD_REQUEST);
-    }
-  }
-
-  async findOne(id: number) {
-    if (!id) {
-      throw new HttpException('Invalid Input. ID must be sent', HttpStatus.BAD_REQUEST);
-    }
-
-    return await this.prisma.caronte.findFirstOrThrow({
-      where: { id }
-    });
-  }
-
-  async update(id: number, updateCaronteDto: UpdateCaronteDto) {
-    if (!id) {
-      throw new HttpException('Invalid Input. ID must be sent', HttpStatus.BAD_REQUEST);
-    }
-    
-    const validFields = ['ip', 'esp', 'password', 'environmentId'];
-    const invalidFields = Object.keys(updateCaronteDto).filter(
-      field => !validFields.includes(field),
-    );
-
-    if (invalidFields.length > 0) {
-      throw new BadRequestException(
-        `Invalid fields provided: ${invalidFields.join(', ')}`,
-      );
-    }
-
-    if (updateCaronteDto.password) {
-      updateCaronteDto.password = await bcrypt.hash(
-        updateCaronteDto.password,
-        roundsOfHashing,
-      );
-    }
-
-    try {
-      return await this.prisma.caronte.update({
-        where: { id },
-        data: updateCaronteDto
-      });
-    } catch (error) {
-      if (error.code === 'P2025') {
-        throw new HttpException("Environment not found", HttpStatus.NOT_FOUND);
-      } else if (error.code === 'P2002') {
-        throw new HttpException("This caronte already exists", HttpStatus.CONFLICT);
-      } else {
-        throw new HttpException("Can't update caronte.", HttpStatus.FORBIDDEN);
-      }
-    }
-  }
-
-  async remove(id: number) {
-    if (isNaN(id)) {
-      throw new HttpException("Id must be a number", HttpStatus.BAD_REQUEST);
-    }
-
-    return await this.prisma.caronte.delete({
-      where: { id }
-    });
   }
 }

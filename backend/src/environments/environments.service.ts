@@ -1,10 +1,10 @@
-import { Injectable, BadRequestException, HttpException, HttpStatus } from '@nestjs/common';
+import { Injectable, HttpException, HttpStatus } from '@nestjs/common';
 import { CreateEnvironmentDto } from './dto/create-environment.dto';
 import { UpdateEnvironmentDto } from './dto/update-environment.dto';
 import { PrismaService } from 'src/prisma/prisma.service';
-import { CreateUserDto } from 'src/users/dto/create-user.dto';
 import { AddUserInEnvironmentDto } from './dto/add-user-environment.dto';
-import { User } from '@prisma/client';
+import { isUUID } from 'class-validator';
+import { DateTime } from 'luxon';
 
 @Injectable()
 export class EnvironmentsService {
@@ -48,6 +48,24 @@ export class EnvironmentsService {
         })
       }
 
+      if (data.accessTime && data.role === 'FREQUENTER') {
+        await Promise.all(
+          data.accessTime.map(async (accessTime) => {
+            const { day, startTime, endTime } = accessTime;
+  
+            await this.prisma.accessTime.create({
+              data: {
+                userId: user.id,
+                dayOfWeek: day,
+                startTime: DateTime.fromFormat(startTime, 'HH:mm:ss').toISO(),
+                endTime: DateTime.fromFormat(endTime, 'HH:mm:ss').toISO(),
+              }
+            })
+          })
+        );
+      }
+  
+
       return {
         status: 201,
         message: 'User successfully added.'
@@ -71,9 +89,9 @@ export class EnvironmentsService {
     });
   }
 
-  async findOne(id: number) {
-    if (!id) {
-      throw new BadRequestException('Invalid Input. ID must be sent.');
+  async findOne(id: string) {
+    if (!isUUID(id)) {
+      throw new HttpException("Invalid id input", HttpStatus.BAD_REQUEST);
     }
 
     return await this.prisma.environment.findFirstOrThrow({
@@ -86,9 +104,9 @@ export class EnvironmentsService {
     });
   }
 
-  async update(id: number, updateEnvironmentDto: UpdateEnvironmentDto) {
-    if (!id) {
-      throw new BadRequestException('Invalid Input. ID must be sent.');
+  async update(id: string, updateEnvironmentDto: UpdateEnvironmentDto) {
+    if (!isUUID(id)) {
+      throw new HttpException("Invalid id input", HttpStatus.BAD_REQUEST);
     }
 
     const validFields = ['name', 'description', 'adminId'];
@@ -97,9 +115,7 @@ export class EnvironmentsService {
     );
 
     if (invalidFields.length > 0) {
-      throw new BadRequestException(
-        `Invalid fields provided: ${invalidFields.join(', ')}`,
-      );
+      throw new HttpException(`Invalid fields provided: ${invalidFields.join(', ')}`, HttpStatus.BAD_REQUEST);
     }
 
     return await this.prisma.environment.update({
@@ -108,9 +124,9 @@ export class EnvironmentsService {
     });
   }
 
-  async remove(id: number) {
-    if (!id) {
-      throw new BadRequestException('Invalid Input. ID must be sent.');
+  async remove(id: string) {
+    if (!isUUID(id)) {
+      throw new HttpException("Invalid id input", HttpStatus.BAD_REQUEST);
     }
 
     return await this.prisma.environment.delete({

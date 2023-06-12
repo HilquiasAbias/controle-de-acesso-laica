@@ -4,5 +4,6 @@ export declare class CreateUserDto {
     password: string;
     role: 'ADMIN' | 'FREQUENTER' | 'ENVIRONMENT-MANAGER';
     tag?: string;
-    envId?: number;
+    mac?: string;
+    envId?: string;
 }

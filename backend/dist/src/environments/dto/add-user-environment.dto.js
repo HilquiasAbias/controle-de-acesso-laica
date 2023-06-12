@@ -11,22 +11,31 @@ var __metadata = (this && this.__metadata) || function (k, v) {
 Object.defineProperty(exports, "__esModule", { value: true });
 exports.AddUserInEnvironmentDto = void 0;
 const class_validator_1 = require("class-validator");
+const swagger_1 = require("@nestjs/swagger");
 class AddUserInEnvironmentDto {
 }
+exports.AddUserInEnvironmentDto = AddUserInEnvironmentDto;
 __decorate([
-    (0, class_validator_1.IsNumber)(),
+    (0, class_validator_1.IsUUID)(),
     (0, class_validator_1.IsNotEmpty)(),
-    __metadata("design:type", Number)
+    (0, swagger_1.ApiProperty)(),
+    __metadata("design:type", String)
 ], AddUserInEnvironmentDto.prototype, "envId", void 0);
 __decorate([
-    (0, class_validator_1.IsNumber)(),
+    (0, class_validator_1.IsUUID)(),
     (0, class_validator_1.IsNotEmpty)(),
-    __metadata("design:type", Number)
+    (0, swagger_1.ApiProperty)(),
+    __metadata("design:type", String)
 ], AddUserInEnvironmentDto.prototype, "userId", void 0);
 __decorate([
     (0, class_validator_1.IsString)(),
     (0, class_validator_1.IsNotEmpty)(),
+    (0, swagger_1.ApiProperty)(),
     __metadata("design:type", String)
 ], AddUserInEnvironmentDto.prototype, "role", void 0);
-exports.AddUserInEnvironmentDto = AddUserInEnvironmentDto;
+__decorate([
+    (0, swagger_1.ApiProperty)(),
+    (0, class_validator_1.IsOptional)(),
+    __metadata("design:type", Array)
+], AddUserInEnvironmentDto.prototype, "accessTime", void 0);
 //# sourceMappingURL=add-user-environment.dto.js.map

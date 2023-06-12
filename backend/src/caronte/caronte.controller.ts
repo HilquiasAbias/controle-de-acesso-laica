@@ -1,11 +1,8 @@
-import { Controller, Get, Post, Body, Patch, Param, Delete, UseGuards } from '@nestjs/common';
+import { Controller, Get, Post, Body, Patch, Param, Delete } from '@nestjs/common';
 import { CaronteService } from './caronte.service';
 import { CreateCaronteDto } from './dto/create-caronte.dto';
 import { UpdateCaronteDto } from './dto/update-caronte.dto';
-import { Roles } from 'src/auth/decorators/roles.decorator';
-import { JwtAuthGuard } from 'src/auth/guards/jwt-auth.guard';
-import { RolesGuard } from 'src/auth/guards/roles.guard';
-import { ObolForCharonDto } from './dto/obol-for-caronte.dto';
+import { ObolForCharonDto } from './dto/obol-caronte.dto';
 
 @Controller('caronte')
 export class CaronteController {
@@ -18,38 +15,33 @@ export class CaronteController {
     return this.caronteService.anObolForCharon(obolForCharonDto)
   }
 
-  @Roles('ADMIN') // UserRoles.ADMIN
-  @UseGuards(JwtAuthGuard, RolesGuard)
   @Post()
-  create(@Body() createCaronteDto: CreateCaronteDto) { 
+  create(@Body() createCaronteDto: CreateCaronteDto) {
     return this.caronteService.create(createCaronteDto);
   }
 
-  @Roles('ADMIN') // UserRoles.ADMIN
-  @UseGuards(JwtAuthGuard, RolesGuard)
   @Get()
   findAll() {
     return this.caronteService.findAll();
   }
 
-  @Roles('ADMIN') // UserRoles.ADMIN
-  @UseGuards(JwtAuthGuard, RolesGuard)
+  @Get('environment/:envId')
+  findAllByEnvironment(@Param('envId') envId: string) {
+    return this.caronteService.findAllByEnvironment(envId);
+  }
+
   @Get(':id')
   findOne(@Param('id') id: string) {
-    return this.caronteService.findOne(+id);
+    return this.caronteService.findOne(id);
   }
 
-  @Roles('ADMIN') // UserRoles.ADMIN
-  @UseGuards(JwtAuthGuard, RolesGuard)
   @Patch(':id')
   update(@Param('id') id: string, @Body() updateCaronteDto: UpdateCaronteDto) {
-    return this.caronteService.update(+id, updateCaronteDto);
+    return this.caronteService.update(id, updateCaronteDto);
   }
 
-  @Roles('ADMIN') // UserRoles.ADMIN
-  @UseGuards(JwtAuthGuard, RolesGuard)
   @Delete(':id')
   remove(@Param('id') id: string) {
-    return this.caronteService.remove(+id);
+    return this.caronteService.remove(id);
   }
 }

@@ -4,7 +4,7 @@ generator client {
 
 datasource db {
   provider = "sqlite" // postgres
-  url      = env("DATABASE_URL")
+  url      = "file:./dev.db" // env("DATABASE_URL")
 }
 
 // enum Roles {
@@ -13,46 +13,36 @@ datasource db {
 //   ENVIRONMENT-MANAGER
 // }
 
-model Tag {
-  id        Int      @id @default(autoincrement())
-  content   String   @unique
-  User      User?    @relation(fields: [userId], references: [id])
-  userId    Int?     @unique
-  createdAt DateTime @default(now())
-  updatedAt DateTime @updatedAt
-}
-
-model Mac {
-  id        Int      @id @default(autoincrement())
-  content   String   @unique
-  User      User?    @relation(fields: [userId], references: [id])
-  userId    Int?     @unique
+model Rfid {
+  id        String   @id @default(uuid())
+  tag       String   @unique
+  User      User     @relation(fields: [userId], references: [id])
+  userId    String   @unique
   createdAt DateTime @default(now())
   updatedAt DateTime @updatedAt
 }
 
 model AccessTime {
-  id        Int      @id @default(autoincrement())
-  something String?
+  id        String   @id @default(uuid())
   dayOfWeek String
   startTime DateTime
   endTime   DateTime
   User      User     @relation(fields: [userId], references: [id])
-  userId    Int
+  userId    String
 }
 
 model User {
-  id                      Int          @id @default(autoincrement())
+  id                      String       @id @default(uuid())
   name                    String
   registration            String       @unique
   password                String
   role                    String // Roles
-  tag                     Tag?
-  mac                     Mac?
+  rfid                    Rfid?
+  mac                     String?
   adminEnvironment        Environment? @relation("admins", fields: [environmentAdminId], references: [id])
-  environmentAdminId      Int?
+  environmentAdminId      String?
   frequenterEnvironment   Environment? @relation("frequenters", fields: [environmentFrequenterId], references: [id])
-  environmentFrequenterId Int?
+  environmentFrequenterId String?
   createdAt               DateTime     @default(now())
   updatedAt               DateTime     @updatedAt
   Log                     Log[]
@@ -60,7 +50,7 @@ model User {
 }
 
 model Environment {
-  id          Int       @id @default(autoincrement())
+  id          String    @id @default(uuid())
   name        String    @unique
   description String?
   admins      User[]    @relation("admins")
@@ -71,21 +61,22 @@ model Environment {
 }
 
 model Caronte {
-  id            Int          @id @default(autoincrement())
-  ip            String       @unique
-  esp           String       @unique
+  id            String      @id @default(uuid())
+  ip            String      @unique
+  esp           String      @unique
   password      String
-  Environment   Environment? @relation(fields: [environmentId], references: [id])
-  environmentId Int?
+  Environment   Environment @relation(fields: [environmentId], references: [id])
+  environmentId String
   Log           Log[]
 }
 
 model Log {
-  id         Int      @id @default(autoincrement())
-  caronte    Caronte  @relation(fields: [caronteId], references: [id])
-  caronteId  Int
-  user       User?    @relation(fields: [userId], references: [id])
-  userId     Int?
-  successful Boolean
-  createdAt  DateTime @default(now())
+  id          String   @id @default(uuid())
+  caronte     Caronte  @relation(fields: [caronteId], references: [id])
+  caronteId   String
+  user        User?    @relation(fields: [userId], references: [id])
+  userId      String?
+  errorReason String
+  successful  Boolean
+  createdAt   DateTime @default(now())
 }

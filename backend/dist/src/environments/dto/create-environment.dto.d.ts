@@ -1,5 +1,5 @@
 export declare class CreateEnvironmentDto {
     name: string;
     description?: string;
-    adminId?: number;
+    adminId?: string;
 }

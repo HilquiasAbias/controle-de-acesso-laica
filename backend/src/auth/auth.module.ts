@@ -12,8 +12,8 @@ import { JwtStrategy } from './strategies/jwt.strategy';
     PrismaModule,
     PassportModule,
     JwtModule.register({
-      secret: process.env.JWT_SECRET,
-      signOptions: { expiresIn: '10m' }, // 30s, 7d, 24h, 30m
+      secret: "Who's for the Rest from every pain and ill? Who's for the Lethe's plain? the Donkey-shearings? Who's for Kerberia? Taenarum? or the Ravens?",
+      signOptions: { expiresIn: '15m' }, // 30s, 7d, 24h, 30m
     }),
     UsersModule,
   ],

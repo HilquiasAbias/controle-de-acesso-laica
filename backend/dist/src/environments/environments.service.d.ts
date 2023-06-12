@@ -2,7 +2,6 @@ import { CreateEnvironmentDto } from './dto/create-environment.dto';
 import { UpdateEnvironmentDto } from './dto/update-environment.dto';
 import { PrismaService } from 'src/prisma/prisma.service';
 import { AddUserInEnvironmentDto } from './dto/add-user-environment.dto';
-import { User } from '@prisma/client';
 export declare class EnvironmentsService {
     private readonly prisma;
     constructor(prisma: PrismaService);
@@ -12,15 +11,15 @@ export declare class EnvironmentsService {
         message: string;
     }>;
     findAll(): Promise<(import(".prisma/client").Environment & {
-        admins: User[];
-        frequenters: User[];
+        admins: import(".prisma/client").User[];
+        frequenters: import(".prisma/client").User[];
         carontes: import(".prisma/client").Caronte[];
     })[]>;
-    findOne(id: number): Promise<import(".prisma/client").Environment & {
-        admins: User[];
-        frequenters: User[];
+    findOne(id: string): Promise<import(".prisma/client").Environment & {
+        admins: import(".prisma/client").User[];
+        frequenters: import(".prisma/client").User[];
         carontes: import(".prisma/client").Caronte[];
     }>;
-    update(id: number, updateEnvironmentDto: UpdateEnvironmentDto): Promise<import(".prisma/client").Environment>;
-    remove(id: number): Promise<import(".prisma/client").Environment>;
+    update(id: string, updateEnvironmentDto: UpdateEnvironmentDto): Promise<import(".prisma/client").Environment>;
+    remove(id: string): Promise<import(".prisma/client").Environment>;
 }

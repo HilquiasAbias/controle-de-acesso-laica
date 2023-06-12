@@ -2,9 +2,13 @@ import { EnvironmentsService } from './environments.service';
 import { CreateEnvironmentDto } from './dto/create-environment.dto';
 import { UpdateEnvironmentDto } from './dto/update-environment.dto';
 import { AddUserInEnvironmentDto } from './dto/add-user-environment.dto';
+import { Request } from 'express';
 export declare class EnvironmentsController {
     private readonly environmentsService;
     constructor(environmentsService: EnvironmentsService);
+    getExample(request: Request): {
+        ip_client: string | string[];
+    };
     create(createEnvironmentDto: CreateEnvironmentDto): Promise<import(".prisma/client").Environment>;
     addUserInEnvironment(addUserInEnvironmentDto: AddUserInEnvironmentDto): Promise<{
         status: number;

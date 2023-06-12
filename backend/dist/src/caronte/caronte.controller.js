@@ -17,11 +17,8 @@ const common_1 = require("@nestjs/common");
 const caronte_service_1 = require("./caronte.service");
 const create_caronte_dto_1 = require("./dto/create-caronte.dto");
 const update_caronte_dto_1 = require("./dto/update-caronte.dto");
-const roles_decorator_1 = require("../auth/decorators/roles.decorator");
-const jwt_auth_guard_1 = require("../auth/guards/jwt-auth.guard");
-const roles_guard_1 = require("../auth/guards/roles.guard");
-const obol_for_caronte_dto_1 = require("./dto/obol-for-caronte.dto");
-let CaronteController = class CaronteController {
+const obol_caronte_dto_1 = require("./dto/obol-caronte.dto");
+let CaronteController = exports.CaronteController = class CaronteController {
     constructor(caronteService) {
         this.caronteService = caronteService;
     }
@@ -34,26 +31,27 @@ let CaronteController = class CaronteController {
     findAll() {
         return this.caronteService.findAll();
     }
+    findAllByEnvironment(envId) {
+        return this.caronteService.findAllByEnvironment(envId);
+    }
     findOne(id) {
-        return this.caronteService.findOne(+id);
+        return this.caronteService.findOne(id);
     }
     update(id, updateCaronteDto) {
-        return this.caronteService.update(+id, updateCaronteDto);
+        return this.caronteService.update(id, updateCaronteDto);
     }
     remove(id) {
-        return this.caronteService.remove(+id);
+        return this.caronteService.remove(id);
     }
 };
 __decorate([
     (0, common_1.Post)('obol'),
     __param(0, (0, common_1.Body)()),
     __metadata("design:type", Function),
-    __metadata("design:paramtypes", [obol_for_caronte_dto_1.ObolForCharonDto]),
+    __metadata("design:paramtypes", [obol_caronte_dto_1.ObolForCharonDto]),
     __metadata("design:returntype", void 0)
 ], CaronteController.prototype, "obol", null);
 __decorate([
-    (0, roles_decorator_1.Roles)('ADMIN'),
-    (0, common_1.UseGuards)(jwt_auth_guard_1.JwtAuthGuard, roles_guard_1.RolesGuard),
     (0, common_1.Post)(),
     __param(0, (0, common_1.Body)()),
     __metadata("design:type", Function),
@@ -61,16 +59,19 @@ __decorate([
     __metadata("design:returntype", void 0)
 ], CaronteController.prototype, "create", null);
 __decorate([
-    (0, roles_decorator_1.Roles)('ADMIN'),
-    (0, common_1.UseGuards)(jwt_auth_guard_1.JwtAuthGuard, roles_guard_1.RolesGuard),
     (0, common_1.Get)(),
     __metadata("design:type", Function),
     __metadata("design:paramtypes", []),
     __metadata("design:returntype", void 0)
 ], CaronteController.prototype, "findAll", null);
 __decorate([
-    (0, roles_decorator_1.Roles)('ADMIN'),
-    (0, common_1.UseGuards)(jwt_auth_guard_1.JwtAuthGuard, roles_guard_1.RolesGuard),
+    (0, common_1.Get)('environment/:envId'),
+    __param(0, (0, common_1.Param)('envId')),
+    __metadata("design:type", Function),
+    __metadata("design:paramtypes", [String]),
+    __metadata("design:returntype", void 0)
+], CaronteController.prototype, "findAllByEnvironment", null);
+__decorate([
     (0, common_1.Get)(':id'),
     __param(0, (0, common_1.Param)('id')),
     __metadata("design:type", Function),
@@ -78,8 +79,6 @@ __decorate([
     __metadata("design:returntype", void 0)
 ], CaronteController.prototype, "findOne", null);
 __decorate([
-    (0, roles_decorator_1.Roles)('ADMIN'),
-    (0, common_1.UseGuards)(jwt_auth_guard_1.JwtAuthGuard, roles_guard_1.RolesGuard),
     (0, common_1.Patch)(':id'),
     __param(0, (0, common_1.Param)('id')),
     __param(1, (0, common_1.Body)()),
@@ -88,17 +87,14 @@ __decorate([
     __metadata("design:returntype", void 0)
 ], CaronteController.prototype, "update", null);
 __decorate([
-    (0, roles_decorator_1.Roles)('ADMIN'),
-    (0, common_1.UseGuards)(jwt_auth_guard_1.JwtAuthGuard, roles_guard_1.RolesGuard),
     (0, common_1.Delete)(':id'),
     __param(0, (0, common_1.Param)('id')),
     __metadata("design:type", Function),
     __metadata("design:paramtypes", [String]),
     __metadata("design:returntype", void 0)
 ], CaronteController.prototype, "remove", null);
-CaronteController = __decorate([
+exports.CaronteController = CaronteController = __decorate([
     (0, common_1.Controller)('caronte'),
     __metadata("design:paramtypes", [caronte_service_1.CaronteService])
 ], CaronteController);
-exports.CaronteController = CaronteController;
 //# sourceMappingURL=caronte.controller.js.map

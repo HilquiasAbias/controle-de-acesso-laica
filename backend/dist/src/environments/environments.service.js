@@ -12,7 +12,9 @@ Object.defineProperty(exports, "__esModule", { value: true });
 exports.EnvironmentsService = void 0;
 const common_1 = require("@nestjs/common");
 const prisma_service_1 = require("../prisma/prisma.service");
-let EnvironmentsService = class EnvironmentsService {
+const class_validator_1 = require("class-validator");
+const luxon_1 = require("luxon");
+let EnvironmentsService = exports.EnvironmentsService = class EnvironmentsService {
     constructor(prisma) {
         this.prisma = prisma;
     }
@@ -50,6 +52,19 @@ let EnvironmentsService = class EnvironmentsService {
                     }
                 });
             }
+            if (data.accessTime && data.role === 'FREQUENTER') {
+                await Promise.all(data.accessTime.map(async (accessTime) => {
+                    const { day, startTime, endTime } = accessTime;
+                    await this.prisma.accessTime.create({
+                        data: {
+                            userId: user.id,
+                            dayOfWeek: day,
+                            startTime: luxon_1.DateTime.fromFormat(startTime, 'HH:mm:ss').toISO(),
+                            endTime: luxon_1.DateTime.fromFormat(endTime, 'HH:mm:ss').toISO(),
+                        }
+                    });
+                }));
+            }
             return {
                 status: 201,
                 message: 'User successfully added.'
@@ -74,8 +89,8 @@ let EnvironmentsService = class EnvironmentsService {
         });
     }
     async findOne(id) {
-        if (!id) {
-            throw new common_1.BadRequestException('Invalid Input. ID must be sent.');
+        if (!(0, class_validator_1.isUUID)(id)) {
+            throw new common_1.HttpException("Invalid id input", common_1.HttpStatus.BAD_REQUEST);
         }
         return await this.prisma.environment.findFirstOrThrow({
             where: { id },
@@ -87,13 +102,13 @@ let EnvironmentsService = class EnvironmentsService {
         });
     }
     async update(id, updateEnvironmentDto) {
-        if (!id) {
-            throw new common_1.BadRequestException('Invalid Input. ID must be sent.');
+        if (!(0, class_validator_1.isUUID)(id)) {
+            throw new common_1.HttpException("Invalid id input", common_1.HttpStatus.BAD_REQUEST);
         }
         const validFields = ['name', 'description', 'adminId'];
         const invalidFields = Object.keys(updateEnvironmentDto).filter(field => !validFields.includes(field));
         if (invalidFields.length > 0) {
-            throw new common_1.BadRequestException(`Invalid fields provided: ${invalidFields.join(', ')}`);
+            throw new common_1.HttpException(`Invalid fields provided: ${invalidFields.join(', ')}`, common_1.HttpStatus.BAD_REQUEST);
         }
         return await this.prisma.environment.update({
             data: updateEnvironmentDto,
@@ -101,17 +116,16 @@ let EnvironmentsService = class EnvironmentsService {
         });
     }
     async remove(id) {
-        if (!id) {
-            throw new common_1.BadRequestException('Invalid Input. ID must be sent.');
+        if (!(0, class_validator_1.isUUID)(id)) {
+            throw new common_1.HttpException("Invalid id input", common_1.HttpStatus.BAD_REQUEST);
         }
         return await this.prisma.environment.delete({
             where: { id }
         });
     }
 };
-EnvironmentsService = __decorate([
+exports.EnvironmentsService = EnvironmentsService = __decorate([
     (0, common_1.Injectable)(),
     __metadata("design:paramtypes", [prisma_service_1.PrismaService])
 ], EnvironmentsService);
-exports.EnvironmentsService = EnvironmentsService;
 //# sourceMappingURL=environments.service.js.map

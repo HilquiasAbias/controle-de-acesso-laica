@@ -11,18 +11,13 @@ const common_1 = require("@nestjs/common");
 const caronte_service_1 = require("./caronte.service");
 const caronte_controller_1 = require("./caronte.controller");
 const prisma_module_1 = require("../prisma/prisma.module");
-const environments_module_1 = require("../environments/environments.module");
-let CaronteModule = class CaronteModule {
+let CaronteModule = exports.CaronteModule = class CaronteModule {
 };
-CaronteModule = __decorate([
+exports.CaronteModule = CaronteModule = __decorate([
     (0, common_1.Module)({
-        imports: [
-            prisma_module_1.PrismaModule,
-            environments_module_1.EnvironmentsModule,
-        ],
+        imports: [prisma_module_1.PrismaModule],
         controllers: [caronte_controller_1.CaronteController],
         providers: [caronte_service_1.CaronteService]
     })
 ], CaronteModule);
-exports.CaronteModule = CaronteModule;
 //# sourceMappingURL=caronte.module.js.map
