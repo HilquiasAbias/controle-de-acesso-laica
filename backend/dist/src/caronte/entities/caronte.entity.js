@@ -9,7 +9,7 @@ var __metadata = (this && this.__metadata) || function (k, v) {
     if (typeof Reflect === "object" && typeof Reflect.metadata === "function") return Reflect.metadata(k, v);
 };
 Object.defineProperty(exports, "__esModule", { value: true });
-exports.CaronteEntity = void 0;
+exports.CaronteResponseEntity = exports.CaronteEntity = void 0;
 const swagger_1 = require("@nestjs/swagger");
 class CaronteEntity {
 }
@@ -34,4 +34,11 @@ __decorate([
     (0, swagger_1.ApiProperty)(),
     __metadata("design:type", String)
 ], CaronteEntity.prototype, "environmentId", void 0);
+class CaronteResponseEntity {
+}
+exports.CaronteResponseEntity = CaronteResponseEntity;
+__decorate([
+    (0, swagger_1.ApiProperty)(),
+    __metadata("design:type", String)
+], CaronteResponseEntity.prototype, "access", void 0);
 //# sourceMappingURL=caronte.entity.js.map

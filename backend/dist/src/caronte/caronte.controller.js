@@ -18,6 +18,8 @@ const caronte_service_1 = require("./caronte.service");
 const create_caronte_dto_1 = require("./dto/create-caronte.dto");
 const update_caronte_dto_1 = require("./dto/update-caronte.dto");
 const obol_caronte_dto_1 = require("./dto/obol-caronte.dto");
+const swagger_1 = require("@nestjs/swagger");
+const caronte_entity_1 = require("./entities/caronte.entity");
 let CaronteController = exports.CaronteController = class CaronteController {
     constructor(caronteService) {
         this.caronteService = caronteService;
@@ -46,6 +48,8 @@ let CaronteController = exports.CaronteController = class CaronteController {
 };
 __decorate([
     (0, common_1.Post)('obol'),
+    (0, swagger_1.ApiOperation)({ description: 'Endpoint uma moeda para caronte' }),
+    (0, swagger_1.ApiOkResponse)({ type: caronte_entity_1.CaronteResponseEntity }),
     __param(0, (0, common_1.Body)()),
     __metadata("design:type", Function),
     __metadata("design:paramtypes", [obol_caronte_dto_1.ObolForCharonDto]),
@@ -53,6 +57,9 @@ __decorate([
 ], CaronteController.prototype, "obol", null);
 __decorate([
     (0, common_1.Post)(),
+    (0, swagger_1.ApiBearerAuth)(),
+    (0, swagger_1.ApiOperation)({ description: 'Endpoint para cadastrar caronte' }),
+    (0, swagger_1.ApiCreatedResponse)({ type: caronte_entity_1.CaronteEntity }),
     __param(0, (0, common_1.Body)()),
     __metadata("design:type", Function),
     __metadata("design:paramtypes", [create_caronte_dto_1.CreateCaronteDto]),
@@ -60,12 +67,18 @@ __decorate([
 ], CaronteController.prototype, "create", null);
 __decorate([
     (0, common_1.Get)(),
+    (0, swagger_1.ApiBearerAuth)(),
+    (0, swagger_1.ApiOperation)({ description: 'Endpoint para buscar todos os carontes' }),
+    (0, swagger_1.ApiOkResponse)({ type: caronte_entity_1.CaronteEntity, isArray: true }),
     __metadata("design:type", Function),
     __metadata("design:paramtypes", []),
     __metadata("design:returntype", void 0)
 ], CaronteController.prototype, "findAll", null);
 __decorate([
     (0, common_1.Get)('environment/:envId'),
+    (0, swagger_1.ApiBearerAuth)(),
+    (0, swagger_1.ApiOperation)({ description: 'Endpoint para buscar todos os carontes de um ambiente' }),
+    (0, swagger_1.ApiOkResponse)({ type: caronte_entity_1.CaronteEntity, isArray: true }),
     __param(0, (0, common_1.Param)('envId')),
     __metadata("design:type", Function),
     __metadata("design:paramtypes", [String]),
@@ -73,6 +86,9 @@ __decorate([
 ], CaronteController.prototype, "findAllByEnvironment", null);
 __decorate([
     (0, common_1.Get)(':id'),
+    (0, swagger_1.ApiBearerAuth)(),
+    (0, swagger_1.ApiOperation)({ description: 'Endpoint para buscar um caronte' }),
+    (0, swagger_1.ApiOkResponse)({ type: caronte_entity_1.CaronteEntity }),
     __param(0, (0, common_1.Param)('id')),
     __metadata("design:type", Function),
     __metadata("design:paramtypes", [String]),
@@ -80,6 +96,9 @@ __decorate([
 ], CaronteController.prototype, "findOne", null);
 __decorate([
     (0, common_1.Patch)(':id'),
+    (0, swagger_1.ApiBearerAuth)(),
+    (0, swagger_1.ApiOperation)({ description: 'Endpoint para atualizar um caronte' }),
+    (0, swagger_1.ApiOkResponse)({ type: caronte_entity_1.CaronteEntity }),
     __param(0, (0, common_1.Param)('id')),
     __param(1, (0, common_1.Body)()),
     __metadata("design:type", Function),
@@ -88,6 +107,9 @@ __decorate([
 ], CaronteController.prototype, "update", null);
 __decorate([
     (0, common_1.Delete)(':id'),
+    (0, swagger_1.ApiBearerAuth)(),
+    (0, swagger_1.ApiOperation)({ description: 'Endpoint para remover um caronte' }),
+    (0, swagger_1.ApiOkResponse)({ type: caronte_entity_1.CaronteEntity }),
     __param(0, (0, common_1.Param)('id')),
     __metadata("design:type", Function),
     __metadata("design:paramtypes", [String]),
@@ -95,6 +117,7 @@ __decorate([
 ], CaronteController.prototype, "remove", null);
 exports.CaronteController = CaronteController = __decorate([
     (0, common_1.Controller)('caronte'),
+    (0, swagger_1.ApiTags)('Caronte'),
     __metadata("design:paramtypes", [caronte_service_1.CaronteService])
 ], CaronteController);
 //# sourceMappingURL=caronte.controller.js.map
