@@ -14,6 +14,7 @@ const auth_module_1 = require("./auth/auth.module");
 const rfid_module_1 = require("./rfid/rfid.module");
 const environments_module_1 = require("./environments/environments.module");
 const caronte_module_1 = require("./caronte/caronte.module");
+const log_module_1 = require("./log/log.module");
 const cors = require("cors");
 let AppModule = exports.AppModule = class AppModule {
     configure(consumer) {
@@ -28,7 +29,7 @@ exports.AppModule = AppModule = __decorate([
             auth_module_1.AuthModule,
             rfid_module_1.RfidModule,
             environments_module_1.EnvironmentsModule,
-            caronte_module_1.CaronteModule
+            caronte_module_1.CaronteModule, log_module_1.LogModule
         ]
     })
 ], AppModule);

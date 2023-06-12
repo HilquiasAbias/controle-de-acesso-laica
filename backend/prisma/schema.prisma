@@ -70,13 +70,20 @@ model Caronte {
   Log           Log[]
 }
 
+// enum LogTypes {
+//   INFO
+//   WARN
+//   DEBUG
+// }
+
 model Log {
-  id          String   @id @default(uuid())
-  caronte     Caronte  @relation(fields: [caronteId], references: [id])
-  caronteId   String
-  user        User?    @relation(fields: [userId], references: [id])
-  userId      String?
-  errorReason String
-  successful  Boolean
-  createdAt   DateTime @default(now())
+  id         String   @id @default(uuid())
+  caronte    Caronte  @relation(fields: [caronteId], references: [id])
+  caronteId  String
+  user       User?    @relation(fields: [userId], references: [id])
+  userId     String?
+  type       String // LogTypes
+  message    String
+  successful Boolean
+  createdAt  DateTime @default(now())
 }
