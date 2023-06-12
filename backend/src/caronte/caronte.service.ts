@@ -7,7 +7,7 @@ import { AccessTime, Log, User } from '@prisma/client';
 import * as bcrypt from 'bcrypt';
 import { ObolForCharonDto } from './dto/obol-caronte.dto';
 import { IEnvToFindUser } from 'src/interfaces/env-to-find-user';
-import { UserWithAccessTime } from 'src/interfaces/user-with-accesstime';
+import { UserWithAccessTime, UserWithAccessTimeWithoutRFID } from 'src/interfaces/user-with-accesstime';
 
 @Injectable()
 export class CaronteService {
@@ -63,88 +63,41 @@ export class CaronteService {
     return `This action removes a #${id} caronte`;
   }
 
-  async findUserByTag(tag: string, environment: IEnvToFindUser) { //
+  async findUserByTag(tag: string, users: IEnvToFindUser) { //
     let user: UserWithAccessTime
 
-    user = environment.admins.find(admin => admin.rfid.tag === tag)
+    user = users.admins.find(admin => admin.rfid.tag === tag)
 
     if (!user) {
-      user = environment.frequenters.find(frequenter => frequenter.rfid.tag === tag)
+      user = users.frequenters.find(frequenter => frequenter.rfid.tag === tag)
     }
 
     return user
   }
 
-  async findUserByMac(mac: string, envId: string) {
-    const environment = await this.prisma.environment.findUnique({
-      where: {
-        id: envId
-      },
-      include: {
-        admins: {
-          where: {
-            mac
-          },
-          include: {
-            accessTimes: true
-          },
-          take: 1
-        },
-        frequenters: {
-          where: {
-            mac
-          },
-          include: {
-            accessTimes: true
-          },
-          take: 1
-        }
-      },
-    });
+  async findUserByMac(mac: string, users: IEnvToFindUser) {
+    let user: UserWithAccessTime
 
-    if (environment.admins.length === 1) {
-      return environment.admins.shift()
+    user = users.admins.find(admin => admin.mac === mac)
+
+    if (!user) {
+      user = users.frequenters.find(frequenter => frequenter.mac === mac)
     }
-  
-    return environment.frequenters.shift()
+
+    return user
   }
 
-  async findUserByData(registration: string, password: string, envId: string) {
-    const environment = await this.prisma.environment.findUnique({
-      where: {
-        id: envId
-      },
-      include: {
-        admins: {
-          where: {
-            registration,
-          },
-          include: {
-            accessTimes: true
-          },
-          take: 1
-        },
-        frequenters: {
-          where: {
-            registration
-          },
-          include: {
-            accessTimes: true
-          },
-          take: 1
-        }
-      },
-    });
-  
-    let user: User & { accessTimes: AccessTime[] };
-    
-    if (environment.admins.length === 1) {
-      user = { ...environment.admins[0], accessTimes: environment.admins[0].accessTimes };
-    } else {
-      user = { ...environment.frequenters[0], accessTimes: environment.frequenters[0].accessTimes };
+  async findUserByData(registration: string, password: string, users: IEnvToFindUser) {
+    let user: UserWithAccessTime
+
+    user = users.admins.find(admin => admin.registration === registration)
+
+    if (!user) {
+      user = users.frequenters.find(frequenter => frequenter.registration === registration)
     }
   
-    if (!user) return undefined;
+    if (!user) 
+      return undefined;
   
     const isPasswordValid = await bcrypt.compare(password, user.password);
   
@@ -233,28 +186,21 @@ export class CaronteService {
       throw new HttpException('Unauthorized caronte access', HttpStatus.UNAUTHORIZED);
     }
     
-    let user: User & { accessTimes: AccessTime[] }
-    let log: Log
+    let user: UserWithAccessTimeWithoutRFID
     
     if (obolForCharon.userTagRFID) {
       user = await this.findUserByTag(obolForCharon.userTagRFID, caronte.Environment)
     }
 
     if (!user && obolForCharon.userDeviceMac) {
-      console.log('!user && obolForCharon.userDeviceMac');
-      
-      user = await this.findUserByMac(obolForCharon.userTagRFID, caronte.Environment)
+      user = await this.findUserByMac(obolForCharon.userDeviceMac, caronte.Environment)
     }
 
     if (!user && obolForCharon.userRegistration) {
-      console.log('!user && obolForCharon.userRegistration');
-
-      user = await this.findUserByData(obolForCharon.userRegistration, obolForCharon.userPassword, caronte.environmentId)      
+      user = await this.findUserByData(obolForCharon.userRegistration, obolForCharon.userPassword, caronte.Environment)      
     }
 
     if (!user) {
-      console.log('!user');
-
       throw new HttpException('Unauthorized user access', HttpStatus.UNAUTHORIZED);
     }
 

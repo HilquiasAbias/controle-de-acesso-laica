@@ -18,7 +18,7 @@ let JwtStrategy = exports.JwtStrategy = class JwtStrategy extends (0, passport_1
     constructor(usersService) {
         super({
             jwtFromRequest: passport_jwt_1.ExtractJwt.fromAuthHeaderAsBearerToken(),
-            secretOrKey: "Who's for the Rest from every pain and ill? Who's for the Lethe's plain? the Donkey-shearings? Who's for Kerberia? Taenarum? or the Ravens?",
+            secretOrKey: process.env.JWT_SECRET
         });
         this.usersService = usersService;
     }

@@ -3,3 +3,6 @@ export type UserWithAccessTime = User & {
     accessTimes: AccessTime[];
     rfid: Rfid;
 };
+export type UserWithAccessTimeWithoutRFID = User & {
+    accessTimes: AccessTime[];
+};
