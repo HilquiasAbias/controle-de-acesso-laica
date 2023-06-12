@@ -134,9 +134,19 @@ let RfidService = exports.RfidService = class RfidService {
         if (!(0, class_validator_1.isUUID)(id)) {
             throw new common_1.HttpException("Invalid id input", common_1.HttpStatus.BAD_REQUEST);
         }
-        return await this.prisma.rfid.delete({
-            where: { id }
-        });
+        try {
+            return await this.prisma.rfid.delete({
+                where: { id }
+            });
+        }
+        catch (error) {
+            if (error.code === 'P2025') {
+                throw new common_1.HttpException("Rfid not found", common_1.HttpStatus.NOT_FOUND);
+            }
+            else {
+                throw new common_1.HttpException("Can't remove rfid", common_1.HttpStatus.FORBIDDEN);
+            }
+        }
     }
 };
 exports.RfidService = RfidService = __decorate([

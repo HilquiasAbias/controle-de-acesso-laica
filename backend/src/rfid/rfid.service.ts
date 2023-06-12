@@ -144,8 +144,16 @@ export class RfidService {
       throw new HttpException("Invalid id input", HttpStatus.BAD_REQUEST);
     }
 
-    return await this.prisma.rfid.delete({
-      where: { id }
-    });
+    try {
+      return await this.prisma.rfid.delete({
+        where: { id }
+      });
+    } catch (error) {
+      if (error.code === 'P2025') {
+        throw new HttpException("Rfid not found", HttpStatus.NOT_FOUND);
+      } else {
+        throw new HttpException("Can't remove rfid", HttpStatus.FORBIDDEN);
+      }
+    }
   }
 }

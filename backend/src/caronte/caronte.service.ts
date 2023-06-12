@@ -56,11 +56,56 @@ export class CaronteService {
   }
 
   async update(id: string, updateCaronteDto: UpdateCaronteDto) {
-    return `This action updates a #${id} caronte`;
+    if (!isUUID(id)) {
+      throw new HttpException('Invalid id input', HttpStatus.BAD_REQUEST);
+    }
+
+    const validFields = ['ip', 'esp', 'password', 'environmentId'];
+    const invalidFields = Object.keys(updateCaronteDto).filter(
+      field => !validFields.includes(field),
+    );
+
+    if (invalidFields.length > 0) {
+      throw new HttpException(
+        `Invalid fields provided: ${invalidFields.join(', ')}`,
+        HttpStatus.BAD_REQUEST
+      );
+    }
+
+    try {
+      return await this.prisma.caronte.update({
+        where: { id },
+        data: updateCaronteDto
+      });
+    } catch (error) {
+      if (error.code === 'P2025') {
+        throw new HttpException("Caronte not found", HttpStatus.NOT_FOUND);
+      } else if (error.code === 'P2002') {
+        throw new HttpException("This caronte already exists", HttpStatus.CONFLICT);
+      } else if (error.code === 'P2003') {
+        throw new HttpException("Invalid provided environment", HttpStatus.NOT_FOUND);
+      } else {
+        throw new HttpException("Can't update caronte.", HttpStatus.FORBIDDEN);
+      }
+    }
   }
 
   async remove(id: string) {
-    return `This action removes a #${id} caronte`;
+    if (!isUUID(id)) {
+      throw new HttpException('Invalid id input', HttpStatus.BAD_REQUEST);
+    }
+
+    try {
+      return await this.prisma.caronte.delete({
+        where: { id }
+      });
+    } catch (error) {
+      if (error.code === 'P2025') {
+        throw new HttpException("Caronte not found", HttpStatus.NOT_FOUND);
+      } else {
+        throw new HttpException("Can't remove caronte", HttpStatus.FORBIDDEN);
+      }
+    }
   }
 
   async findUserByTag(tag: string, users: IEnvToFindUser) { //
@@ -104,26 +149,14 @@ export class CaronteService {
     return isPasswordValid ? user : undefined;
   }
 
-  async isCurrentTimeValidForUser(accessTimes: AccessTime[]): Promise<boolean> { // userId: string
-    // const user = await this.prisma.user.findUnique({
-    //   where: { id: userId },
-    //   include: {
-    //     accessTimes: true
-    //   },
-    // });
-
+  async isCurrentTimeValidForUser(accessTimes: AccessTime[]): Promise<boolean> { 
     if (!accessTimes || accessTimes.length === 0) {
-      // O usuário não tem horários de acesso definidos
       return false;
     }
 
     const currentTime = new Date();
-
-    console.log((await this.prisma.accessTime.findFirst()).startTime)
-    
     const currentDayOfWeek = this.getDayOfWeek(currentTime);
 
-    // Verificar se o horário atual está dentro de algum AccessTime
     const isValidTime = accessTimes.some(
       (accessTime: AccessTime) =>
         accessTime.dayOfWeek === currentDayOfWeek &&
@@ -144,7 +177,7 @@ export class CaronteService {
   }
 
   async anObolForCharon(obolForCharon: ObolForCharonDto) {
-    const validFields = ['ip', 'esp', 'carontePassword', 'userPassword', 'userRegistration', 'userId', 'userDeviceMac', 'userTagRFID'];
+    const validFields = ['userPassword', 'userRegistration', 'userId', 'userDeviceMac', 'userTagRFID'];
     const invalidFields = Object.keys(obolForCharon).filter(
       field => !validFields.includes(field),
     );

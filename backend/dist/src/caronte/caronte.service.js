@@ -58,10 +58,52 @@ let CaronteService = exports.CaronteService = class CaronteService {
         });
     }
     async update(id, updateCaronteDto) {
-        return `This action updates a #${id} caronte`;
+        if (!(0, class_validator_1.isUUID)(id)) {
+            throw new common_1.HttpException('Invalid id input', common_1.HttpStatus.BAD_REQUEST);
+        }
+        const validFields = ['ip', 'esp', 'password', 'environmentId'];
+        const invalidFields = Object.keys(updateCaronteDto).filter(field => !validFields.includes(field));
+        if (invalidFields.length > 0) {
+            throw new common_1.HttpException(`Invalid fields provided: ${invalidFields.join(', ')}`, common_1.HttpStatus.BAD_REQUEST);
+        }
+        try {
+            return await this.prisma.caronte.update({
+                where: { id },
+                data: updateCaronteDto
+            });
+        }
+        catch (error) {
+            if (error.code === 'P2025') {
+                throw new common_1.HttpException("Caronte not found", common_1.HttpStatus.NOT_FOUND);
+            }
+            else if (error.code === 'P2002') {
+                throw new common_1.HttpException("This caronte already exists", common_1.HttpStatus.CONFLICT);
+            }
+            else if (error.code === 'P2003') {
+                throw new common_1.HttpException("Invalid provided environment", common_1.HttpStatus.NOT_FOUND);
+            }
+            else {
+                throw new common_1.HttpException("Can't update caronte.", common_1.HttpStatus.FORBIDDEN);
+            }
+        }
     }
     async remove(id) {
-        return `This action removes a #${id} caronte`;
+        if (!(0, class_validator_1.isUUID)(id)) {
+            throw new common_1.HttpException('Invalid id input', common_1.HttpStatus.BAD_REQUEST);
+        }
+        try {
+            return await this.prisma.caronte.delete({
+                where: { id }
+            });
+        }
+        catch (error) {
+            if (error.code === 'P2025') {
+                throw new common_1.HttpException("Caronte not found", common_1.HttpStatus.NOT_FOUND);
+            }
+            else {
+                throw new common_1.HttpException("Can't remove caronte", common_1.HttpStatus.FORBIDDEN);
+            }
+        }
     }
     async findUserByTag(tag, users) {
         let user;
@@ -95,7 +137,6 @@ let CaronteService = exports.CaronteService = class CaronteService {
             return false;
         }
         const currentTime = new Date();
-        console.log((await this.prisma.accessTime.findFirst()).startTime);
         const currentDayOfWeek = this.getDayOfWeek(currentTime);
         const isValidTime = accessTimes.some((accessTime) => accessTime.dayOfWeek === currentDayOfWeek &&
             this.isTimeWithinRange(currentTime, accessTime.startTime, accessTime.endTime));
@@ -110,7 +151,7 @@ let CaronteService = exports.CaronteService = class CaronteService {
         return time >= startTime && time <= endTime;
     }
     async anObolForCharon(obolForCharon) {
-        const validFields = ['ip', 'esp', 'carontePassword', 'userPassword', 'userRegistration', 'userId', 'userDeviceMac', 'userTagRFID'];
+        const validFields = ['userPassword', 'userRegistration', 'userId', 'userDeviceMac', 'userTagRFID'];
         const invalidFields = Object.keys(obolForCharon).filter(field => !validFields.includes(field));
         if (invalidFields.length > 0) {
             throw new common_1.HttpException(`Invalid fields provided: ${invalidFields.join(', ')}`, common_1.HttpStatus.BAD_REQUEST);

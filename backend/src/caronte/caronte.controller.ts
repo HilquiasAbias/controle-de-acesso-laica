@@ -1,4 +1,4 @@
-import { Controller, Get, Post, Body, Patch, Param, Delete } from '@nestjs/common';
+import { Controller, Get, Post, Body, Patch, Param, Delete, UseGuards } from '@nestjs/common';
 import { CaronteService } from './caronte.service';
 import { CreateCaronteDto } from './dto/create-caronte.dto';
 import { UpdateCaronteDto } from './dto/update-caronte.dto';
@@ -11,6 +11,9 @@ import {CaronteBadRequestResponseEntity} from './entities/caronte-bad-request-re
 import {CaronteConflictResponseEntity} from './entities/caronte-conflict-response.entity';
 import {CaronteNotFoundResponseEntity} from './entities/caronte-not-found-response.entity';
 import {CaronteIdParamInvalidResponseEntity} from './entities/caronte-invalid-id-param-response.entity';
+import { RolesGuard } from 'src/auth/guards/roles.guard';
+import { JwtAuthGuard } from 'src/auth/guards/jwt-auth.guard';
+import { Roles } from 'src/auth/decorators/roles.decorator';
 
 @Controller('caronte')
 @ApiTags('Caronte')
@@ -28,6 +31,8 @@ export class CaronteController {
     return this.caronteService.anObolForCharon(obolForCharonDto)
   }
 
+  @Roles('ADMIN') // UserRoles.ADMIN
+  @UseGuards(JwtAuthGuard, RolesGuard)
   @Post()
   @ApiBearerAuth()
   @ApiOperation({ description: 'Endpoint para cadastrar caronte' })
@@ -38,6 +43,8 @@ export class CaronteController {
     return this.caronteService.create(createCaronteDto);
   }
 
+  @Roles('ADMIN') // UserRoles.ADMIN
+  @UseGuards(JwtAuthGuard, RolesGuard)
   @Get()
   @ApiBearerAuth()
   @ApiOperation({ description: 'Endpoint para buscar todos os carontes' })
@@ -47,6 +54,8 @@ export class CaronteController {
     return this.caronteService.findAll();
   }
 
+  @Roles('ADMIN') // UserRoles.ADMIN
+  @UseGuards(JwtAuthGuard, RolesGuard)
   @Get('environment/:envId')
   @ApiBearerAuth()
   @ApiOperation({ description: 'Endpoint para buscar todos os carontes de um ambiente' })
@@ -57,6 +66,8 @@ export class CaronteController {
     return this.caronteService.findAllByEnvironment(envId);
   }
 
+  @Roles('ADMIN') // UserRoles.ADMIN
+  @UseGuards(JwtAuthGuard, RolesGuard)
   @Get(':id')
   @ApiBearerAuth()
   @ApiOperation({ description: 'Endpoint para buscar um caronte' })
@@ -67,6 +78,8 @@ export class CaronteController {
     return this.caronteService.findOne(id);
   }
 
+  @Roles('ADMIN') // UserRoles.ADMIN
+  @UseGuards(JwtAuthGuard, RolesGuard)
   @Patch(':id')
   @ApiBearerAuth()
   @ApiOperation({ description: 'Endpoint para atualizar um caronte' })
@@ -77,6 +90,8 @@ export class CaronteController {
     return this.caronteService.update(id, updateCaronteDto);
   }
 
+  @Roles('ADMIN') // UserRoles.ADMIN
+  @UseGuards(JwtAuthGuard, RolesGuard)
   @Delete(':id')
   @ApiBearerAuth()
   @ApiOperation({ description: 'Endpoint para remover um caronte' })

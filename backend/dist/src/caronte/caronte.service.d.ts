@@ -12,8 +12,8 @@ export declare class CaronteService {
     findAll(): Promise<import(".prisma/client").Caronte[]>;
     findAllByEnvironment(envId: string): Promise<import(".prisma/client").Caronte[]>;
     findOne(id: string): Promise<import(".prisma/client").Caronte>;
-    update(id: string, updateCaronteDto: UpdateCaronteDto): Promise<string>;
-    remove(id: string): Promise<string>;
+    update(id: string, updateCaronteDto: UpdateCaronteDto): Promise<import(".prisma/client").Caronte>;
+    remove(id: string): Promise<import(".prisma/client").Caronte>;
     findUserByTag(tag: string, users: IEnvToFindUser): Promise<UserWithAccessTime>;
     findUserByMac(mac: string, users: IEnvToFindUser): Promise<UserWithAccessTime>;
     findUserByData(registration: string, password: string, users: IEnvToFindUser): Promise<UserWithAccessTime>;

@@ -26,6 +26,9 @@ const caronte_bad_request_response_entity_1 = require("./entities/caronte-bad-re
 const caronte_conflict_response_entity_1 = require("./entities/caronte-conflict-response.entity");
 const caronte_not_found_response_entity_1 = require("./entities/caronte-not-found-response.entity");
 const caronte_invalid_id_param_response_entity_1 = require("./entities/caronte-invalid-id-param-response.entity");
+const roles_guard_1 = require("../auth/guards/roles.guard");
+const jwt_auth_guard_1 = require("../auth/guards/jwt-auth.guard");
+const roles_decorator_1 = require("../auth/decorators/roles.decorator");
 let CaronteController = exports.CaronteController = class CaronteController {
     constructor(caronteService) {
         this.caronteService = caronteService;
@@ -64,6 +67,8 @@ __decorate([
     __metadata("design:returntype", void 0)
 ], CaronteController.prototype, "obol", null);
 __decorate([
+    (0, roles_decorator_1.Roles)('ADMIN'),
+    (0, common_1.UseGuards)(jwt_auth_guard_1.JwtAuthGuard, roles_guard_1.RolesGuard),
     (0, common_1.Post)(),
     (0, swagger_1.ApiBearerAuth)(),
     (0, swagger_1.ApiOperation)({ description: 'Endpoint para cadastrar caronte' }),
@@ -76,6 +81,8 @@ __decorate([
     __metadata("design:returntype", void 0)
 ], CaronteController.prototype, "create", null);
 __decorate([
+    (0, roles_decorator_1.Roles)('ADMIN'),
+    (0, common_1.UseGuards)(jwt_auth_guard_1.JwtAuthGuard, roles_guard_1.RolesGuard),
     (0, common_1.Get)(),
     (0, swagger_1.ApiBearerAuth)(),
     (0, swagger_1.ApiOperation)({ description: 'Endpoint para buscar todos os carontes' }),
@@ -86,6 +93,8 @@ __decorate([
     __metadata("design:returntype", void 0)
 ], CaronteController.prototype, "findAll", null);
 __decorate([
+    (0, roles_decorator_1.Roles)('ADMIN'),
+    (0, common_1.UseGuards)(jwt_auth_guard_1.JwtAuthGuard, roles_guard_1.RolesGuard),
     (0, common_1.Get)('environment/:envId'),
     (0, swagger_1.ApiBearerAuth)(),
     (0, swagger_1.ApiOperation)({ description: 'Endpoint para buscar todos os carontes de um ambiente' }),
@@ -98,6 +107,8 @@ __decorate([
     __metadata("design:returntype", void 0)
 ], CaronteController.prototype, "findAllByEnvironment", null);
 __decorate([
+    (0, roles_decorator_1.Roles)('ADMIN'),
+    (0, common_1.UseGuards)(jwt_auth_guard_1.JwtAuthGuard, roles_guard_1.RolesGuard),
     (0, common_1.Get)(':id'),
     (0, swagger_1.ApiBearerAuth)(),
     (0, swagger_1.ApiOperation)({ description: 'Endpoint para buscar um caronte' }),
@@ -110,6 +121,8 @@ __decorate([
     __metadata("design:returntype", void 0)
 ], CaronteController.prototype, "findOne", null);
 __decorate([
+    (0, roles_decorator_1.Roles)('ADMIN'),
+    (0, common_1.UseGuards)(jwt_auth_guard_1.JwtAuthGuard, roles_guard_1.RolesGuard),
     (0, common_1.Patch)(':id'),
     (0, swagger_1.ApiBearerAuth)(),
     (0, swagger_1.ApiOperation)({ description: 'Endpoint para atualizar um caronte' }),
@@ -123,6 +136,8 @@ __decorate([
     __metadata("design:returntype", void 0)
 ], CaronteController.prototype, "update", null);
 __decorate([
+    (0, roles_decorator_1.Roles)('ADMIN'),
+    (0, common_1.UseGuards)(jwt_auth_guard_1.JwtAuthGuard, roles_guard_1.RolesGuard),
     (0, common_1.Delete)(':id'),
     (0, swagger_1.ApiBearerAuth)(),
     (0, swagger_1.ApiOperation)({ description: 'Endpoint para remover um caronte' }),
