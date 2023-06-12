@@ -6,7 +6,7 @@ export declare class CaronteController {
     private readonly caronteService;
     constructor(caronteService: CaronteService);
     obol(obolForCharonDto: ObolForCharonDto): Promise<{
-        access: string;
+        access: boolean;
     }>;
     create(createCaronteDto: CreateCaronteDto): Promise<import(".prisma/client").Caronte>;
     findAll(): Promise<import(".prisma/client").Caronte[]>;

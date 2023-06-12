@@ -6,6 +6,3 @@ export declare class CaronteEntity implements Caronte {
     password: string;
     environmentId: string;
 }
-export declare class CaronteResponseEntity {
-    access: 'valid';
-}

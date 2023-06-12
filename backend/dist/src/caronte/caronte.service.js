@@ -161,7 +161,7 @@ let CaronteService = exports.CaronteService = class CaronteService {
             throw new common_1.HttpException('Unauthorized user access', common_1.HttpStatus.UNAUTHORIZED);
         }
         return {
-            access: 'valid'
+            access: true
         };
     }
 };

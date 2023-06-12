@@ -11,8 +11,8 @@ export class ObolForCharonDto {
   esp: string
 
   @ApiProperty()
-  @IsString()
   @IsOptional()
+  @IsString()
   carontePassword: string
 
   @ApiProperty()

@@ -17,8 +17,3 @@ export class CaronteEntity implements Caronte {
   @ApiProperty()
   environmentId: string
 }
-
-export class CaronteResponseEntity {
-  @ApiProperty()
-  access: 'valid'
-}

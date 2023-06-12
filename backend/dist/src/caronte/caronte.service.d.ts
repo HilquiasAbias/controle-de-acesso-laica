@@ -21,6 +21,6 @@ export declare class CaronteService {
     private getDayOfWeek;
     private isTimeWithinRange;
     anObolForCharon(obolForCharon: ObolForCharonDto): Promise<{
-        access: string;
+        access: boolean;
     }>;
 }

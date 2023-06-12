@@ -48,7 +48,7 @@ let PrismaClientExceptionFilter = exports.PrismaClientExceptionFilter = class Pr
                 const operationName = match ? match[1] : 'Unknown operation';
                 response.status(status).json({
                     statusCode: status,
-                    message: `The requested ${operationName} operation is forbidden.`,
+                    message: operationName ? `The requested ${operationName} operation is forbidden.` : message,
                 });
                 break;
             }

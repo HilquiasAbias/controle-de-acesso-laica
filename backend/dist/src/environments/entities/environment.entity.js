@@ -9,7 +9,7 @@ var __metadata = (this && this.__metadata) || function (k, v) {
     if (typeof Reflect === "object" && typeof Reflect.metadata === "function") return Reflect.metadata(k, v);
 };
 Object.defineProperty(exports, "__esModule", { value: true });
-exports.UserAddedEntity = exports.EnvironmentEntity = void 0;
+exports.EnvironmentEntity = void 0;
 const swagger_1 = require("@nestjs/swagger");
 class EnvironmentEntity {
 }
@@ -34,7 +34,4 @@ __decorate([
     (0, swagger_1.ApiProperty)(),
     __metadata("design:type", Date)
 ], EnvironmentEntity.prototype, "updatedAt", void 0);
-class UserAddedEntity {
-}
-exports.UserAddedEntity = UserAddedEntity;
 //# sourceMappingURL=environment.entity.js.map

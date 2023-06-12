@@ -6,11 +6,14 @@ import { RolesGuard } from 'src/auth/guards/roles.guard';
 import { JwtAuthGuard } from 'src/auth/guards/jwt-auth.guard';
 import { Roles } from 'src/auth/decorators/roles.decorator';
 import { AddUserInEnvironmentDto } from './dto/add-user-environment.dto';
-import { ApiBearerAuth, ApiCreatedResponse, ApiOkResponse, ApiOperation, ApiTags } from '@nestjs/swagger';
+import { ApiBadRequestResponse, ApiBearerAuth, ApiCreatedResponse, ApiNotFoundResponse, ApiOkResponse, ApiOperation, ApiTags } from '@nestjs/swagger';
 //import { Roles as UserRoles } from '@prisma/client';
 import { Request } from 'express';
 import * as requestIp from 'request-ip';
-import { EnvironmentEntity, UserAddedEntity } from './entities/environment.entity';
+import { EnvironmentEntity } from './entities/environment.entity';
+import { UserAddedEntity } from './entities/environment-user-added.entity';
+import { EnvironmentBadRequestResponseEntity } from './entities/environment-bad-request-response.entity';
+import { EnvironmentNotFoundResponseEntity } from './entities/environment-not-found-response.entity';
 
 @Controller('environments')
 @ApiBearerAuth()
@@ -44,6 +47,7 @@ export class EnvironmentsController {
   @Post('add/user')
   @ApiOperation({ description: 'Endpoint para adcionar um usuário em um ambiente' })
   @ApiOkResponse({ type: UserAddedEntity })
+  @ApiBadRequestResponse({ type: EnvironmentBadRequestResponseEntity })
   addUserInEnvironment(@Body() addUserInEnvironmentDto: AddUserInEnvironmentDto) {
     return this.environmentsService.addUserInEnvironment(addUserInEnvironmentDto);
   }
@@ -53,6 +57,7 @@ export class EnvironmentsController {
   @Get()
   @ApiOperation({ description: 'Endpoint para buscar todos os ambientes' })
   @ApiOkResponse({ type: EnvironmentEntity, isArray: true })
+  @ApiNotFoundResponse({ type: EnvironmentNotFoundResponseEntity })
   findAll() {
     return this.environmentsService.findAll();
   }
@@ -62,6 +67,8 @@ export class EnvironmentsController {
   @Get(':id')
   @ApiOperation({ description: 'Endpoint para buscar um ambiente' })
   @ApiOkResponse({ type: EnvironmentEntity })
+  @ApiNotFoundResponse({ type: EnvironmentNotFoundResponseEntity })
+  @ApiBadRequestResponse({ type: EnvironmentBadRequestResponseEntity })
   findOne(@Param('id') id: string) {
     return this.environmentsService.findOne(id);
   }
