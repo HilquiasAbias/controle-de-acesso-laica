@@ -10,12 +10,15 @@ exports.LogModule = void 0;
 const common_1 = require("@nestjs/common");
 const log_service_1 = require("./log.service");
 const log_controller_1 = require("./log.controller");
+const prisma_module_1 = require("../prisma/prisma.module");
 let LogModule = exports.LogModule = class LogModule {
 };
 exports.LogModule = LogModule = __decorate([
     (0, common_1.Module)({
+        imports: [prisma_module_1.PrismaModule],
         controllers: [log_controller_1.LogController],
-        providers: [log_service_1.LogService]
+        providers: [log_service_1.LogService],
+        exports: [log_service_1.LogService]
     })
 ], LogModule);
 //# sourceMappingURL=log.module.js.map

@@ -1,9 +1,11 @@
 import { CreateLogDto } from './dto/create-log.dto';
-import { UpdateLogDto } from './dto/update-log.dto';
+import { PrismaService } from 'src/prisma/prisma.service';
 export declare class LogService {
-    create(createLogDto: CreateLogDto): string;
-    findAll(): string;
-    findOne(id: number): string;
-    update(id: number, updateLogDto: UpdateLogDto): string;
-    remove(id: number): string;
+    private readonly prisma;
+    constructor(prisma: PrismaService);
+    create(data: CreateLogDto): Promise<import(".prisma/client").Log>;
+    findAll(): Promise<import(".prisma/client").Log[]>;
+    findAllByCaronte(caronteMac: string): Promise<import(".prisma/client").Log[]>;
+    findAllByUser(userRegistration: string): Promise<import(".prisma/client").Log[]>;
+    findOne(id: string): Promise<import(".prisma/client").Log>;
 }

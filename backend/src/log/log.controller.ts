@@ -1,9 +1,10 @@
-import { Controller, Get, Post, Body, Patch, Param, Delete } from '@nestjs/common';
+import { Controller, Get, Post, Body, Param } from '@nestjs/common';
 import { LogService } from './log.service';
 import { CreateLogDto } from './dto/create-log.dto';
-import { UpdateLogDto } from './dto/update-log.dto';
+import { ApiTags } from '@nestjs/swagger';
 
 @Controller('log')
+@ApiTags('Log')
 export class LogController {
   constructor(private readonly logService: LogService) {}
 
@@ -19,16 +20,7 @@ export class LogController {
 
   @Get(':id')
   findOne(@Param('id') id: string) {
-    return this.logService.findOne(+id);
+    return this.logService.findOne(id);
   }
 
-  @Patch(':id')
-  update(@Param('id') id: string, @Body() updateLogDto: UpdateLogDto) {
-    return this.logService.update(+id, updateLogDto);
-  }
-
-  @Delete(':id')
-  remove(@Param('id') id: string) {
-    return this.logService.remove(+id);
-  }
 }

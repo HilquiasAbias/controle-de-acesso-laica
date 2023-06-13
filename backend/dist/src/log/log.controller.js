@@ -16,7 +16,7 @@ exports.LogController = void 0;
 const common_1 = require("@nestjs/common");
 const log_service_1 = require("./log.service");
 const create_log_dto_1 = require("./dto/create-log.dto");
-const update_log_dto_1 = require("./dto/update-log.dto");
+const swagger_1 = require("@nestjs/swagger");
 let LogController = exports.LogController = class LogController {
     constructor(logService) {
         this.logService = logService;
@@ -28,13 +28,7 @@ let LogController = exports.LogController = class LogController {
         return this.logService.findAll();
     }
     findOne(id) {
-        return this.logService.findOne(+id);
-    }
-    update(id, updateLogDto) {
-        return this.logService.update(+id, updateLogDto);
-    }
-    remove(id) {
-        return this.logService.remove(+id);
+        return this.logService.findOne(id);
     }
 };
 __decorate([
@@ -57,23 +51,9 @@ __decorate([
     __metadata("design:paramtypes", [String]),
     __metadata("design:returntype", void 0)
 ], LogController.prototype, "findOne", null);
-__decorate([
-    (0, common_1.Patch)(':id'),
-    __param(0, (0, common_1.Param)('id')),
-    __param(1, (0, common_1.Body)()),
-    __metadata("design:type", Function),
-    __metadata("design:paramtypes", [String, update_log_dto_1.UpdateLogDto]),
-    __metadata("design:returntype", void 0)
-], LogController.prototype, "update", null);
-__decorate([
-    (0, common_1.Delete)(':id'),
-    __param(0, (0, common_1.Param)('id')),
-    __metadata("design:type", Function),
-    __metadata("design:paramtypes", [String]),
-    __metadata("design:returntype", void 0)
-], LogController.prototype, "remove", null);
 exports.LogController = LogController = __decorate([
     (0, common_1.Controller)('log'),
+    (0, swagger_1.ApiTags)('Log'),
     __metadata("design:paramtypes", [log_service_1.LogService])
 ], LogController);
 //# sourceMappingURL=log.controller.js.map

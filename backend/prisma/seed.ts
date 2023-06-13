@@ -13,7 +13,7 @@ async function seedUsersAndEnvs() {
       password: await bcrypt.hash('password', roundsOfHashing),
       role: 'ADMIN',
       mac: '9C:F2:48:87:C2:5A',
-      rfid: { create: { tag: 'F6G7H8I9J0' } }
+      rfid: { create: { tag: 'F6G7H8I9J0' } },
     },
   });
 
@@ -109,7 +109,7 @@ async function seedCarontes() {
 
   const caronte1 = await prisma.caronte.create({
     data: {
-      ip: '192.168.1.1',
+      ip: '192.168.1.3',
       esp: '02:F1:95:7C:C2:EC',
       Environment: {
         connect: { id: envs[0].id },
@@ -130,16 +130,7 @@ async function seedCarontes() {
   });
 }
 
-seedUsersAndEnvs()
-  .catch((error) => {
-    console.error(error);
-    process.exit(1);
-  })
-  .finally(async () => {
-    await prisma.$disconnect();
-  });
-
-// seedCarontes()
+// seedUsersAndEnvs()
 //   .catch((error) => {
 //     console.error(error);
 //     process.exit(1);
@@ -147,3 +138,12 @@ seedUsersAndEnvs()
 //   .finally(async () => {
 //     await prisma.$disconnect();
 //   });
+
+seedCarontes()
+  .catch((error) => {
+    console.error(error);
+    process.exit(1);
+  })
+  .finally(async () => {
+    await prisma.$disconnect();
+  });

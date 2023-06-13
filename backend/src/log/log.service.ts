@@ -1,26 +1,47 @@
-import { Injectable } from '@nestjs/common';
+import { Injectable, HttpException, HttpStatus } from '@nestjs/common';
 import { CreateLogDto } from './dto/create-log.dto';
-import { UpdateLogDto } from './dto/update-log.dto';
+import { PrismaService } from 'src/prisma/prisma.service';
+import * as bcrypt from 'bcrypt';
 
 @Injectable()
 export class LogService {
-  create(createLogDto: CreateLogDto) {
-    return 'This action adds a new log';
+  constructor(private readonly prisma: PrismaService) {}
+
+  async create(data: CreateLogDto) {
+    const caronte = await this.prisma.caronte.findFirstOrThrow({
+      where: {
+        esp: data.caronteMac
+      },
+    })
+
+    const isPasswordValid = await bcrypt.compare(data.carontePassword, caronte.password);
+
+    if (!isPasswordValid) {
+      throw new HttpException('Unauthorized caronte access', HttpStatus.UNAUTHORIZED);
+    }
+
+    return this.prisma.log.create({ data });
   }
 
-  findAll() {
-    return `This action returns all log`;
+  async findAll() {
+    return this.prisma.log.findMany();
   }
 
-  findOne(id: number) {
-    return `This action returns a #${id} log`;
+  async findAllByCaronte(caronteMac: string) {
+    return this.prisma.log.findMany({
+      where: { caronteMac }
+    });
   }
 
-  update(id: number, updateLogDto: UpdateLogDto) {
-    return `This action updates a #${id} log`;
+  async findAllByUser(userRegistration: string) {
+    return this.prisma.log.findMany({
+      where: { userRegistration }
+    });
   }
 
-  remove(id: number) {
-    return `This action removes a #${id} log`;
+  async findOne(id: string) {
+    return this.prisma.log.findFirstOrThrow({
+      where: { id }
+    });
   }
 }

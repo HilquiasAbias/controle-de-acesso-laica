@@ -5,9 +5,11 @@ import { AccessTime } from '@prisma/client';
 import { ObolForCharonDto } from './dto/obol-caronte.dto';
 import { IEnvToFindUser } from 'src/interfaces/env-to-find-user';
 import { UserWithAccessTime } from 'src/interfaces/user-with-accesstime';
+import { LogService } from 'src/log/log.service';
 export declare class CaronteService {
     private readonly prisma;
-    constructor(prisma: PrismaService);
+    private readonly log;
+    constructor(prisma: PrismaService, log: LogService);
     create(createCaronteDto: CreateCaronteDto): Promise<import(".prisma/client").Caronte>;
     findAll(): Promise<import(".prisma/client").Caronte[]>;
     findAllByEnvironment(envId: string): Promise<import(".prisma/client").Caronte[]>;
@@ -20,6 +22,7 @@ export declare class CaronteService {
     isCurrentTimeValidForUser(accessTimes: AccessTime[]): Promise<boolean>;
     private getDayOfWeek;
     private isTimeWithinRange;
+    private getObolType;
     anObolForCharon(obolForCharon: ObolForCharonDto): Promise<{
         access: boolean;
     }>;

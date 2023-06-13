@@ -14,9 +14,11 @@ const common_1 = require("@nestjs/common");
 const prisma_service_1 = require("../prisma/prisma.service");
 const class_validator_1 = require("class-validator");
 const bcrypt = require("bcrypt");
+const log_service_1 = require("../log/log.service");
 let CaronteService = exports.CaronteService = class CaronteService {
-    constructor(prisma) {
+    constructor(prisma, log) {
         this.prisma = prisma;
+        this.log = log;
     }
     async create(createCaronteDto) {
         try {
@@ -150,13 +152,25 @@ let CaronteService = exports.CaronteService = class CaronteService {
     isTimeWithinRange(time, startTime, endTime) {
         return time >= startTime && time <= endTime;
     }
+    getObolType(obolForCharon) {
+        if (obolForCharon.userDeviceMac) {
+            return 'DEVICE_MAC';
+        }
+        if (obolForCharon.userTagRFID) {
+            return 'TAG_RFID';
+        }
+        if (obolForCharon.userRegistration) {
+            return 'USER_CREDENTIALS';
+        }
+        return undefined;
+    }
     async anObolForCharon(obolForCharon) {
-        const validFields = ['userPassword', 'userRegistration', 'userId', 'userDeviceMac', 'userTagRFID'];
+        const validFields = ['ip', 'esp', 'carontePassword', 'userPassword', 'userRegistration', 'userId', 'userDeviceMac', 'userTagRFID'];
         const invalidFields = Object.keys(obolForCharon).filter(field => !validFields.includes(field));
         if (invalidFields.length > 0) {
             throw new common_1.HttpException(`Invalid fields provided: ${invalidFields.join(', ')}`, common_1.HttpStatus.BAD_REQUEST);
         }
-        const caronte = await this.prisma.caronte.findFirstOrThrow({
+        const caronte = await this.prisma.caronte.findFirst({
             where: {
                 esp: obolForCharon.esp,
                 ip: obolForCharon.ip
@@ -180,6 +194,9 @@ let CaronteService = exports.CaronteService = class CaronteService {
                 }
             }
         });
+        if (!caronte) {
+            throw new common_1.HttpException('Caronte not found', common_1.HttpStatus.UNAUTHORIZED);
+        }
         const isCarontePasswordValid = await bcrypt.compare(obolForCharon.carontePassword, caronte.password);
         if (!isCarontePasswordValid) {
             throw new common_1.HttpException('Unauthorized caronte access', common_1.HttpStatus.UNAUTHORIZED);
@@ -208,6 +225,7 @@ let CaronteService = exports.CaronteService = class CaronteService {
 };
 exports.CaronteService = CaronteService = __decorate([
     (0, common_1.Injectable)(),
-    __metadata("design:paramtypes", [prisma_service_1.PrismaService])
+    __metadata("design:paramtypes", [prisma_service_1.PrismaService,
+        log_service_1.LogService])
 ], CaronteService);
 //# sourceMappingURL=caronte.service.js.map

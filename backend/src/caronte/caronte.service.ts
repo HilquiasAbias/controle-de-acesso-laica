@@ -8,10 +8,15 @@ import * as bcrypt from 'bcrypt';
 import { ObolForCharonDto } from './dto/obol-caronte.dto';
 import { IEnvToFindUser } from 'src/interfaces/env-to-find-user';
 import { UserWithAccessTime, UserWithAccessTimeWithoutRFID } from 'src/interfaces/user-with-accesstime';
+import { LogService } from 'src/log/log.service';
+import { ObolType } from 'src/log/dto/create-log.dto';
 
 @Injectable()
 export class CaronteService {
-  constructor(private readonly prisma: PrismaService) {}
+  constructor(
+    private readonly prisma: PrismaService,
+    private readonly log: LogService
+  ) {}
 
   async create(createCaronteDto: CreateCaronteDto) {
     try {
@@ -176,8 +181,21 @@ export class CaronteService {
     return time >= startTime && time <= endTime;
   }
 
+  private getObolType(obolForCharon: ObolForCharonDto) {
+    if (obolForCharon.userDeviceMac) {
+      return 'DEVICE_MAC'
+    }
+    if (obolForCharon.userTagRFID) {
+      return 'TAG_RFID'
+    }
+    if (obolForCharon.userRegistration) {
+      return 'USER_CREDENTIALS'
+    }
+    return undefined
+  }
+
   async anObolForCharon(obolForCharon: ObolForCharonDto) {
-    const validFields = ['userPassword', 'userRegistration', 'userId', 'userDeviceMac', 'userTagRFID'];
+    const validFields = ['ip', 'esp', 'carontePassword', 'userPassword', 'userRegistration', 'userId', 'userDeviceMac', 'userTagRFID'];
     const invalidFields = Object.keys(obolForCharon).filter(
       field => !validFields.includes(field),
     );
@@ -186,7 +204,7 @@ export class CaronteService {
       throw new HttpException(`Invalid fields provided: ${invalidFields.join(', ')}`, HttpStatus.BAD_REQUEST);
     }
 
-    const caronte = await this.prisma.caronte.findFirstOrThrow({
+    const caronte = await this.prisma.caronte.findFirst({
       where: {
         esp: obolForCharon.esp,
         ip: obolForCharon.ip
@@ -211,6 +229,11 @@ export class CaronteService {
       }
     })
 
+    if (!caronte) {
+      // TODO: log para caronte fornecido não encontrado
+      throw new HttpException('Caronte not found', HttpStatus.UNAUTHORIZED);
+    }
+
     const isCarontePasswordValid = await bcrypt.compare(
       obolForCharon.carontePassword, caronte.password
     )
@@ -233,7 +256,19 @@ export class CaronteService {
       user = await this.findUserByData(obolForCharon.userRegistration, obolForCharon.userPassword, caronte.Environment)      
     }
 
+    // const obol = this.getObolType(obolForCharon)
+
     if (!user) {
+      // this.prisma.log.create({
+      //   data: {
+      //     userRegistration: user.registration,
+      //     caronteMac: caronte.esp,
+      //     type: 'WARN',
+      //     message: 'msg1',
+      //     obolType: obol,
+      //   }
+      // })
+
       throw new HttpException('Unauthorized user access', HttpStatus.UNAUTHORIZED);
     }
 
@@ -264,6 +299,16 @@ export class CaronteService {
     if (!isUserAccessTimeValid) {
       throw new HttpException('Unauthorized user access', HttpStatus.UNAUTHORIZED);
     }
+
+    // this.prisma.log.create({
+    //   data: {
+    //     userRegistration: user.registration,
+    //     caronteMac: caronte.esp,
+    //     type: 'INFO',
+    //     message: 'msg2',
+    //     obolType: obol
+    //   }
+    // })
 
     return {
       access: true
