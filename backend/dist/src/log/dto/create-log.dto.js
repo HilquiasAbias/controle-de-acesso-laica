@@ -29,9 +29,14 @@ __decorate([
 ], CreateLogDto.prototype, "userRegistration", void 0);
 __decorate([
     (0, class_validator_1.IsString)(),
-    (0, class_validator_1.IsIn)(['DEVICE_MAC', 'TAG_RFID', 'USER_CREDENTIALS']),
+    (0, class_validator_1.IsOptional)(),
     __metadata("design:type", String)
-], CreateLogDto.prototype, "obolType", void 0);
+], CreateLogDto.prototype, "userTag", void 0);
+__decorate([
+    (0, class_validator_1.IsMACAddress)(),
+    (0, class_validator_1.IsOptional)(),
+    __metadata("design:type", String)
+], CreateLogDto.prototype, "userMac", void 0);
 __decorate([
     (0, class_validator_1.IsString)(),
     (0, class_validator_1.IsIn)(['INFO', 'WARN', 'DEBUG']),

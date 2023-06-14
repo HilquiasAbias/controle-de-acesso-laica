@@ -15,12 +15,14 @@ const prisma_service_1 = require("../prisma/prisma.service");
 const class_validator_1 = require("class-validator");
 const bcrypt = require("bcrypt");
 const log_service_1 = require("../log/log.service");
+const users_service_1 = require("../users/users.service");
 let CaronteService = exports.CaronteService = class CaronteService {
     constructor(prisma, log) {
         this.prisma = prisma;
         this.log = log;
     }
     async create(createCaronteDto) {
+        createCaronteDto.password = await bcrypt.hash(createCaronteDto.password, users_service_1.roundsOfHashing);
         try {
             return await this.prisma.caronte.create({
                 data: createCaronteDto,

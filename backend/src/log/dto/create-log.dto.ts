@@ -20,8 +20,16 @@ export class CreateLogDto {
   userRegistration?: string
 
   @IsString()
-  @IsIn(['DEVICE_MAC', 'TAG_RFID', 'USER_CREDENTIALS'])
-  obolType: string
+  @IsOptional()
+  userTag?: string
+
+  @IsMACAddress()
+  @IsOptional()
+  userMac?: string
+
+  // @IsString()
+  // @IsIn(['DEVICE_MAC', 'TAG_RFID', 'USER_CREDENTIALS'])
+  //obolType?: string
 
   @IsString()
   @IsIn(['INFO', 'WARN', 'DEBUG'])

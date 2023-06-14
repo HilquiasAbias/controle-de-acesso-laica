@@ -17,6 +17,36 @@ let LogService = exports.LogService = class LogService {
     constructor(prisma) {
         this.prisma = prisma;
     }
+    async getUserForLog(data) {
+        let userRegistration;
+        let obolType;
+        if (data.userTag) {
+            userRegistration = await this.prisma.user.findFirstOrThrow({
+                where: {
+                    rfid: { tag: data.userTag }
+                },
+                select: {
+                    registration: true
+                }
+            });
+            data.userRegistration = userRegistration.registration;
+            obolType = 'TAG_RFID';
+        }
+        if (data.userMac) {
+            userRegistration = await this.prisma.user.findFirstOrThrow({
+                where: {
+                    mac: data.userMac
+                },
+                select: {
+                    registration: true
+                }
+            });
+            data.userRegistration = userRegistration.registration;
+            obolType = 'DEVICE_MAC';
+        }
+        console.log(userRegistration);
+        return { data, obolType };
+    }
     async create(data) {
         const caronte = await this.prisma.caronte.findFirstOrThrow({
             where: {
@@ -27,7 +57,40 @@ let LogService = exports.LogService = class LogService {
         if (!isPasswordValid) {
             throw new common_1.HttpException('Unauthorized caronte access', common_1.HttpStatus.UNAUTHORIZED);
         }
-        return this.prisma.log.create({ data });
+        let userDataResponse;
+        if (!data.userRegistration) {
+            userDataResponse = await this.getUserForLog(data);
+        }
+        try {
+            await this.prisma.log.create({
+                data: {
+                    message: userDataResponse.data.message,
+                    obolType: userDataResponse.obolType,
+                    type: userDataResponse.data.type,
+                    caronte: { connect: { esp: userDataResponse.data.caronteMac } },
+                    user: {
+                        connect: {
+                            registration: userDataResponse ? userDataResponse.data.userRegistration : data.userRegistration
+                        }
+                    }
+                }
+            });
+        }
+        catch (error) {
+            console.log(error.code);
+            if (error.code === 'P2025') {
+                throw new common_1.HttpException('Not found', common_1.HttpStatus.NOT_FOUND);
+            }
+            else if (error.code === 'P2002') {
+                throw new common_1.HttpException('Already exists', common_1.HttpStatus.CONFLICT);
+            }
+            else {
+                throw new common_1.HttpException('Failed to create log', common_1.HttpStatus.FORBIDDEN);
+            }
+        }
+        return {
+            created: true
+        };
     }
     async findAll() {
         return this.prisma.log.findMany();

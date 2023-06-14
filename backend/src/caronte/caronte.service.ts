@@ -9,7 +9,8 @@ import { ObolForCharonDto } from './dto/obol-caronte.dto';
 import { IEnvToFindUser } from 'src/interfaces/env-to-find-user';
 import { UserWithAccessTime, UserWithAccessTimeWithoutRFID } from 'src/interfaces/user-with-accesstime';
 import { LogService } from 'src/log/log.service';
-import { ObolType } from 'src/log/dto/create-log.dto';
+// import { ObolType } from 'src/log/dto/create-log.dto';
+import { roundsOfHashing } from 'src/users/users.service';
 
 @Injectable()
 export class CaronteService {
@@ -19,6 +20,11 @@ export class CaronteService {
   ) {}
 
   async create(createCaronteDto: CreateCaronteDto) {
+    createCaronteDto.password = await bcrypt.hash(
+      createCaronteDto.password,
+      roundsOfHashing,
+    );
+
     try {
       return await this.prisma.caronte.create({
         data: createCaronteDto,

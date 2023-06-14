@@ -7,7 +7,8 @@ export declare class CreateLogDto {
     caronteMac: string;
     carontePassword?: string;
     userRegistration?: string;
-    obolType: string;
+    userTag?: string;
+    userMac?: string;
     type: string;
     message: string;
 }

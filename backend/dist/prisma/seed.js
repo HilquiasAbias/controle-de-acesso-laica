@@ -12,7 +12,7 @@ async function seedUsersAndEnvs() {
             password: await bcrypt.hash('password', roundsOfHashing),
             role: 'ADMIN',
             mac: '9C:F2:48:87:C2:5A',
-            rfid: { create: { tag: 'F6G7H8I9J0' } }
+            rfid: { create: { tag: 'F6G7H8I9J0' } },
         },
     });
     const admin2 = await prisma.user.create({
@@ -97,7 +97,7 @@ async function seedCarontes() {
     const envs = await prisma.environment.findMany();
     const caronte1 = await prisma.caronte.create({
         data: {
-            ip: '192.168.1.1',
+            ip: '192.168.1.3',
             esp: '02:F1:95:7C:C2:EC',
             Environment: {
                 connect: { id: envs[0].id },
@@ -116,7 +116,7 @@ async function seedCarontes() {
         },
     });
 }
-seedUsersAndEnvs()
+seedCarontes()
     .catch((error) => {
     console.error(error);
     process.exit(1);
