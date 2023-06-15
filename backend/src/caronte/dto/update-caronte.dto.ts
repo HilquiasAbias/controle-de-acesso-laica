@@ -1,4 +1,17 @@
-import { PartialType } from '@nestjs/swagger';
-import { CreateCaronteDto } from './create-caronte.dto';
+import { ApiProperty } from "@nestjs/swagger";
+import { IsIP, IsMACAddress, IsString } from "class-validator";
 
-export class UpdateCaronteDto extends PartialType(CreateCaronteDto) {}
+
+export class UpdateCaronteDto {
+  @ApiProperty()
+  @IsIP()
+  ip: string;
+
+  @ApiProperty()
+  @IsMACAddress()
+  esp: string
+
+  @ApiProperty()
+  @IsString()
+  password: string
+}

@@ -23,9 +23,7 @@ const roles_decorator_1 = require("../auth/decorators/roles.decorator");
 const add_user_environment_dto_1 = require("./dto/add-user-environment.dto");
 const swagger_1 = require("@nestjs/swagger");
 const environment_entity_1 = require("./entities/environment.entity");
-const environment_user_added_entity_1 = require("./entities/environment-user-added.entity");
-const environment_bad_request_response_entity_1 = require("./entities/environment-bad-request-response.entity");
-const environment_not_found_response_entity_1 = require("./entities/environment-not-found-response.entity");
+const environment_swagger_responses_entity_1 = require("./entities/environment-swagger-responses.entity");
 let EnvironmentsController = exports.EnvironmentsController = class EnvironmentsController {
     constructor(environmentsService) {
         this.environmentsService = environmentsService;
@@ -63,9 +61,11 @@ __decorate([
 __decorate([
     (0, roles_decorator_1.Roles)('ADMIN'),
     (0, common_1.UseGuards)(jwt_auth_guard_1.JwtAuthGuard, roles_guard_1.RolesGuard),
-    (0, common_1.Post)(),
     (0, swagger_1.ApiOperation)({ description: 'Endpoint para cadastrarar ambientes' }),
     (0, swagger_1.ApiCreatedResponse)({ type: environment_entity_1.EnvironmentEntity }),
+    (0, swagger_1.ApiCreatedResponse)({ type: environment_swagger_responses_entity_1.EnvironmentBadRequestResponseEntity }),
+    (0, swagger_1.ApiBearerAuth)(),
+    (0, common_1.Post)(),
     __param(0, (0, common_1.Body)()),
     __metadata("design:type", Function),
     __metadata("design:paramtypes", [create_environment_dto_1.CreateEnvironmentDto]),
@@ -74,10 +74,11 @@ __decorate([
 __decorate([
     (0, roles_decorator_1.Roles)('ADMIN'),
     (0, common_1.UseGuards)(jwt_auth_guard_1.JwtAuthGuard, roles_guard_1.RolesGuard),
-    (0, common_1.Post)('add/user'),
     (0, swagger_1.ApiOperation)({ description: 'Endpoint para adcionar um usuário em um ambiente' }),
-    (0, swagger_1.ApiOkResponse)({ type: environment_user_added_entity_1.UserAddedEntity }),
-    (0, swagger_1.ApiBadRequestResponse)({ type: environment_bad_request_response_entity_1.EnvironmentBadRequestResponseEntity }),
+    (0, swagger_1.ApiOkResponse)({ type: environment_swagger_responses_entity_1.UserAddedEntity }),
+    (0, swagger_1.ApiBadRequestResponse)({ type: environment_swagger_responses_entity_1.EnvironmentBadRequestResponseEntity }),
+    (0, swagger_1.ApiBearerAuth)(),
+    (0, common_1.Post)('add/user'),
     __param(0, (0, common_1.Body)()),
     __metadata("design:type", Function),
     __metadata("design:paramtypes", [add_user_environment_dto_1.AddUserInEnvironmentDto]),
@@ -86,10 +87,11 @@ __decorate([
 __decorate([
     (0, roles_decorator_1.Roles)('ADMIN'),
     (0, common_1.UseGuards)(jwt_auth_guard_1.JwtAuthGuard, roles_guard_1.RolesGuard),
-    (0, common_1.Get)(),
     (0, swagger_1.ApiOperation)({ description: 'Endpoint para buscar todos os ambientes' }),
     (0, swagger_1.ApiOkResponse)({ type: environment_entity_1.EnvironmentEntity, isArray: true }),
-    (0, swagger_1.ApiNotFoundResponse)({ type: environment_not_found_response_entity_1.EnvironmentNotFoundResponseEntity }),
+    (0, swagger_1.ApiNotFoundResponse)({ type: environment_swagger_responses_entity_1.EnvironmentNotFoundResponseEntity }),
+    (0, swagger_1.ApiBearerAuth)(),
+    (0, common_1.Get)(),
     __metadata("design:type", Function),
     __metadata("design:paramtypes", []),
     __metadata("design:returntype", void 0)
@@ -97,11 +99,12 @@ __decorate([
 __decorate([
     (0, roles_decorator_1.Roles)('ADMIN'),
     (0, common_1.UseGuards)(jwt_auth_guard_1.JwtAuthGuard, roles_guard_1.RolesGuard),
-    (0, common_1.Get)(':id'),
     (0, swagger_1.ApiOperation)({ description: 'Endpoint para buscar um ambiente' }),
     (0, swagger_1.ApiOkResponse)({ type: environment_entity_1.EnvironmentEntity }),
-    (0, swagger_1.ApiNotFoundResponse)({ type: environment_not_found_response_entity_1.EnvironmentNotFoundResponseEntity }),
-    (0, swagger_1.ApiBadRequestResponse)({ type: environment_bad_request_response_entity_1.EnvironmentBadRequestResponseEntity }),
+    (0, swagger_1.ApiNotFoundResponse)({ type: environment_swagger_responses_entity_1.EnvironmentNotFoundResponseEntity }),
+    (0, swagger_1.ApiBadRequestResponse)({ type: environment_swagger_responses_entity_1.EnvironmentBadRequestResponseEntity }),
+    (0, swagger_1.ApiBearerAuth)(),
+    (0, common_1.Get)(':id'),
     __param(0, (0, common_1.Param)('id')),
     __metadata("design:type", Function),
     __metadata("design:paramtypes", [String]),
@@ -110,9 +113,10 @@ __decorate([
 __decorate([
     (0, roles_decorator_1.Roles)('ADMIN'),
     (0, common_1.UseGuards)(jwt_auth_guard_1.JwtAuthGuard, roles_guard_1.RolesGuard),
-    (0, common_1.Patch)(':id'),
     (0, swagger_1.ApiOperation)({ description: 'Endpoint para atualizar um ambiente' }),
     (0, swagger_1.ApiOkResponse)({ type: environment_entity_1.EnvironmentEntity }),
+    (0, swagger_1.ApiBearerAuth)(),
+    (0, common_1.Patch)(':id'),
     __param(0, (0, common_1.Param)('id')),
     __param(1, (0, common_1.Body)()),
     __metadata("design:type", Function),
@@ -122,9 +126,10 @@ __decorate([
 __decorate([
     (0, roles_decorator_1.Roles)('ADMIN'),
     (0, common_1.UseGuards)(jwt_auth_guard_1.JwtAuthGuard, roles_guard_1.RolesGuard),
-    (0, common_1.Delete)(':id'),
     (0, swagger_1.ApiOperation)({ description: 'Endpoint para remover um ambiente' }),
     (0, swagger_1.ApiOkResponse)({ type: environment_entity_1.EnvironmentEntity }),
+    (0, swagger_1.ApiBearerAuth)(),
+    (0, common_1.Delete)(':id'),
     __param(0, (0, common_1.Param)('id')),
     __metadata("design:type", Function),
     __metadata("design:paramtypes", [String]),
@@ -132,7 +137,6 @@ __decorate([
 ], EnvironmentsController.prototype, "remove", null);
 exports.EnvironmentsController = EnvironmentsController = __decorate([
     (0, common_1.Controller)('environments'),
-    (0, swagger_1.ApiBearerAuth)(),
     (0, swagger_1.ApiTags)('Environments'),
     __metadata("design:paramtypes", [environments_service_1.EnvironmentsService])
 ], EnvironmentsController);

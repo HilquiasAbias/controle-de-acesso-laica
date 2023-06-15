@@ -11,12 +11,13 @@ import { ApiBadRequestResponse, ApiBearerAuth, ApiCreatedResponse, ApiNotFoundRe
 import { Request } from 'express';
 import * as requestIp from 'request-ip';
 import { EnvironmentEntity } from './entities/environment.entity';
-import { UserAddedEntity } from './entities/environment-user-added.entity';
-import { EnvironmentBadRequestResponseEntity } from './entities/environment-bad-request-response.entity';
-import { EnvironmentNotFoundResponseEntity } from './entities/environment-not-found-response.entity';
+import { 
+  UserAddedEntity,
+  EnvironmentBadRequestResponseEntity,
+  EnvironmentNotFoundResponseEntity,
+} from './entities/environment-swagger-responses.entity';
 
 @Controller('environments')
-@ApiBearerAuth()
 @ApiTags('Environments')
 export class EnvironmentsController {
   constructor(private readonly environmentsService: EnvironmentsService) {}
@@ -35,58 +36,65 @@ export class EnvironmentsController {
 
   @Roles('ADMIN') // UserRoles.ADMIN
   @UseGuards(JwtAuthGuard, RolesGuard)
-  @Post()
   @ApiOperation({ description: 'Endpoint para cadastrarar ambientes' })
   @ApiCreatedResponse({ type: EnvironmentEntity })
+  @ApiCreatedResponse({ type: EnvironmentBadRequestResponseEntity })
+  @ApiBearerAuth()
+  @Post()
   create(@Body() createEnvironmentDto: CreateEnvironmentDto) {
     return this.environmentsService.create(createEnvironmentDto);
   }
 
   @Roles('ADMIN') // UserRoles.ADMIN
   @UseGuards(JwtAuthGuard, RolesGuard)
-  @Post('add/user')
   @ApiOperation({ description: 'Endpoint para adcionar um usuário em um ambiente' })
   @ApiOkResponse({ type: UserAddedEntity })
   @ApiBadRequestResponse({ type: EnvironmentBadRequestResponseEntity })
+  @ApiBearerAuth()
+  @Post('add/user')
   addUserInEnvironment(@Body() addUserInEnvironmentDto: AddUserInEnvironmentDto) {
     return this.environmentsService.addUserInEnvironment(addUserInEnvironmentDto);
   }
 
   @Roles('ADMIN') // UserRoles.ADMIN
   @UseGuards(JwtAuthGuard, RolesGuard)
-  @Get()
   @ApiOperation({ description: 'Endpoint para buscar todos os ambientes' })
   @ApiOkResponse({ type: EnvironmentEntity, isArray: true })
   @ApiNotFoundResponse({ type: EnvironmentNotFoundResponseEntity })
+  @ApiBearerAuth()
+  @Get()
   findAll() {
     return this.environmentsService.findAll();
   }
 
   @Roles('ADMIN') // UserRoles.ADMIN
   @UseGuards(JwtAuthGuard, RolesGuard)
-  @Get(':id')
   @ApiOperation({ description: 'Endpoint para buscar um ambiente' })
   @ApiOkResponse({ type: EnvironmentEntity })
   @ApiNotFoundResponse({ type: EnvironmentNotFoundResponseEntity })
   @ApiBadRequestResponse({ type: EnvironmentBadRequestResponseEntity })
+  @ApiBearerAuth()
+  @Get(':id')
   findOne(@Param('id') id: string) {
     return this.environmentsService.findOne(id);
   }
 
   @Roles('ADMIN') // UserRoles.ADMIN
   @UseGuards(JwtAuthGuard, RolesGuard)
-  @Patch(':id')
   @ApiOperation({ description: 'Endpoint para atualizar um ambiente' })
   @ApiOkResponse({ type: EnvironmentEntity })
+  @ApiBearerAuth()
+  @Patch(':id')
   update(@Param('id') id: string, @Body() updateEnvironmentDto: UpdateEnvironmentDto) {
     return this.environmentsService.update(id, updateEnvironmentDto);
   }
 
   @Roles('ADMIN') // UserRoles.ADMIN
   @UseGuards(JwtAuthGuard, RolesGuard)
-  @Delete(':id')
   @ApiOperation({ description: 'Endpoint para remover um ambiente' })
   @ApiOkResponse({ type: EnvironmentEntity })
+  @ApiBearerAuth()
+  @Delete(':id')
   remove(@Param('id') id: string) {
     return this.environmentsService.remove(id);
   }

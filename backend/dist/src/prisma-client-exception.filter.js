@@ -52,6 +52,18 @@ let PrismaClientExceptionFilter = exports.PrismaClientExceptionFilter = class Pr
                 });
                 break;
             }
+            case 'P2018': {
+                const status = common_1.HttpStatus.FORBIDDEN;
+                const regex = /The required connected records were not found '([^']+)'[^']*$/;
+                const match = message.match(regex);
+                const relationName = match ? match[1] : 'Unknown relation';
+                const errorMessage = `The required connected records were not found: ${relationName}`;
+                response.status(status).json({
+                    statusCode: status,
+                    message: errorMessage,
+                });
+                break;
+            }
             case 'P4001': {
                 const status = common_1.HttpStatus.BAD_REQUEST;
                 const regex = /Invalid input for (\w+)/;

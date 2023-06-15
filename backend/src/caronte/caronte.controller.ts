@@ -5,12 +5,14 @@ import { UpdateCaronteDto } from './dto/update-caronte.dto';
 import { ObolForCharonDto } from './dto/obol-caronte.dto';
 import { ApiBadRequestResponse, ApiBearerAuth, ApiConflictResponse, ApiCreatedResponse, ApiNotFoundResponse, ApiOkResponse, ApiOperation, ApiTags, ApiUnauthorizedResponse } from '@nestjs/swagger';
 import { CaronteEntity } from './entities/caronte.entity'
-import {CaronteValidResponseEntity} from './entities/caronte-valid-response.entity';
-import {CaronteUnauthorizedResponseEntity} from './entities/caronte-unauthorized-response.entity';
-import {CaronteBadRequestResponseEntity} from './entities/caronte-bad-request-response.entity';
-import {CaronteConflictResponseEntity} from './entities/caronte-conflict-response.entity';
-import {CaronteNotFoundResponseEntity} from './entities/caronte-not-found-response.entity';
-import {CaronteIdParamInvalidResponseEntity} from './entities/caronte-invalid-id-param-response.entity';
+import {
+  CaronteValidResponseEntity,
+  CaronteUnauthorizedResponseEntity,
+  CaronteBadRequestResponseEntity,
+  CaronteConflictResponseEntity,
+  CaronteNotFoundResponseEntity,
+  CaronteIdParamInvalidResponseEntity
+} from './entities/caronte-swagger-responses.entity';
 import { RolesGuard } from 'src/auth/guards/roles.guard';
 import { JwtAuthGuard } from 'src/auth/guards/jwt-auth.guard';
 import { Roles } from 'src/auth/decorators/roles.decorator';

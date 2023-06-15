@@ -13,3 +13,20 @@ export class EnvironmentBadRequestResponseEntity {
   ]})
   message: string
 }
+
+export class EnvironmentNotFoundResponseEntity {
+  @ApiProperty()
+  @ApiResponseProperty({ example: ['No Environment found', 'Environment not found'] })
+  message: string
+}
+
+export class EnvironmentNotFoundOnCreateResponseEntity {
+  @ApiProperty()
+  @ApiResponseProperty({ example: 'Admin not found' })
+  message: string
+}
+
+export class UserAddedEntity {
+  @ApiProperty()
+  added: true
+}

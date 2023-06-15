@@ -20,12 +20,7 @@ const update_caronte_dto_1 = require("./dto/update-caronte.dto");
 const obol_caronte_dto_1 = require("./dto/obol-caronte.dto");
 const swagger_1 = require("@nestjs/swagger");
 const caronte_entity_1 = require("./entities/caronte.entity");
-const caronte_valid_response_entity_1 = require("./entities/caronte-valid-response.entity");
-const caronte_unauthorized_response_entity_1 = require("./entities/caronte-unauthorized-response.entity");
-const caronte_bad_request_response_entity_1 = require("./entities/caronte-bad-request-response.entity");
-const caronte_conflict_response_entity_1 = require("./entities/caronte-conflict-response.entity");
-const caronte_not_found_response_entity_1 = require("./entities/caronte-not-found-response.entity");
-const caronte_invalid_id_param_response_entity_1 = require("./entities/caronte-invalid-id-param-response.entity");
+const caronte_swagger_responses_entity_1 = require("./entities/caronte-swagger-responses.entity");
 const roles_guard_1 = require("../auth/guards/roles.guard");
 const jwt_auth_guard_1 = require("../auth/guards/jwt-auth.guard");
 const roles_decorator_1 = require("../auth/decorators/roles.decorator");
@@ -58,9 +53,9 @@ let CaronteController = exports.CaronteController = class CaronteController {
 __decorate([
     (0, common_1.Post)('obol'),
     (0, swagger_1.ApiOperation)({ description: 'Endpoint uma moeda para caronte' }),
-    (0, swagger_1.ApiOkResponse)({ type: caronte_valid_response_entity_1.CaronteValidResponseEntity }),
-    (0, swagger_1.ApiUnauthorizedResponse)({ type: caronte_unauthorized_response_entity_1.CaronteUnauthorizedResponseEntity }),
-    (0, swagger_1.ApiBadRequestResponse)({ type: caronte_bad_request_response_entity_1.CaronteBadRequestResponseEntity }),
+    (0, swagger_1.ApiOkResponse)({ type: caronte_swagger_responses_entity_1.CaronteValidResponseEntity }),
+    (0, swagger_1.ApiUnauthorizedResponse)({ type: caronte_swagger_responses_entity_1.CaronteUnauthorizedResponseEntity }),
+    (0, swagger_1.ApiBadRequestResponse)({ type: caronte_swagger_responses_entity_1.CaronteBadRequestResponseEntity }),
     __param(0, (0, common_1.Body)()),
     __metadata("design:type", Function),
     __metadata("design:paramtypes", [obol_caronte_dto_1.ObolForCharonDto]),
@@ -73,8 +68,8 @@ __decorate([
     (0, swagger_1.ApiBearerAuth)(),
     (0, swagger_1.ApiOperation)({ description: 'Endpoint para cadastrar caronte' }),
     (0, swagger_1.ApiCreatedResponse)({ type: caronte_entity_1.CaronteEntity }),
-    (0, swagger_1.ApiConflictResponse)({ type: caronte_conflict_response_entity_1.CaronteConflictResponseEntity }),
-    (0, swagger_1.ApiBadRequestResponse)({ type: caronte_bad_request_response_entity_1.CaronteBadRequestResponseEntity }),
+    (0, swagger_1.ApiConflictResponse)({ type: caronte_swagger_responses_entity_1.CaronteConflictResponseEntity }),
+    (0, swagger_1.ApiBadRequestResponse)({ type: caronte_swagger_responses_entity_1.CaronteBadRequestResponseEntity }),
     __param(0, (0, common_1.Body)()),
     __metadata("design:type", Function),
     __metadata("design:paramtypes", [create_caronte_dto_1.CreateCaronteDto]),
@@ -87,7 +82,7 @@ __decorate([
     (0, swagger_1.ApiBearerAuth)(),
     (0, swagger_1.ApiOperation)({ description: 'Endpoint para buscar todos os carontes' }),
     (0, swagger_1.ApiOkResponse)({ type: caronte_entity_1.CaronteEntity, isArray: true }),
-    (0, swagger_1.ApiNotFoundResponse)({ type: caronte_not_found_response_entity_1.CaronteNotFoundResponseEntity }),
+    (0, swagger_1.ApiNotFoundResponse)({ type: caronte_swagger_responses_entity_1.CaronteNotFoundResponseEntity }),
     __metadata("design:type", Function),
     __metadata("design:paramtypes", []),
     __metadata("design:returntype", void 0)
@@ -99,8 +94,8 @@ __decorate([
     (0, swagger_1.ApiBearerAuth)(),
     (0, swagger_1.ApiOperation)({ description: 'Endpoint para buscar todos os carontes de um ambiente' }),
     (0, swagger_1.ApiOkResponse)({ type: caronte_entity_1.CaronteEntity, isArray: true }),
-    (0, swagger_1.ApiNotFoundResponse)({ type: caronte_not_found_response_entity_1.CaronteNotFoundResponseEntity }),
-    (0, swagger_1.ApiBadRequestResponse)({ type: caronte_invalid_id_param_response_entity_1.CaronteIdParamInvalidResponseEntity }),
+    (0, swagger_1.ApiNotFoundResponse)({ type: caronte_swagger_responses_entity_1.CaronteNotFoundResponseEntity }),
+    (0, swagger_1.ApiBadRequestResponse)({ type: caronte_swagger_responses_entity_1.CaronteIdParamInvalidResponseEntity }),
     __param(0, (0, common_1.Param)('envId')),
     __metadata("design:type", Function),
     __metadata("design:paramtypes", [String]),
@@ -113,8 +108,8 @@ __decorate([
     (0, swagger_1.ApiBearerAuth)(),
     (0, swagger_1.ApiOperation)({ description: 'Endpoint para buscar um caronte' }),
     (0, swagger_1.ApiOkResponse)({ type: caronte_entity_1.CaronteEntity }),
-    (0, swagger_1.ApiNotFoundResponse)({ type: caronte_not_found_response_entity_1.CaronteNotFoundResponseEntity }),
-    (0, swagger_1.ApiBadRequestResponse)({ type: caronte_invalid_id_param_response_entity_1.CaronteIdParamInvalidResponseEntity }),
+    (0, swagger_1.ApiNotFoundResponse)({ type: caronte_swagger_responses_entity_1.CaronteNotFoundResponseEntity }),
+    (0, swagger_1.ApiBadRequestResponse)({ type: caronte_swagger_responses_entity_1.CaronteIdParamInvalidResponseEntity }),
     __param(0, (0, common_1.Param)('id')),
     __metadata("design:type", Function),
     __metadata("design:paramtypes", [String]),
@@ -127,8 +122,8 @@ __decorate([
     (0, swagger_1.ApiBearerAuth)(),
     (0, swagger_1.ApiOperation)({ description: 'Endpoint para atualizar um caronte' }),
     (0, swagger_1.ApiOkResponse)({ type: caronte_entity_1.CaronteEntity }),
-    (0, swagger_1.ApiNotFoundResponse)({ type: caronte_not_found_response_entity_1.CaronteNotFoundResponseEntity }),
-    (0, swagger_1.ApiBadRequestResponse)({ type: caronte_invalid_id_param_response_entity_1.CaronteIdParamInvalidResponseEntity }),
+    (0, swagger_1.ApiNotFoundResponse)({ type: caronte_swagger_responses_entity_1.CaronteNotFoundResponseEntity }),
+    (0, swagger_1.ApiBadRequestResponse)({ type: caronte_swagger_responses_entity_1.CaronteIdParamInvalidResponseEntity }),
     __param(0, (0, common_1.Param)('id')),
     __param(1, (0, common_1.Body)()),
     __metadata("design:type", Function),
@@ -142,8 +137,8 @@ __decorate([
     (0, swagger_1.ApiBearerAuth)(),
     (0, swagger_1.ApiOperation)({ description: 'Endpoint para remover um caronte' }),
     (0, swagger_1.ApiOkResponse)({ type: caronte_entity_1.CaronteEntity }),
-    (0, swagger_1.ApiNotFoundResponse)({ type: caronte_not_found_response_entity_1.CaronteNotFoundResponseEntity }),
-    (0, swagger_1.ApiBadRequestResponse)({ type: caronte_invalid_id_param_response_entity_1.CaronteIdParamInvalidResponseEntity }),
+    (0, swagger_1.ApiNotFoundResponse)({ type: caronte_swagger_responses_entity_1.CaronteNotFoundResponseEntity }),
+    (0, swagger_1.ApiBadRequestResponse)({ type: caronte_swagger_responses_entity_1.CaronteIdParamInvalidResponseEntity }),
     __param(0, (0, common_1.Param)('id')),
     __metadata("design:type", Function),
     __metadata("design:paramtypes", [String]),

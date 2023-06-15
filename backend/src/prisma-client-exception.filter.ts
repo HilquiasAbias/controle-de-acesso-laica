@@ -50,6 +50,20 @@ export class PrismaClientExceptionFilter extends BaseExceptionFilter {
         break;
       }
 
+      case 'P2018': {
+        const status = HttpStatus.FORBIDDEN;
+        const regex = /The required connected records were not found '([^']+)'[^']*$/;
+        const match = message.match(regex);
+        const relationName = match ? match[1] : 'Unknown relation';
+        const errorMessage = `The required connected records were not found: ${relationName}`;
+      
+        response.status(status).json({
+          statusCode: status,
+          message: errorMessage,
+        });
+        break;
+      }
+
       case 'P4001': {
         const status = HttpStatus.BAD_REQUEST;
         const regex = /Invalid input for (\w+)/;
