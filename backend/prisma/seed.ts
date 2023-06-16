@@ -13,7 +13,7 @@ async function seedUsersAndEnvs() {
       password: await bcrypt.hash('password', roundsOfHashing),
       role: 'ADMIN',
       mac: '9C:F2:48:87:C2:5A',
-      rfid: { create: { tag: 'F6G7H8I9J0' } },
+      // rfid: { create: { tag: 'F6G7H8I9J0' } },
     },
   });
 
@@ -24,7 +24,7 @@ async function seedUsersAndEnvs() {
       password: await bcrypt.hash('password', roundsOfHashing),
       role: 'ADMIN',
       mac: '32:6E:2E:57:D1:3C',
-      rfid: { create: { tag: 'A1B2C3D4E5' } }
+      // rfid: { create: { tag: 'A1B2C3D4E5' } }
     },
   });
 
@@ -35,30 +35,30 @@ async function seedUsersAndEnvs() {
       password: await bcrypt.hash('password', roundsOfHashing),
       role: 'ADMIN',
       mac: '0E:DC:21:40:EF:B4',
-      rfid: { create: { tag: 'XYZW789012' } }
+      // rfid: { create: { tag: 'XYZW789012' } }
     },
   });
 
   // Cria 3 ambientes
-  const env1 = await prisma.environment.create({
-    data: {
-      name: 'Environment 1',
-      description: 'Description for Environment 1',
-      admins: {
-        connect: [{ id: admin1.id }, { id: admin2.id }],
-      },
-    },
-  });
+  // const env1 = await prisma.environment.create({
+  //   data: {
+  //     name: 'Environment 1',
+  //     description: 'Description for Environment 1',
+  //     admins: {
+  //       connect: [{ id: admin1.id }, { id: admin2.id }],
+  //     },
+  //   },
+  // });
 
-  const env2 = await prisma.environment.create({
-    data: {
-      name: 'Environment 2',
-      description: 'Description for Environment 2',
-      admins: {
-        connect: [{ id: admin3.id }],
-      },
-    },
-  });
+  // const env2 = await prisma.environment.create({
+  //   data: {
+  //     name: 'Environment 2',
+  //     description: 'Description for Environment 2',
+  //     admins: {
+  //       connect: [{ id: admin3.id }],
+  //     },
+  //   },
+  // });
 
   // Cria 3 frequentadores
   const freq1 = await prisma.user.create({
@@ -67,11 +67,11 @@ async function seedUsersAndEnvs() {
       registration: '20201014040081',
       password: await bcrypt.hash('password', roundsOfHashing),
       role: 'FREQUENTER',
-      frequenterEnvironment: {
-        connect: { id: env1.id },
-      },
+      // frequenterEnvironment: {
+      //   connect: { id: env1.id },
+      // },
       mac: '18:41:6D:48:0D:DA',
-      rfid: { create: { tag: 'RFIDESP32XX' } }
+      // rfid: { create: { tag: 'RFIDESP32XX' } }
     },
   });
 
@@ -81,11 +81,11 @@ async function seedUsersAndEnvs() {
       registration: '20231151210066',
       password: await bcrypt.hash('password', roundsOfHashing),
       role: 'FREQUENTER',
-      frequenterEnvironment: {
-        connect: { id: env1.id },
-      },
+      // frequenterEnvironment: {
+      //   connect: { id: env1.id },
+      // },
       mac: '05:76:22:59:7F:D4',
-      rfid: { create: { tag: 'KLMN123456' } }
+      // rfid: { create: { tag: 'KLMN123456' } }
     },
   });
 
@@ -95,51 +95,42 @@ async function seedUsersAndEnvs() {
       registration: '20231012090022',
       password: await bcrypt.hash('password', roundsOfHashing),
       role: 'FREQUENTER',
-      frequenterEnvironment: {
-        connect: { id: env2.id },
-      },
+      // frequenterEnvironment: {
+      //   connect: { id: env2.id },
+      // },
       mac: 'F7:5D:51:88:8A:54',
-      rfid: { create: { tag: 'T3344I02D23' } }
+      // rfid: { create: { tag: 'T3344I02D23' } }
     },
   });
 }
 
-async function seedCarontes() {
-  const envs = await prisma.environment.findMany()
+// async function seedCarontes() {
+//   const envs = await prisma.environment.findMany()
 
-  const caronte1 = await prisma.caronte.create({
-    data: {
-      ip: '192.168.1.3',
-      esp: '02:F1:95:7C:C2:EC',
-      Environment: {
-        connect: { id: envs[0].id },
-      },
-      password: await bcrypt.hash('password', roundsOfHashing),
-    },
-  });
-  
-  const caronte2 = await prisma.caronte.create({
-    data: {
-      ip: '192.168.1.2',
-      esp: 'A7:43:0E:BC:06:6D',
-      Environment: {
-        connect: { id: envs[1].id },
-      },
-      password: await bcrypt.hash('password', roundsOfHashing),
-    },
-  });
-}
-
-// seedUsersAndEnvs()
-//   .catch((error) => {
-//     console.error(error);
-//     process.exit(1);
-//   })
-//   .finally(async () => {
-//     await prisma.$disconnect();
+//   const caronte1 = await prisma.caronte.create({
+//     data: {
+//       ip: '192.168.1.3',
+//       esp: '02:F1:95:7C:C2:EC',
+//       Environment: {
+//         connect: { id: envs[0].id },
+//       },
+//       password: await bcrypt.hash('password', roundsOfHashing),
+//     },
 //   });
+  
+//   const caronte2 = await prisma.caronte.create({
+//     data: {
+//       ip: '192.168.1.2',
+//       esp: 'A7:43:0E:BC:06:6D',
+//       Environment: {
+//         connect: { id: envs[1].id },
+//       },
+//       password: await bcrypt.hash('password', roundsOfHashing),
+//     },
+//   });
+// }
 
-seedCarontes()
+seedUsersAndEnvs()
   .catch((error) => {
     console.error(error);
     process.exit(1);
@@ -147,3 +138,12 @@ seedCarontes()
   .finally(async () => {
     await prisma.$disconnect();
   });
+
+// seedCarontes()
+//   .catch((error) => {
+//     console.error(error);
+//     process.exit(1);
+//   })
+//   .finally(async () => {
+//     await prisma.$disconnect();
+//   });

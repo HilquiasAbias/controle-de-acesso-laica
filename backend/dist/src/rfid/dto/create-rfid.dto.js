@@ -16,9 +16,9 @@ class CreateRfidDto {
 }
 exports.CreateRfidDto = CreateRfidDto;
 __decorate([
-    (0, class_validator_1.IsHexadecimal)(),
+    (0, class_validator_1.IsString)(),
     (0, class_validator_1.IsNotEmpty)(),
-    (0, class_validator_1.Length)(8, 16),
+    (0, class_validator_1.MaxLength)(100),
     (0, swagger_1.ApiProperty)(),
     __metadata("design:type", String)
 ], CreateRfidDto.prototype, "tag", void 0);

@@ -1,10 +1,10 @@
-import { IsHexadecimal, IsNotEmpty, IsUUID, Length } from "class-validator"
+import { IsHexadecimal, IsNotEmpty, IsString, IsUUID, Length, MaxLength } from "class-validator"
 import { ApiProperty } from '@nestjs/swagger';
 
 export class CreateRfidDto {
-  @IsHexadecimal()
+  @IsString()
   @IsNotEmpty()
-  @Length(8, 16) // 
+  @MaxLength(100) // 
   @ApiProperty()
   tag: string
   
