@@ -15,7 +15,8 @@ import * as cors from 'cors';
     AuthModule, 
     RfidModule, 
     EnvironmentsModule, 
-    CaronteModule, LogModule
+    CaronteModule, 
+    LogModule
   ]
 })
 export class AppModule implements NestModule {

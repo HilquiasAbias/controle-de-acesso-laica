@@ -29,7 +29,8 @@ exports.AppModule = AppModule = __decorate([
             auth_module_1.AuthModule,
             rfid_module_1.RfidModule,
             environments_module_1.EnvironmentsModule,
-            caronte_module_1.CaronteModule, log_module_1.LogModule
+            caronte_module_1.CaronteModule,
+            log_module_1.LogModule
         ]
     })
 ], AppModule);

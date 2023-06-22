@@ -23,12 +23,14 @@ model Rfid {
 }
 
 model AccessTime {
-  id        String   @id @default(uuid())
-  dayOfWeek String
-  startTime DateTime
-  endTime   DateTime
-  User      User     @relation(fields: [userId], references: [id])
-  userId    String
+  id            String      @id @default(uuid())
+  dayOfWeek     String
+  startTime     DateTime
+  endTime       DateTime
+  User          User        @relation(fields: [userId], references: [id])
+  userId        String
+  Environment   Environment @relation(fields: [environmentId], references: [id])
+  environmentId String
 }
 
 model User {
@@ -50,14 +52,15 @@ model User {
 }
 
 model Environment {
-  id          String    @id @default(uuid())
-  name        String    @unique
+  id          String       @id @default(uuid())
+  name        String       @unique
   description String?
-  admins      User[]    @relation("admins")
-  frequenters User[]    @relation("frequenters")
+  admins      User[]       @relation("admins")
+  frequenters User[]       @relation("frequenters")
   carontes    Caronte[]
-  createdAt   DateTime  @default(now())
-  updatedAt   DateTime  @updatedAt
+  createdAt   DateTime     @default(now())
+  updatedAt   DateTime     @updatedAt
+  AccessTime  AccessTime[]
 }
 
 model Caronte {

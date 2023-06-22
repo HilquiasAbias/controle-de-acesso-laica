@@ -7,6 +7,9 @@ const prisma_client_exception_filter_1 = require("./prisma-client-exception.filt
 const common_1 = require("@nestjs/common");
 async function bootstrap() {
     const app = await core_1.NestFactory.create(app_module_1.AppModule);
+    app.enableCors({
+        origin: '*'
+    });
     const config = new swagger_1.DocumentBuilder()
         .setTitle('Laica: controle de acesso')
         .setDescription('Documentação da API de controle de acesso do Laica')
@@ -14,7 +17,8 @@ async function bootstrap() {
         .addBearerAuth()
         .build();
     const document = swagger_1.SwaggerModule.createDocument(app, config);
-    swagger_1.SwaggerModule.setup('api', app, document);
+    swagger_1.SwaggerModule.setup('', app, document);
+    app.setGlobalPrefix('/access-ng');
     const { httpAdapter } = app.get(core_1.HttpAdapterHost);
     app.useGlobalFilters(new prisma_client_exception_filter_1.PrismaClientExceptionFilter(httpAdapter));
     app.useGlobalPipes(new common_1.ValidationPipe());
