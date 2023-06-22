@@ -14,7 +14,7 @@ export class PrismaClientExceptionFilter extends BaseExceptionFilter {
     switch (exception.code) {
       case 'P2002': {
         const status = HttpStatus.CONFLICT;
-        const errorMessage = message.match(/`([^`]+)`\)$/); // Extrai a parte entre "`" no final da string
+        const errorMessage = message.match(/`([^`]+)`\)$/);
         const errorField = errorMessage ? errorMessage[1] : 'Unknown field';
         response.status(status).json({
           statusCode: status,

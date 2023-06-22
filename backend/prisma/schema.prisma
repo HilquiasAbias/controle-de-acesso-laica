@@ -16,17 +16,28 @@ datasource db {
 model Rfid {
   id        String   @id @default(uuid())
   tag       String   @unique
+  active    Boolean
   User      User     @relation(fields: [userId], references: [id])
   userId    String   @unique
   createdAt DateTime @default(now())
   updatedAt DateTime @updatedAt
 }
 
-model AccessTime {
+model EnvAccess {
   id            String      @id @default(uuid())
   dayOfWeek     String
   startTime     DateTime
   endTime       DateTime
+  active        Boolean
+  User          User        @relation(fields: [userId], references: [id])
+  userId        String
+  Environment   Environment @relation(fields: [environmentId], references: [id])
+  environmentId String
+}
+
+model EnvManager {
+  id            String      @id @default(uuid())
+  active        Boolean
   User          User        @relation(fields: [userId], references: [id])
   userId        String
   Environment   Environment @relation(fields: [environmentId], references: [id])
@@ -34,33 +45,30 @@ model AccessTime {
 }
 
 model User {
-  id                      String       @id @default(uuid())
-  name                    String
-  registration            String       @unique
-  password                String
-  role                    String // Roles
-  rfid                    Rfid?
-  mac                     String?
-  adminEnvironment        Environment? @relation("admins", fields: [environmentAdminId], references: [id])
-  environmentAdminId      String?
-  frequenterEnvironment   Environment? @relation("frequenters", fields: [environmentFrequenterId], references: [id])
-  environmentFrequenterId String?
-  createdAt               DateTime     @default(now())
-  updatedAt               DateTime     @updatedAt
-  Log                     Log[]
-  accessTimes             AccessTime[]
+  id           String       @id @default(uuid())
+  name         String
+  registration String       @unique
+  password     String
+  role         String // Roles
+  Rfid         Rfid?
+  mac          String?
+  createdAt    DateTime     @default(now())
+  updatedAt    DateTime     @updatedAt
+  Log          Log[]
+  EnvAccess    EnvAccess[]
+  EnvManager   EnvManager[]
 }
 
 model Environment {
   id          String       @id @default(uuid())
   name        String       @unique
   description String?
-  admins      User[]       @relation("admins")
-  frequenters User[]       @relation("frequenters")
+  active      Boolean
   carontes    Caronte[]
   createdAt   DateTime     @default(now())
   updatedAt   DateTime     @updatedAt
-  AccessTime  AccessTime[]
+  EnvAccess   EnvAccess[]
+  EnvManager  EnvManager[]
 }
 
 model Caronte {
@@ -68,6 +76,7 @@ model Caronte {
   ip            String      @unique
   esp           String      @unique
   password      String
+  active        Boolean
   Environment   Environment @relation(fields: [environmentId], references: [id])
   environmentId String
   Log           Log[]
@@ -81,9 +90,9 @@ model Caronte {
 
 model Log {
   id               String   @id @default(uuid())
-  caronte          Caronte  @relation(fields: [caronteMac], references: [esp])
+  Caronte          Caronte  @relation(fields: [caronteMac], references: [esp])
   caronteMac       String
-  user             User?    @relation(fields: [userRegistration], references: [registration])
+  User             User?    @relation(fields: [userRegistration], references: [registration])
   userRegistration String?
   type             String // LogTypes
   message          String
