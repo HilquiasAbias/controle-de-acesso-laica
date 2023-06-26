@@ -1,110 +1,39 @@
-import { ArgumentsHost, Catch, HttpStatus } from '@nestjs/common';
-import { BaseExceptionFilter } from '@nestjs/core';
+import { ArgumentsHost, Catch } from '@nestjs/common';
+import { BaseRpcExceptionFilter, RpcException } from '@nestjs/microservices';
 import { Prisma } from '@prisma/client';
-import { Response } from 'express';
+import { Observable, throwError } from 'rxjs';
 
 @Catch(Prisma.PrismaClientKnownRequestError)
-export class PrismaClientExceptionFilter extends BaseExceptionFilter {
-  catch(exception: Prisma.PrismaClientKnownRequestError, host: ArgumentsHost) {
+export class PrismaClientExceptionFilter extends BaseRpcExceptionFilter {
+  catch(exception: Prisma.PrismaClientKnownRequestError, host: ArgumentsHost): Observable<any> {
     console.error(exception.message);
-    const ctx = host.switchToHttp();
-    const response = ctx.getResponse<Response>();
-    const message = exception.message.replace(/\n/g, '');
 
     switch (exception.code) {
       case 'P2002': {
-        const status = HttpStatus.CONFLICT;
-        const errorMessage = message.match(/`([^`]+)`\)$/);
-        const errorField = errorMessage ? errorMessage[1] : 'Unknown field';
-        response.status(status).json({
-          statusCode: status,
+        const errorMessage = exception.message.replace(/\n/g, '');
+        const errorField = errorMessage.match(/`([^`]+)`\)$/)[1];
+        return throwError(new RpcException({
+          statusCode: 409,
           message: `Unique constraint failed on the field: (${errorField})`,
-          error: 'Conflict'
-        });
-        break;
+          error: 'Conflict',
+        }));
       }
 
       case 'P2025': {
-        const status = HttpStatus.NOT_FOUND;
-        const regex = /The (\w+) with value \(.+\) was not found in/;
-        const match = message.match(regex);
+        const errorMessage = exception.message.replace(/\n/g, '');
+        const match = errorMessage.match(/The (\w+) with value \(.+\) was not found in/);
         const entityName = match ? match[1] : null;
-        const errorMessage = message.match(/`([^`]+)`\)$/);
-        response.status(status).json({
-          statusCode: status,
-          message: entityName ? `The requested ${entityName} was not found.` : message,
-          error: 'Not found'
-        });
-        break;
+        return throwError(new RpcException({
+          statusCode: 404,
+          message: entityName ? `The requested ${entityName} was not found.` : errorMessage,
+          error: 'Not found',
+        }));
       }
 
-      case 'P2101': {
-        const status = HttpStatus.FORBIDDEN;
-        const regex = /The (\w+) operation is not permitted/;
-        const match = message.match(regex);
-        const operationName = match ? match[1] : 'Unknown operation';
-        response.status(status).json({
-          statusCode: status,
-          message: operationName ? `The requested ${operationName} operation is forbidden.` : message,
-        });
-        break;
-      }
-
-      case 'P2018': {
-        const status = HttpStatus.FORBIDDEN;
-        const regex = /The required connected records were not found '([^']+)'[^']*$/;
-        const match = message.match(regex);
-        const relationName = match ? match[1] : 'Unknown relation';
-        const errorMessage = `The required connected records were not found: ${relationName}`;
-      
-        response.status(status).json({
-          statusCode: status,
-          message: errorMessage,
-        });
-        break;
-      }
-
-      case 'P4001': {
-        const status = HttpStatus.BAD_REQUEST;
-        const regex = /Invalid input for (\w+)/;
-        const match = message.match(regex);
-        const inputName = match ? match[1] : 'Unknown input';
-        response.status(status).json({
-          statusCode: status,
-          message: `Invalid input data for ${inputName}.`,
-        });
-        break;
-      }
-
-      case 'P4002': {
-        const status = HttpStatus.BAD_REQUEST;
-        const regex = /Required field\((.+)\)/;
-        const match = message.match(regex);
-        const errorField = match ? match[1] : 'Unknown field';
-
-        response.status(status).json({
-          statusCode: status,
-          message: `Required field missing: ${errorField}`,
-        });
-        break;
-      }
-
-      case 'P4003': {
-        const status = HttpStatus.BAD_REQUEST;
-        const regex = /Invalid field value\((.+)\)/;
-        const match = message.match(regex);
-        const errorField = match ? match[1] : 'Unknown field';
-
-        response.status(status).json({
-          statusCode: status,
-          message: `Invalid field value: ${errorField}`,
-        });
-        break;
-      }
+      // Handle other Prisma errors...
 
       default:
-        super.catch(exception, host); // default 500 error code
-        break;
+        return super.catch(exception, host); // default behavior
     }
   }
 }

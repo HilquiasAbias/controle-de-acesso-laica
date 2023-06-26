@@ -1,11 +1,11 @@
 import { NestFactory, HttpAdapterHost } from "@nestjs/core";
 import { Transport } from "@nestjs/microservices";
-import { UserModule } from "./user/user.module";
+import { AppModule } from "./app.module";
 import { ValidationPipe } from "@nestjs/common";
 import { PrismaClientExceptionFilter } from "./prisma-client-exception.filter";
 
 async function bootstrap() {
-  const app = await NestFactory.createMicroservice(UserModule, {
+  const app = await NestFactory.createMicroservice(AppModule, {
     transport: Transport.TCP,
     options: {
       host: "127.0.0.1",
@@ -15,7 +15,7 @@ async function bootstrap() {
 
   const { httpAdapter } = app.get(HttpAdapterHost);
   
-  app.useGlobalFilters(new PrismaClientExceptionFilter(httpAdapter));
+  app.useGlobalFilters(new PrismaClientExceptionFilter());
   app.useGlobalPipes(new ValidationPipe());
   app.listen();
 }
