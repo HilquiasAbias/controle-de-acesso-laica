@@ -1,0 +1,6 @@
+backend/node_modules
+backend/.env
+
+back/services/users/node_modules
+back/services/users/.env
+
