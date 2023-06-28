@@ -20,6 +20,15 @@ let UserService = class UserService {
         this.prisma = prisma;
     }
     async create(createUserDto) {
+        const validFields = ['email', 'name', 'registration', 'password', 'role', 'tag'];
+        const invalidFields = Object.keys(createUserDto).filter(field => !validFields.includes(field));
+        if (invalidFields.length > 0) {
+            throw new microservices_1.RpcException({
+                statusCode: 400,
+                message: `Invalid fields provided: ${invalidFields.join(', ')}`,
+                error: 'Bad Request',
+            });
+        }
         const hashedPassword = await bcrypt.hash(createUserDto.password, exports.roundsOfHashing);
         let user;
         try {
@@ -31,6 +40,9 @@ let UserService = class UserService {
                     role: createUserDto.role,
                     password: hashedPassword,
                     Rfid: createUserDto.tag ? { create: { tag: createUserDto.tag } } : undefined
+                },
+                include: {
+                    Rfid: true
                 }
             });
         }
@@ -38,7 +50,7 @@ let UserService = class UserService {
             if (error.code === 'P2002') {
                 throw new microservices_1.RpcException({
                     statusCode: 409,
-                    message: 'Already exists',
+                    message: `Already exists: ${error.meta.target}`,
                     error: 'Conflict',
                 });
             }
@@ -62,6 +74,12 @@ let UserService = class UserService {
     async findAllAdmins() {
         return await this.prisma.user.findMany({
             where: { role: 'ADMIN' },
+            include: { Rfid: true }
+        });
+    }
+    async findAllEnvironmentManager() {
+        return await this.prisma.user.findMany({
+            where: { role: 'ENVIRONMENT_MANAGER' },
             include: { Rfid: true }
         });
     }

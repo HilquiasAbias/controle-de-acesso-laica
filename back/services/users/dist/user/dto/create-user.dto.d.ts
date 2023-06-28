@@ -1,7 +1,7 @@
 export declare class CreateUserDto {
     name: string;
     registration: string;
-    email?: string;
+    email: string;
     password: string;
     role: string;
     tag?: string;

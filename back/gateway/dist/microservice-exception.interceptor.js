@@ -16,6 +16,12 @@ let MicroserviceExceptionInterceptor = class MicroserviceExceptionInterceptor {
             if (error.statusCode === 409) {
                 throw new common_1.HttpException(error.message, common_1.HttpStatus.CONFLICT);
             }
+            if (error.response.statusCode === 400) {
+                throw new common_1.HttpException(error.response.message, common_1.HttpStatus.BAD_REQUEST);
+            }
+            if (error.statusCode === 403) {
+                throw new common_1.HttpException(error.message, common_1.HttpStatus.FORBIDDEN);
+            }
             throw new common_1.BadGatewayException('Erro ao processar a requisição via microsserviço');
         }));
     }

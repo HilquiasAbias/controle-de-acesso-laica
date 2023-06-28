@@ -23,6 +23,15 @@ let UsersController = class UsersController {
     createUser(createUserDto) {
         return this.usersService.create(createUserDto);
     }
+    findAllFrequenters() {
+        return this.usersService.findAllFrequenters();
+    }
+    findAllAdmins() {
+        return this.usersService.findAllAdmins();
+    }
+    findAllEnvironmentManager() {
+        return this.usersService.findAllEnvironmentManager();
+    }
 };
 __decorate([
     (0, common_1.Post)(),
@@ -31,6 +40,24 @@ __decorate([
     __metadata("design:paramtypes", [create_user_dto_1.CreateUserDto]),
     __metadata("design:returntype", void 0)
 ], UsersController.prototype, "createUser", null);
+__decorate([
+    (0, common_1.Get)('/frequenters'),
+    __metadata("design:type", Function),
+    __metadata("design:paramtypes", []),
+    __metadata("design:returntype", void 0)
+], UsersController.prototype, "findAllFrequenters", null);
+__decorate([
+    (0, common_1.Get)('/admins'),
+    __metadata("design:type", Function),
+    __metadata("design:paramtypes", []),
+    __metadata("design:returntype", void 0)
+], UsersController.prototype, "findAllAdmins", null);
+__decorate([
+    (0, common_1.Get)('/environment_managers'),
+    __metadata("design:type", Function),
+    __metadata("design:paramtypes", []),
+    __metadata("design:returntype", void 0)
+], UsersController.prototype, "findAllEnvironmentManager", null);
 UsersController = __decorate([
     (0, common_1.Controller)('users'),
     __metadata("design:paramtypes", [users_service_1.UsersService])

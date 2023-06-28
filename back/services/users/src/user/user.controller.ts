@@ -11,4 +11,19 @@ export class UserController {
   async create(@Payload() createUserDto: CreateUserDto) {
     return await this.userService.create(createUserDto);
   }
+
+  @MessagePattern({ cmd: "get-environment_managers" })
+  async findAllEnvironmentManager() {
+    return await this.userService.findAllEnvironmentManager();
+  }
+
+  @MessagePattern({ cmd: "get-admins" })
+  async findAllAdmins() {
+    return await this.userService.findAllAdmins();
+  }
+
+  @MessagePattern({ cmd: "get-frequenters" })
+  async findAllFrequenters() {
+    return await this.userService.findAllFrequenters();
+  }
 }

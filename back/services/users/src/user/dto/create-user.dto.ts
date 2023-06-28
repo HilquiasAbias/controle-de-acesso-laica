@@ -1,4 +1,4 @@
-import { IsEmail, IsIn, IsMACAddress, IsOptional, IsString, Length } from "class-validator"
+import { IsEmail, IsIn, IsMACAddress, IsNotEmpty, IsOptional, IsString, Length } from "class-validator"
 //import { Roles } from "@prisma/client"
 
 export class CreateUserDto {
@@ -9,7 +9,8 @@ export class CreateUserDto {
   registration: string
 
   @IsEmail()
-  email?: string
+  @IsNotEmpty()
+  email: string
 
   @IsString()
   password: string

@@ -10,4 +10,19 @@ export class UsersController {
   createUser(@Body() createUserDto: CreateUserDto) {
     return this.usersService.create(createUserDto)
   }
+
+  @Get('/frequenters')
+  findAllFrequenters() {
+    return this.usersService.findAllFrequenters()
+  }
+
+  @Get('/admins')
+  findAllAdmins() {
+    return this.usersService.findAllAdmins()
+  }
+
+  @Get('/environment_managers')
+  findAllEnvironmentManager() {
+    return this.usersService.findAllEnvironmentManager()
+  }
 }

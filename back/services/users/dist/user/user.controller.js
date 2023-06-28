@@ -24,6 +24,15 @@ let UserController = class UserController {
     async create(createUserDto) {
         return await this.userService.create(createUserDto);
     }
+    async findAllEnvironmentManager() {
+        return await this.userService.findAllEnvironmentManager();
+    }
+    async findAllAdmins() {
+        return await this.userService.findAllAdmins();
+    }
+    async findAllFrequenters() {
+        return await this.userService.findAllFrequenters();
+    }
 };
 __decorate([
     (0, microservices_1.MessagePattern)({ cmd: "create-user" }),
@@ -32,6 +41,24 @@ __decorate([
     __metadata("design:paramtypes", [create_user_dto_1.CreateUserDto]),
     __metadata("design:returntype", Promise)
 ], UserController.prototype, "create", null);
+__decorate([
+    (0, microservices_1.MessagePattern)({ cmd: "get-environment_managers" }),
+    __metadata("design:type", Function),
+    __metadata("design:paramtypes", []),
+    __metadata("design:returntype", Promise)
+], UserController.prototype, "findAllEnvironmentManager", null);
+__decorate([
+    (0, microservices_1.MessagePattern)({ cmd: "get-admins" }),
+    __metadata("design:type", Function),
+    __metadata("design:paramtypes", []),
+    __metadata("design:returntype", Promise)
+], UserController.prototype, "findAllAdmins", null);
+__decorate([
+    (0, microservices_1.MessagePattern)({ cmd: "get-frequenters" }),
+    __metadata("design:type", Function),
+    __metadata("design:paramtypes", []),
+    __metadata("design:returntype", Promise)
+], UserController.prototype, "findAllFrequenters", null);
 UserController = __decorate([
     (0, common_1.Controller)(),
     __metadata("design:paramtypes", [user_service_1.UserService])
