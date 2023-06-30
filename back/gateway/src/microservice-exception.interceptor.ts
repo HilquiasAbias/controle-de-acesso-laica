@@ -12,18 +12,22 @@ export class MicroserviceExceptionInterceptor implements NestInterceptor {
         //console.log(error.response);
         
         if (error.statusCode === 409) {
-          throw new HttpException(error.message, HttpStatus.CONFLICT);
+          throw new HttpException(error, HttpStatus.CONFLICT);
         }
         
-        if (error.response.statusCode === 400) {
-          throw new HttpException(error.response.message, HttpStatus.BAD_REQUEST);
+        if (error.response?.statusCode === 400) {
+          throw new HttpException(error.response, HttpStatus.BAD_REQUEST);
+        }
+
+        if (error.statusCode === 400) {
+          throw new HttpException(error, HttpStatus.BAD_REQUEST);
         }
 
         if (error.statusCode === 403) {
           throw new HttpException(error.message, HttpStatus.FORBIDDEN);
         }
         
-        throw new BadGatewayException('Erro ao processar a requisição via microsserviço');
+        throw new HttpException('Failed to process request', HttpStatus.BAD_REQUEST);
       }),
     );
   }

@@ -8,26 +8,21 @@ var __decorate = (this && this.__decorate) || function (decorators, target, key,
 Object.defineProperty(exports, "__esModule", { value: true });
 exports.PrismaClientExceptionFilter = void 0;
 const common_1 = require("@nestjs/common");
-const core_1 = require("@nestjs/core");
 const microservices_1 = require("@nestjs/microservices");
 const client_1 = require("@prisma/client");
 const rxjs_1 = require("rxjs");
-let PrismaClientExceptionFilter = class PrismaClientExceptionFilter extends core_1.BaseExceptionFilter {
+let PrismaClientExceptionFilter = class PrismaClientExceptionFilter extends microservices_1.BaseRpcExceptionFilter {
     catch(exception, host) {
         console.error(exception.message);
-        const ctx = host.switchToHttp();
-        const response = ctx.getResponse();
-        const message = exception.message.replace(/\n/g, '');
         switch (exception.code) {
             case 'P2002': {
-                const errorMessage = message.match(/`([^`]+)`\)$/);
-                const errorField = errorMessage ? errorMessage[1] : 'Unknown field';
-                const thisMessage = `Unique constraint failed on the field: (${errorField})`;
-                response.status(common_1.HttpStatus.CONFLICT).json({
-                    statusCode: common_1.HttpStatus.CONFLICT,
-                    message: thisMessage,
+                const errorMessage = exception.message.replace(/\n/g, '');
+                const errorField = errorMessage.match(/`([^`]+)`\)$/)[1];
+                return (0, rxjs_1.throwError)(new microservices_1.RpcException({
+                    statusCode: 409,
+                    message: `Unique constraint failed on the field: (${errorField})`,
                     error: 'Conflict',
-                });
+                }));
             }
             case 'P2025': {
                 const errorMessage = exception.message.replace(/\n/g, '');

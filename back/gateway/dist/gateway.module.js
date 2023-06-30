@@ -22,8 +22,8 @@ GatewayModule = __decorate([
             {
                 provide: core_1.APP_INTERCEPTOR,
                 useClass: microservice_exception_interceptor_1.MicroserviceExceptionInterceptor,
-            },
-        ],
+            }
+        ]
     })
 ], GatewayModule);
 exports.GatewayModule = GatewayModule;

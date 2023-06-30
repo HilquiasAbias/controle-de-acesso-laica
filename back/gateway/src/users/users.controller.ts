@@ -25,4 +25,9 @@ export class UsersController {
   findAllEnvironmentManager() {
     return this.usersService.findAllEnvironmentManager()
   }
+
+  @Get('/:id')
+  findOne(@Param('id') id: string) {
+    return this.usersService.findOne(id)
+  }
 }

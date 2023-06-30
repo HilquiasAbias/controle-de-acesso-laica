@@ -14,6 +14,7 @@ const common_1 = require("@nestjs/common");
 const bcrypt = require("bcrypt");
 const prisma_service_1 = require("../prisma/prisma.service");
 const microservices_1 = require("@nestjs/microservices");
+const class_validator_1 = require("class-validator");
 exports.roundsOfHashing = 10;
 let UserService = class UserService {
     constructor(prisma) {
@@ -82,6 +83,30 @@ let UserService = class UserService {
             where: { role: 'ENVIRONMENT_MANAGER' },
             include: { Rfid: true }
         });
+    }
+    async findOne(id) {
+        if (!(0, class_validator_1.isUUID)(id)) {
+            throw new microservices_1.RpcException({
+                statusCode: 400,
+                message: 'Invalid id input',
+                error: 'Bad Request',
+            });
+        }
+        try {
+            return await this.prisma.user.findFirstOrThrow({
+                where: { id },
+                include: { Rfid: true }
+            });
+        }
+        catch (error) {
+            if (error.code === 'P2025') {
+                throw new microservices_1.RpcException({
+                    statusCode: 409,
+                    message: error.message,
+                    error: 'Conflict',
+                });
+            }
+        }
     }
 };
 UserService = __decorate([

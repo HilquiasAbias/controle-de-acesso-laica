@@ -4,6 +4,7 @@ import { CreateUserDto } from './dto/create-user.dto';
 import * as bcrypt from 'bcrypt';
 import { PrismaService } from 'src/prisma/prisma.service';
 import { RpcException } from '@nestjs/microservices';
+import { isUUID } from 'class-validator';
 
 export const roundsOfHashing = 10;
 
@@ -22,7 +23,6 @@ export class UserService {
         statusCode: 400,
         message: `Invalid fields provided: ${invalidFields.join(', ')}`,
         error: 'Bad Request',
-      
       });
     }
 
@@ -88,4 +88,32 @@ export class UserService {
       include: { Rfid: true }
     });
   }
+
+  async findOne(id: string) {
+    if (!isUUID(id)) {
+      throw new RpcException({
+        statusCode: 400,
+        message: 'Invalid id input',
+        error: 'Bad Request',
+      })
+    }
+
+    try {
+      return await this.prisma.user.findFirstOrThrow({
+        where: { id },
+        include: { Rfid: true }
+      });
+    } catch (error) {
+      if (error.code === 'P2025') {
+        
+        throw new RpcException({
+          statusCode: 409,
+          message: error.message,
+          error: 'Conflict',
+        })
+      }
+    }
+  }
+
+  // async update
 }

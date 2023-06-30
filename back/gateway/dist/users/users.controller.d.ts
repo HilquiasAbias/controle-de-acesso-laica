@@ -7,4 +7,5 @@ export declare class UsersController {
     findAllFrequenters(): import("rxjs").Observable<any>;
     findAllAdmins(): import("rxjs").Observable<any>;
     findAllEnvironmentManager(): import("rxjs").Observable<any>;
+    findOne(id: string): import("rxjs").Observable<any>;
 }

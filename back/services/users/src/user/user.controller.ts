@@ -26,4 +26,9 @@ export class UserController {
   async findAllFrequenters() {
     return await this.userService.findAllFrequenters();
   }
+
+  @MessagePattern({ cmd: "get-one" })
+  async findOne(@Payload() id: string) {
+    return await this.userService.findOne(id);
+  }
 }

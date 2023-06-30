@@ -39,6 +39,11 @@ let UsersService = class UsersService {
         const payload = {};
         return this.usersService.send(pattern, payload);
     }
+    findOne(id) {
+        const pattern = { cmd: 'get-one' };
+        const payload = id;
+        return this.usersService.send(pattern, payload);
+    }
 };
 UsersService = __decorate([
     (0, common_1.Injectable)(),

@@ -32,6 +32,9 @@ let UsersController = class UsersController {
     findAllEnvironmentManager() {
         return this.usersService.findAllEnvironmentManager();
     }
+    findOne(id) {
+        return this.usersService.findOne(id);
+    }
 };
 __decorate([
     (0, common_1.Post)(),
@@ -58,6 +61,13 @@ __decorate([
     __metadata("design:paramtypes", []),
     __metadata("design:returntype", void 0)
 ], UsersController.prototype, "findAllEnvironmentManager", null);
+__decorate([
+    (0, common_1.Get)('/:id'),
+    __param(0, (0, common_1.Param)('id')),
+    __metadata("design:type", Function),
+    __metadata("design:paramtypes", [String]),
+    __metadata("design:returntype", void 0)
+], UsersController.prototype, "findOne", null);
 UsersController = __decorate([
     (0, common_1.Controller)('users'),
     __metadata("design:paramtypes", [users_service_1.UsersService])

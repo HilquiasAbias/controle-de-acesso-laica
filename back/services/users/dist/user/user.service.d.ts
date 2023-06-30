@@ -71,4 +71,23 @@ export declare class UserService {
         createdAt: Date;
         updatedAt: Date;
     }, unknown, never> & {})[]>;
+    findOne(id: string): Promise<{
+        Rfid: import("@prisma/client/runtime").GetResult<{
+            id: string;
+            tag: string;
+            active: boolean;
+            userId: string;
+            createdAt: Date;
+            updatedAt: Date;
+        }, unknown, never> & {};
+    } & import("@prisma/client/runtime").GetResult<{
+        id: string;
+        name: string;
+        registration: string;
+        email: string;
+        password: string;
+        role: string;
+        createdAt: Date;
+        updatedAt: Date;
+    }, unknown, never> & {}>;
 }
