@@ -2,6 +2,7 @@ import { Controller } from '@nestjs/common';
 import { UserService } from './user.service';
 import { MessagePattern, Payload } from '@nestjs/microservices';
 import { CreateUserDto } from './dto/create-user.dto';
+import { UpdateUserGeneralDto } from './dto/update-user-general.dto';
 
 @Controller()
 export class UserController {
@@ -30,5 +31,13 @@ export class UserController {
   @MessagePattern({ cmd: "get-one" })
   async findOne(@Payload() id: string) {
     return await this.userService.findOne(id);
+  }
+
+  @MessagePattern({ cmd: "update-general-data" })
+  async updateGeneralData(
+    @Payload() payload: { id: string, updateUserGeneralDto: UpdateUserGeneralDto }
+  ) {
+    const { id, updateUserGeneralDto } = payload
+    return await this.userService.updateGeneralData(id, updateUserGeneralDto)
   }
 }

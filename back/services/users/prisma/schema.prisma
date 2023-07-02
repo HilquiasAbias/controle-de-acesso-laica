@@ -3,35 +3,32 @@ generator client {
 }
 
 datasource db {
-  provider = "postgres" // postgres
+  provider = "sqlite" // postgres
   url      = "file:./dev.db" // env("DATABASE_URL")
 }
 
-enum Roles {
-  ADMIN
-  FREQUENTER
-  ENVIRONMENT_MANAGER
-}
-
-// model UserRoles {
-//   id                 String  @id @default(uuid())
-//   frequenter         Boolean
-//   environmentManager Boolean
-//   admin              Boolean
-//   User               User    @relation(fields: [userId], references: [id])
-//   userId             String
+// enum Roles {
+//   ADMIN
+//   FREQUENTER
+//   ENVIRONMENT_MANAGER
 // }
 
+model UserRoles {
+  id     String  @id @default(uuid())
+  role   String // Roles
+  User   User?   @relation(fields: [userId], references: [id])
+  userId String?
+}
+
 model User {
-  id           String   @id @default(uuid())
+  id           String      @id @default(uuid())
   name         String
-  registration String   @unique
-  email        String   @unique
+  registration String      @unique
+  email        String?     @unique
   password     String
-  roles        Roles[]
-  createdAt    DateTime @default(now())
-  updatedAt    DateTime @updatedAt
-  // Roles        UserRoles[]
+  createdAt    DateTime    @default(now())
+  updatedAt    DateTime    @updatedAt
+  Roles        UserRoles[]
   Rfid         Rfid?
   Device       Mobile?
 }

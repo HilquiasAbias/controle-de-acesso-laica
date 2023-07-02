@@ -26,6 +26,10 @@ export class MicroserviceExceptionInterceptor implements NestInterceptor {
         if (error.statusCode === 403) {
           throw new HttpException(error.message, HttpStatus.FORBIDDEN);
         }
+
+        if (error.statusCode === 404) {
+          throw new HttpException(error, HttpStatus.FORBIDDEN);
+        }
         
         throw new HttpException('Failed to process request', HttpStatus.BAD_REQUEST);
       }),

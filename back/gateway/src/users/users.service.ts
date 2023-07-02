@@ -1,6 +1,9 @@
-import { Injectable, Inject } from "@nestjs/common";
+import { Injectable, Inject, BadRequestException } from "@nestjs/common";
 import { ClientProxy } from "@nestjs/microservices";
 import { CreateUserDto } from "./dto/create-user.dto";
+import { UpdateUserGeneralDto } from "./dto/update-user-general.dto";
+import { UpdateUserRolesDto } from "./dto/update-user-roles.dto";
+import { isUUID } from "class-validator";
 
 @Injectable()
 export class UsersService {
@@ -38,6 +41,46 @@ export class UsersService {
     const pattern = { cmd: 'get-one' }
     const payload = id
     
+    return this.usersService.send(pattern, payload)
+  }
+
+  updateGeneralData(id: string, updateUserGeneralDto: UpdateUserGeneralDto) {
+    if (!isUUID(id)) {
+      throw new BadRequestException('Invalid id input')
+    }
+
+    const validFields = ['email', 'name', 'registration', 'password'];
+    const invalidFields = Object.keys(updateUserGeneralDto).filter(
+      field => !validFields.includes(field),
+    );
+
+    if (invalidFields.length > 0) {
+      throw new BadRequestException(`Invalid fields provided: ${invalidFields.join(', ')}`)
+    }
+
+    const pattern = { cmd: "update-general-data" }
+    const payload = { id, updateUserGeneralDto }
+
+    return this.usersService.send(pattern, payload)
+  }
+
+  updateRoles(id: string, updateRolesData: UpdateUserRolesDto) {
+    if (!isUUID(id)) {
+      throw new BadRequestException('Invalid id input')
+    }
+    
+    const validFields = ['rolesToAdd', 'rolesToRemove'];
+    const invalidFields = Object.keys(updateRolesData).filter(
+      field => !validFields.includes(field),
+    );
+
+    if (invalidFields.length > 0) {
+      throw new BadRequestException(`Invalid fields provided: ${invalidFields.join(', ')}`)
+    }
+
+    const pattern = { cmd: "update-roles-data" }
+    const payload = { id, updateRolesData }
+
     return this.usersService.send(pattern, payload)
   }
 }

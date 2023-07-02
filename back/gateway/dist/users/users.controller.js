@@ -16,6 +16,8 @@ exports.UsersController = void 0;
 const common_1 = require("@nestjs/common");
 const users_service_1 = require("./users.service");
 const create_user_dto_1 = require("./dto/create-user.dto");
+const update_user_general_dto_1 = require("./dto/update-user-general.dto");
+const update_user_roles_dto_1 = require("./dto/update-user-roles.dto");
 let UsersController = class UsersController {
     constructor(usersService) {
         this.usersService = usersService;
@@ -34,6 +36,12 @@ let UsersController = class UsersController {
     }
     findOne(id) {
         return this.usersService.findOne(id);
+    }
+    updateGeneralData(id, updateGeneralData) {
+        return this.usersService.updateGeneralData(id, updateGeneralData);
+    }
+    updateRoles(id, updateRolesDto) {
+        return this.usersService.updateRoles(id, updateRolesDto);
     }
 };
 __decorate([
@@ -68,6 +76,21 @@ __decorate([
     __metadata("design:paramtypes", [String]),
     __metadata("design:returntype", void 0)
 ], UsersController.prototype, "findOne", null);
+__decorate([
+    (0, common_1.Patch)('/:id'),
+    __param(0, (0, common_1.Param)('id')),
+    __param(1, (0, common_1.Body)()),
+    __metadata("design:type", Function),
+    __metadata("design:paramtypes", [String, update_user_general_dto_1.UpdateUserGeneralDto]),
+    __metadata("design:returntype", void 0)
+], UsersController.prototype, "updateGeneralData", null);
+__decorate([
+    (0, common_1.Patch)('roles/:id'),
+    __param(0, (0, common_1.Param)('id')),
+    __metadata("design:type", Function),
+    __metadata("design:paramtypes", [String, update_user_roles_dto_1.UpdateUserRolesDto]),
+    __metadata("design:returntype", void 0)
+], UsersController.prototype, "updateRoles", null);
 UsersController = __decorate([
     (0, common_1.Controller)('users'),
     __metadata("design:paramtypes", [users_service_1.UsersService])

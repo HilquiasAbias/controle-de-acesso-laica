@@ -36,6 +36,10 @@ let UserController = class UserController {
     async findOne(id) {
         return await this.userService.findOne(id);
     }
+    async updateGeneralData(payload) {
+        const { id, updateUserGeneralDto } = payload;
+        return await this.userService.updateGeneralData(id, updateUserGeneralDto);
+    }
 };
 __decorate([
     (0, microservices_1.MessagePattern)({ cmd: "create-user" }),
@@ -69,6 +73,13 @@ __decorate([
     __metadata("design:paramtypes", [String]),
     __metadata("design:returntype", Promise)
 ], UserController.prototype, "findOne", null);
+__decorate([
+    (0, microservices_1.MessagePattern)({ cmd: "update-general-data" }),
+    __param(0, (0, microservices_1.Payload)()),
+    __metadata("design:type", Function),
+    __metadata("design:paramtypes", [Object]),
+    __metadata("design:returntype", Promise)
+], UserController.prototype, "updateGeneralData", null);
 UserController = __decorate([
     (0, common_1.Controller)(),
     __metadata("design:paramtypes", [user_service_1.UserService])

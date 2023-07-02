@@ -5,6 +5,7 @@ import * as bcrypt from 'bcrypt';
 import { PrismaService } from 'src/prisma/prisma.service';
 import { RpcException } from '@nestjs/microservices';
 import { isUUID } from 'class-validator';
+import { UpdateUserGeneralDto } from './dto/update-user-general.dto';
 
 export const roundsOfHashing = 10;
 
@@ -13,7 +14,7 @@ export class UserService {
   constructor(private prisma: PrismaService) {} 
 
   async create(createUserDto: CreateUserDto) {
-    const validFields = ['email', 'name', 'registration', 'password', 'role', 'tag'];
+    const validFields = ['email', 'name', 'registration', 'password', 'roles', 'tag'];
     const invalidFields = Object.keys(createUserDto).filter(
       field => !validFields.includes(field),
     );
@@ -39,7 +40,6 @@ export class UserService {
           name: createUserDto.name,
           registration: createUserDto.registration,
           email: createUserDto.email,
-          role: createUserDto.role,
           password: hashedPassword,
           Rfid: createUserDto.tag ? { create: { tag: createUserDto.tag } } : undefined
         },
@@ -63,6 +63,15 @@ export class UserService {
       }
     }
 
+    for (const role of createUserDto.roles) {
+      await this.prisma.userRoles.create({
+        data: {
+          User: { connect: { id: user.id } },
+          role,
+        },
+      });
+    }
+
     if (createUserDto.envId) {} // TODO: se comunicar com Environments para adcionar o usuário criado
 
     return user;
@@ -70,21 +79,33 @@ export class UserService {
 
   async findAllFrequenters() {
     return await this.prisma.user.findMany({
-      where: { role: 'FREQUENTER' },
+      where: { Roles: {
+        some: {
+          role: 'FREQUENTER'
+        }
+      } },
       include: { Rfid: true }
     });
   }
 
   async findAllAdmins() {
     return await this.prisma.user.findMany({
-      where: { role: 'ADMIN' },
+      where: { Roles: {
+        some: {
+          role: 'ADMIN'
+        }
+      } },
       include: { Rfid: true }
     });
   }
 
   async findAllEnvironmentManager() {
     return await this.prisma.user.findMany({
-      where: { role: 'ENVIRONMENT_MANAGER' },
+      where: { Roles: {
+        some: {
+          role: 'ENVIRONMENT_MANAGER'
+        }
+      } },
       include: { Rfid: true }
     });
   }
@@ -104,16 +125,59 @@ export class UserService {
         include: { Rfid: true }
       });
     } catch (error) {
+      console.log(error);
+      
       if (error.code === 'P2025') {
-        
         throw new RpcException({
-          statusCode: 409,
+          statusCode: 404,
           message: error.message,
-          error: 'Conflict',
+          error: 'Not Found',
         })
       }
     }
   }
 
-  // async update
+  async updateGeneralData(id: string, updateUserGeneralDto: UpdateUserGeneralDto) {
+    if (!isUUID(id)) {
+      throw new RpcException({
+        statusCode: 400,
+        message: 'Invalid id input',
+        error: 'Bad Request',
+      })
+    }
+
+    try {
+      return await this.prisma.user.update({
+        data: {
+          name: updateUserGeneralDto.name,
+          email: updateUserGeneralDto.email,
+          registration: updateUserGeneralDto.registration,
+          password: updateUserGeneralDto.password
+        },
+        where: { id }
+      })
+    } catch (error) {
+      console.log(error);
+      
+      if (error.code === 'P2002') {
+        throw new RpcException({
+          statusCode: 409,
+          message: `Already exists: ${error.meta.target}`,
+          error: 'Conflict',
+        })
+      } else if (error.code === 'P2025') {
+        throw new RpcException({
+          statusCode: 404,
+          message: error.meta.cause, // error.message,
+          error: 'Not Found',
+        })
+      } else {
+        throw new RpcException({
+          statusCode: 403,
+          message: "Can't update user",
+          error: 'Forbidden',
+        });
+      }
+    }
+  }
 }

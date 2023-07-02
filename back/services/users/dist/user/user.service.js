@@ -21,7 +21,7 @@ let UserService = class UserService {
         this.prisma = prisma;
     }
     async create(createUserDto) {
-        const validFields = ['email', 'name', 'registration', 'password', 'role', 'tag'];
+        const validFields = ['email', 'name', 'registration', 'password', 'roles', 'tag'];
         const invalidFields = Object.keys(createUserDto).filter(field => !validFields.includes(field));
         if (invalidFields.length > 0) {
             throw new microservices_1.RpcException({
@@ -38,7 +38,6 @@ let UserService = class UserService {
                     name: createUserDto.name,
                     registration: createUserDto.registration,
                     email: createUserDto.email,
-                    role: createUserDto.role,
                     password: hashedPassword,
                     Rfid: createUserDto.tag ? { create: { tag: createUserDto.tag } } : undefined
                 },
@@ -63,24 +62,44 @@ let UserService = class UserService {
                 });
             }
         }
+        for (const role of createUserDto.roles) {
+            await this.prisma.userRoles.create({
+                data: {
+                    User: { connect: { id: user.id } },
+                    role,
+                },
+            });
+        }
         if (createUserDto.envId) { }
         return user;
     }
     async findAllFrequenters() {
         return await this.prisma.user.findMany({
-            where: { role: 'FREQUENTER' },
+            where: { Roles: {
+                    some: {
+                        role: 'FREQUENTER'
+                    }
+                } },
             include: { Rfid: true }
         });
     }
     async findAllAdmins() {
         return await this.prisma.user.findMany({
-            where: { role: 'ADMIN' },
+            where: { Roles: {
+                    some: {
+                        role: 'ADMIN'
+                    }
+                } },
             include: { Rfid: true }
         });
     }
     async findAllEnvironmentManager() {
         return await this.prisma.user.findMany({
-            where: { role: 'ENVIRONMENT_MANAGER' },
+            where: { Roles: {
+                    some: {
+                        role: 'ENVIRONMENT_MANAGER'
+                    }
+                } },
             include: { Rfid: true }
         });
     }
@@ -99,11 +118,56 @@ let UserService = class UserService {
             });
         }
         catch (error) {
+            console.log(error);
             if (error.code === 'P2025') {
                 throw new microservices_1.RpcException({
-                    statusCode: 409,
+                    statusCode: 404,
                     message: error.message,
+                    error: 'Not Found',
+                });
+            }
+        }
+    }
+    async updateGeneralData(id, updateUserGeneralDto) {
+        if (!(0, class_validator_1.isUUID)(id)) {
+            throw new microservices_1.RpcException({
+                statusCode: 400,
+                message: 'Invalid id input',
+                error: 'Bad Request',
+            });
+        }
+        try {
+            return await this.prisma.user.update({
+                data: {
+                    name: updateUserGeneralDto.name,
+                    email: updateUserGeneralDto.email,
+                    registration: updateUserGeneralDto.registration,
+                    password: updateUserGeneralDto.password
+                },
+                where: { id }
+            });
+        }
+        catch (error) {
+            console.log(error);
+            if (error.code === 'P2002') {
+                throw new microservices_1.RpcException({
+                    statusCode: 409,
+                    message: `Already exists: ${error.meta.target}`,
                     error: 'Conflict',
+                });
+            }
+            else if (error.code === 'P2025') {
+                throw new microservices_1.RpcException({
+                    statusCode: 404,
+                    message: error.meta.cause,
+                    error: 'Not Found',
+                });
+            }
+            else {
+                throw new microservices_1.RpcException({
+                    statusCode: 403,
+                    message: "Can't update user",
+                    error: 'Forbidden',
                 });
             }
         }

@@ -26,6 +26,9 @@ let MicroserviceExceptionInterceptor = class MicroserviceExceptionInterceptor {
             if (error.statusCode === 403) {
                 throw new common_1.HttpException(error.message, common_1.HttpStatus.FORBIDDEN);
             }
+            if (error.statusCode === 404) {
+                throw new common_1.HttpException(error, common_1.HttpStatus.FORBIDDEN);
+            }
             throw new common_1.HttpException('Failed to process request', common_1.HttpStatus.BAD_REQUEST);
         }));
     }

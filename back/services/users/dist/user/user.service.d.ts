@@ -1,5 +1,6 @@
 import { CreateUserDto } from './dto/create-user.dto';
 import { PrismaService } from 'src/prisma/prisma.service';
+import { UpdateUserGeneralDto } from './dto/update-user-general.dto';
 export declare const roundsOfHashing = 10;
 export declare class UserService {
     private prisma;
@@ -10,7 +11,6 @@ export declare class UserService {
         registration: string;
         email: string;
         password: string;
-        role: string;
         createdAt: Date;
         updatedAt: Date;
     }, unknown, never> & {}>;
@@ -29,7 +29,6 @@ export declare class UserService {
         registration: string;
         email: string;
         password: string;
-        role: string;
         createdAt: Date;
         updatedAt: Date;
     }, unknown, never> & {})[]>;
@@ -48,7 +47,6 @@ export declare class UserService {
         registration: string;
         email: string;
         password: string;
-        role: string;
         createdAt: Date;
         updatedAt: Date;
     }, unknown, never> & {})[]>;
@@ -67,7 +65,6 @@ export declare class UserService {
         registration: string;
         email: string;
         password: string;
-        role: string;
         createdAt: Date;
         updatedAt: Date;
     }, unknown, never> & {})[]>;
@@ -86,7 +83,15 @@ export declare class UserService {
         registration: string;
         email: string;
         password: string;
-        role: string;
+        createdAt: Date;
+        updatedAt: Date;
+    }, unknown, never> & {}>;
+    updateGeneralData(id: string, updateUserGeneralDto: UpdateUserGeneralDto): Promise<import("@prisma/client/runtime").GetResult<{
+        id: string;
+        name: string;
+        registration: string;
+        email: string;
+        password: string;
         createdAt: Date;
         updatedAt: Date;
     }, unknown, never> & {}>;

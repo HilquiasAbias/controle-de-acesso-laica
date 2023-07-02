@@ -23,7 +23,7 @@ __decorate([
 ], CreateUserDto.prototype, "registration", void 0);
 __decorate([
     (0, class_validator_1.IsEmail)(),
-    (0, class_validator_1.IsOptional)(),
+    (0, class_validator_1.IsNotEmpty)(),
     __metadata("design:type", String)
 ], CreateUserDto.prototype, "email", void 0);
 __decorate([
@@ -31,10 +31,11 @@ __decorate([
     __metadata("design:type", String)
 ], CreateUserDto.prototype, "password", void 0);
 __decorate([
-    (0, class_validator_1.IsString)(),
-    (0, class_validator_1.IsIn)(['ADMIN', 'FREQUENTER', 'ENVIRONMENT_MANAGER']),
-    __metadata("design:type", String)
-], CreateUserDto.prototype, "role", void 0);
+    (0, class_validator_1.IsArray)(),
+    (0, class_validator_1.ArrayNotEmpty)(),
+    (0, class_validator_1.IsIn)(['ADMIN', 'FREQUENTER', 'ENVIRONMENT_MANAGER'], { each: true }),
+    __metadata("design:type", Array)
+], CreateUserDto.prototype, "roles", void 0);
 __decorate([
     (0, class_validator_1.IsString)(),
     (0, class_validator_1.IsOptional)(),

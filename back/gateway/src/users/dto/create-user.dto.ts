@@ -1,4 +1,4 @@
-import { IsEmail, IsIn, IsMACAddress, IsOptional, IsString, Length } from "class-validator"
+import { ArrayNotEmpty, IsArray, IsEmail, IsIn, IsMACAddress, IsNotEmpty, IsOptional, IsString, Length } from "class-validator"
 //import { Roles } from "@prisma/client"
 
 export class CreateUserDto {
@@ -9,15 +9,16 @@ export class CreateUserDto {
   registration: string
 
   @IsEmail()
-  @IsOptional()
-  email?: string
+  @IsNotEmpty()
+  email: string
 
   @IsString()
   password: string
 
-  @IsString()
-  @IsIn(['ADMIN', 'FREQUENTER', 'ENVIRONMENT_MANAGER'])
-  role: string // Roles
+  @IsArray()
+  @ArrayNotEmpty()
+  @IsIn(['ADMIN', 'FREQUENTER', 'ENVIRONMENT_MANAGER'], { each: true })
+  roles: string[] // Roles
 
   @IsString()
   // @Length(30, 50)

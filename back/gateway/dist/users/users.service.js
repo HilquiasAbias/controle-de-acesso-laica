@@ -15,6 +15,7 @@ Object.defineProperty(exports, "__esModule", { value: true });
 exports.UsersService = void 0;
 const common_1 = require("@nestjs/common");
 const microservices_1 = require("@nestjs/microservices");
+const class_validator_1 = require("class-validator");
 let UsersService = class UsersService {
     constructor(usersService) {
         this.usersService = usersService;
@@ -42,6 +43,32 @@ let UsersService = class UsersService {
     findOne(id) {
         const pattern = { cmd: 'get-one' };
         const payload = id;
+        return this.usersService.send(pattern, payload);
+    }
+    updateGeneralData(id, updateUserGeneralDto) {
+        if (!(0, class_validator_1.isUUID)(id)) {
+            throw new common_1.BadRequestException('Invalid id input');
+        }
+        const validFields = ['email', 'name', 'registration', 'password'];
+        const invalidFields = Object.keys(updateUserGeneralDto).filter(field => !validFields.includes(field));
+        if (invalidFields.length > 0) {
+            throw new common_1.BadRequestException(`Invalid fields provided: ${invalidFields.join(', ')}`);
+        }
+        const pattern = { cmd: "update-general-data" };
+        const payload = { id, updateUserGeneralDto };
+        return this.usersService.send(pattern, payload);
+    }
+    updateRoles(id, updateRolesData) {
+        if (!(0, class_validator_1.isUUID)(id)) {
+            throw new common_1.BadRequestException('Invalid id input');
+        }
+        const validFields = ['rolesToAdd', 'rolesToRemove'];
+        const invalidFields = Object.keys(updateRolesData).filter(field => !validFields.includes(field));
+        if (invalidFields.length > 0) {
+            throw new common_1.BadRequestException(`Invalid fields provided: ${invalidFields.join(', ')}`);
+        }
+        const pattern = { cmd: "update-roles-data" };
+        const payload = { id, updateRolesData };
         return this.usersService.send(pattern, payload);
     }
 };

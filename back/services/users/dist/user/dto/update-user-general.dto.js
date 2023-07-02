@@ -9,30 +9,25 @@ var __metadata = (this && this.__metadata) || function (k, v) {
     if (typeof Reflect === "object" && typeof Reflect.metadata === "function") return Reflect.metadata(k, v);
 };
 Object.defineProperty(exports, "__esModule", { value: true });
-exports.UpdateUserDto = void 0;
+exports.UpdateUserGeneralDto = void 0;
 const class_validator_1 = require("class-validator");
-class UpdateUserDto {
+class UpdateUserGeneralDto {
 }
 __decorate([
     (0, class_validator_1.IsString)(),
     __metadata("design:type", String)
-], UpdateUserDto.prototype, "name", void 0);
+], UpdateUserGeneralDto.prototype, "name", void 0);
 __decorate([
     (0, class_validator_1.Length)(10, 14),
     __metadata("design:type", String)
-], UpdateUserDto.prototype, "registration", void 0);
+], UpdateUserGeneralDto.prototype, "registration", void 0);
 __decorate([
     (0, class_validator_1.IsEmail)(),
     __metadata("design:type", String)
-], UpdateUserDto.prototype, "email", void 0);
+], UpdateUserGeneralDto.prototype, "email", void 0);
 __decorate([
     (0, class_validator_1.IsString)(),
     __metadata("design:type", String)
-], UpdateUserDto.prototype, "password", void 0);
-__decorate([
-    (0, class_validator_1.IsString)(),
-    (0, class_validator_1.IsIn)(['ADMIN', 'FREQUENTER', 'ENVIRONMENT_MANAGER']),
-    __metadata("design:type", String)
-], UpdateUserDto.prototype, "role", void 0);
-exports.UpdateUserDto = UpdateUserDto;
-//# sourceMappingURL=update-user.dto.js.map
+], UpdateUserGeneralDto.prototype, "password", void 0);
+exports.UpdateUserGeneralDto = UpdateUserGeneralDto;
+//# sourceMappingURL=update-user-general.dto.js.map

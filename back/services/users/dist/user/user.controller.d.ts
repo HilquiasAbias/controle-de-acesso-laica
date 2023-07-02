@@ -1,5 +1,6 @@
 import { UserService } from './user.service';
 import { CreateUserDto } from './dto/create-user.dto';
+import { UpdateUserGeneralDto } from './dto/update-user-general.dto';
 export declare class UserController {
     private readonly userService;
     constructor(userService: UserService);
@@ -9,7 +10,6 @@ export declare class UserController {
         registration: string;
         email: string;
         password: string;
-        role: string;
         createdAt: Date;
         updatedAt: Date;
     }, unknown, never> & {}>;
@@ -28,7 +28,6 @@ export declare class UserController {
         registration: string;
         email: string;
         password: string;
-        role: string;
         createdAt: Date;
         updatedAt: Date;
     }, unknown, never> & {})[]>;
@@ -47,7 +46,6 @@ export declare class UserController {
         registration: string;
         email: string;
         password: string;
-        role: string;
         createdAt: Date;
         updatedAt: Date;
     }, unknown, never> & {})[]>;
@@ -66,7 +64,6 @@ export declare class UserController {
         registration: string;
         email: string;
         password: string;
-        role: string;
         createdAt: Date;
         updatedAt: Date;
     }, unknown, never> & {})[]>;
@@ -85,7 +82,18 @@ export declare class UserController {
         registration: string;
         email: string;
         password: string;
-        role: string;
+        createdAt: Date;
+        updatedAt: Date;
+    }, unknown, never> & {}>;
+    updateGeneralData(payload: {
+        id: string;
+        updateUserGeneralDto: UpdateUserGeneralDto;
+    }): Promise<import("@prisma/client/runtime").GetResult<{
+        id: string;
+        name: string;
+        registration: string;
+        email: string;
+        password: string;
         createdAt: Date;
         updatedAt: Date;
     }, unknown, never> & {}>;
