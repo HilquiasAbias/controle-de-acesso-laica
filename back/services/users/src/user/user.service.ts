@@ -198,51 +198,59 @@ export class UserService {
 
     const { rolesToAdd, rolesToRemove } = updateUserRolesDto;
 
-    // Adicionar novos papéis ao usuário
-    if (rolesToAdd && rolesToAdd.length > 0) {
-      await Promise.all(
-        rolesToAdd.map(async (role) => {
-          await this.prisma.userRoles.create({
-            data: {
-              role,
-              User: { connect: { id: userId } }
-            },
-          });
-        })
-      );
-    }
-
-    // Remover papéis existentes do usuário
-    if (rolesToRemove && rolesToRemove.length > 0) {
-      await Promise.all(
-        rolesToRemove.map(async (role) => {
-          const userRole = await this.prisma.userRoles.findFirst({
-            where: {
-              userId,
-              role
-            }
+    try {
+      if (rolesToAdd && rolesToAdd.length > 0) {
+        await Promise.all(
+          rolesToAdd.map(async (role) => {
+            await this.prisma.userRoles.create({
+              data: {
+                role,
+                User: { connect: { id: userId } }
+              },
+            });
           })
-
-          console.log(userRole);
-
-          await this.prisma.user.update({
-            where: {
-              id: userId,
-            },
-            data: {
-              Roles: {
-                update: {
-                  data: { active: false },
-                  where: {
-                    id: userRole.id
-                  }
-                }
+        );
+      }
+  
+      if (rolesToRemove && rolesToRemove.length > 0) {
+        await Promise.all(
+          rolesToRemove.map(async (role) => {
+            const userRole = await this.prisma.userRoles.findFirst({
+              where: {
+                userId,
+                role
               }
-            }
+            });
+      
+            console.log(userRole);
+      
+            await this.prisma.userRoles.update({
+              where: {
+                id: userRole.id
+              },
+              data: {
+                active: false
+              }
+            });
           })
+        );
+      }
+    } catch (error) {
+      if (error.code === 'P2002') {
+        throw new RpcException({
+          statusCode: 409,
+          message: `Already exists: ${error.meta.target}`,
+          error: 'Conflict',
         })
-      );
+      } else if (error.code === 'P2025') {
+        throw new RpcException({
+          statusCode: 404,
+          message: error.meta.cause, // error.message,
+          error: 'Not Found',
+        })
+      }
     }
+
 
     return await this.prisma.userRoles.findMany({
       where: { userId }

@@ -184,41 +184,52 @@ let UserService = class UserService {
         }
         console.log(updateUserRolesDto);
         const { rolesToAdd, rolesToRemove } = updateUserRolesDto;
-        if (rolesToAdd && rolesToAdd.length > 0) {
-            await Promise.all(rolesToAdd.map(async (role) => {
-                await this.prisma.userRoles.create({
-                    data: {
-                        role,
-                        User: { connect: { id: userId } }
-                    },
-                });
-            }));
-        }
-        if (rolesToRemove && rolesToRemove.length > 0) {
-            await Promise.all(rolesToRemove.map(async (role) => {
-                const userRole = await this.prisma.userRoles.findFirst({
-                    where: {
-                        userId,
-                        role
-                    }
-                });
-                console.log(userRole);
-                await this.prisma.user.update({
-                    where: {
-                        id: userId,
-                    },
-                    data: {
-                        Roles: {
-                            update: {
-                                data: { active: false },
-                                where: {
-                                    id: userRole.id
-                                }
-                            }
+        try {
+            if (rolesToAdd && rolesToAdd.length > 0) {
+                await Promise.all(rolesToAdd.map(async (role) => {
+                    await this.prisma.userRoles.create({
+                        data: {
+                            role,
+                            User: { connect: { id: userId } }
+                        },
+                    });
+                }));
+            }
+            if (rolesToRemove && rolesToRemove.length > 0) {
+                await Promise.all(rolesToRemove.map(async (role) => {
+                    const userRole = await this.prisma.userRoles.findFirst({
+                        where: {
+                            userId,
+                            role
                         }
-                    }
+                    });
+                    console.log(userRole);
+                    await this.prisma.userRoles.update({
+                        where: {
+                            id: userRole.id
+                        },
+                        data: {
+                            active: false
+                        }
+                    });
+                }));
+            }
+        }
+        catch (error) {
+            if (error.code === 'P2002') {
+                throw new microservices_1.RpcException({
+                    statusCode: 409,
+                    message: `Already exists: ${error.meta.target}`,
+                    error: 'Conflict',
                 });
-            }));
+            }
+            else if (error.code === 'P2025') {
+                throw new microservices_1.RpcException({
+                    statusCode: 404,
+                    message: error.meta.cause,
+                    error: 'Not Found',
+                });
+            }
         }
         return await this.prisma.userRoles.findMany({
             where: { userId }
