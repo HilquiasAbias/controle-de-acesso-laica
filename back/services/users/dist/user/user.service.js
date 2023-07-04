@@ -62,6 +62,8 @@ let UserService = class UserService {
                 });
             }
         }
+        console.log(user);
+        console.log(createUserDto.roles);
         for (const role of createUserDto.roles) {
             await this.prisma.userRoles.create({
                 data: {
@@ -194,12 +196,26 @@ let UserService = class UserService {
         }
         if (rolesToRemove && rolesToRemove.length > 0) {
             await Promise.all(rolesToRemove.map(async (role) => {
-                await this.prisma.userRoles.update({
+                const userRole = await this.prisma.userRoles.findFirst({
                     where: {
                         userId,
+                        role
+                    }
+                });
+                console.log(userRole);
+                await this.prisma.user.update({
+                    where: {
+                        id: userId,
                     },
                     data: {
-                        User: { disconnect: true }
+                        Roles: {
+                            update: {
+                                data: { active: false },
+                                where: {
+                                    id: userRole.id
+                                }
+                            }
+                        }
                     }
                 });
             }));
