@@ -172,6 +172,42 @@ let UserService = class UserService {
             }
         }
     }
+    async updateRolesData(userId, updateUserRolesDto) {
+        if (!(0, class_validator_1.isUUID)(userId)) {
+            throw new microservices_1.RpcException({
+                statusCode: 400,
+                message: 'Invalid id input',
+                error: 'Bad Request',
+            });
+        }
+        console.log(updateUserRolesDto);
+        const { rolesToAdd, rolesToRemove } = updateUserRolesDto;
+        if (rolesToAdd && rolesToAdd.length > 0) {
+            await Promise.all(rolesToAdd.map(async (role) => {
+                await this.prisma.userRoles.create({
+                    data: {
+                        role,
+                        User: { connect: { id: userId } }
+                    },
+                });
+            }));
+        }
+        if (rolesToRemove && rolesToRemove.length > 0) {
+            await Promise.all(rolesToRemove.map(async (role) => {
+                await this.prisma.userRoles.update({
+                    where: {
+                        userId,
+                    },
+                    data: {
+                        User: { disconnect: true }
+                    }
+                });
+            }));
+        }
+        return await this.prisma.userRoles.findMany({
+            where: { userId }
+        });
+    }
 };
 UserService = __decorate([
     (0, common_1.Injectable)(),

@@ -15,14 +15,12 @@ class UpdateUserRolesDto {
 }
 __decorate([
     (0, class_validator_1.IsArray)(),
-    (0, class_validator_1.ArrayNotEmpty)(),
     (0, class_validator_1.IsIn)(['ADMIN', 'FREQUENTER', 'ENVIRONMENT_MANAGER'], { each: true }),
     (0, class_validator_1.IsOptional)(),
     __metadata("design:type", Array)
 ], UpdateUserRolesDto.prototype, "rolesToAdd", void 0);
 __decorate([
     (0, class_validator_1.IsArray)(),
-    (0, class_validator_1.ArrayNotEmpty)(),
     (0, class_validator_1.IsIn)(['ADMIN', 'FREQUENTER', 'ENVIRONMENT_MANAGER'], { each: true }),
     (0, class_validator_1.IsOptional)(),
     __metadata("design:type", Array)

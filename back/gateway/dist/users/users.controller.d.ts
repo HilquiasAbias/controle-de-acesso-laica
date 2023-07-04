@@ -10,6 +10,6 @@ export declare class UsersController {
     findAllAdmins(): import("rxjs").Observable<any>;
     findAllEnvironmentManager(): import("rxjs").Observable<any>;
     findOne(id: string): import("rxjs").Observable<any>;
-    updateGeneralData(id: string, updateGeneralData: UpdateUserGeneralDto): import("rxjs").Observable<any>;
+    updateGeneralData(id: string, updateGeneralDataDto: UpdateUserGeneralDto): import("rxjs").Observable<any>;
     updateRoles(id: string, updateRolesDto: UpdateUserRolesDto): import("rxjs").Observable<any>;
 }

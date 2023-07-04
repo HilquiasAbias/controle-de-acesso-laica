@@ -6,6 +6,7 @@ import { PrismaService } from 'src/prisma/prisma.service';
 import { RpcException } from '@nestjs/microservices';
 import { isUUID } from 'class-validator';
 import { UpdateUserGeneralDto } from './dto/update-user-general.dto';
+import { UpdateUserRolesDto } from './dto/update-user-roles.dto';
 
 export const roundsOfHashing = 10;
 
@@ -179,5 +180,53 @@ export class UserService {
         });
       }
     }
+  }
+
+  async updateRolesData(userId: string, updateUserRolesDto: UpdateUserRolesDto) {
+    if (!isUUID(userId)) {
+      throw new RpcException({
+        statusCode: 400,
+        message: 'Invalid id input',
+        error: 'Bad Request',
+      })
+    }
+
+    console.log(updateUserRolesDto);
+
+    const { rolesToAdd, rolesToRemove } = updateUserRolesDto;
+
+    // Adicionar novos papéis ao usuário
+    if (rolesToAdd && rolesToAdd.length > 0) {
+      await Promise.all(
+        rolesToAdd.map(async (role) => {
+          await this.prisma.userRoles.create({
+            data: {
+              role,
+              User: { connect: { id: userId } }
+            },
+          });
+        })
+      );
+    }
+
+    // Remover papéis existentes do usuário
+    if (rolesToRemove && rolesToRemove.length > 0) {
+      await Promise.all(
+        rolesToRemove.map(async (role) => {
+          await this.prisma.userRoles.update({
+            where: {
+              userId, // TODO: identificar o papel para desativar
+            },
+            data: {
+              User: { disconnect: true }
+            }
+          })
+        })
+      );
+    }
+
+    return await this.prisma.userRoles.findMany({
+      where: { userId }
+    })
   }
 }

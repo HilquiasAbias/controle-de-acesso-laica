@@ -1,6 +1,7 @@
 import { CreateUserDto } from './dto/create-user.dto';
 import { PrismaService } from 'src/prisma/prisma.service';
 import { UpdateUserGeneralDto } from './dto/update-user-general.dto';
+import { UpdateUserRolesDto } from './dto/update-user-roles.dto';
 export declare const roundsOfHashing = 10;
 export declare class UserService {
     private prisma;
@@ -95,4 +96,10 @@ export declare class UserService {
         createdAt: Date;
         updatedAt: Date;
     }, unknown, never> & {}>;
+    updateRolesData(userId: string, updateUserRolesDto: UpdateUserRolesDto): Promise<(import("@prisma/client/runtime").GetResult<{
+        id: string;
+        role: string;
+        active: boolean;
+        userId: string;
+    }, unknown, never> & {})[]>;
 }

@@ -1,6 +1,7 @@
 import { UserService } from './user.service';
 import { CreateUserDto } from './dto/create-user.dto';
 import { UpdateUserGeneralDto } from './dto/update-user-general.dto';
+import { UpdateUserRolesDto } from './dto/update-user-roles.dto';
 export declare class UserController {
     private readonly userService;
     constructor(userService: UserService);
@@ -97,4 +98,13 @@ export declare class UserController {
         createdAt: Date;
         updatedAt: Date;
     }, unknown, never> & {}>;
+    updateRolesData(payload: {
+        id: string;
+        updateUserRolesDto: UpdateUserRolesDto;
+    }): Promise<(import("@prisma/client/runtime").GetResult<{
+        id: string;
+        role: string;
+        active: boolean;
+        userId: string;
+    }, unknown, never> & {})[]>;
 }

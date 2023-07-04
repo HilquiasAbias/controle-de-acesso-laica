@@ -16,8 +16,9 @@ datasource db {
 model UserRoles {
   id     String  @id @default(uuid())
   role   String // Roles
+  active Boolean @default(true)
   User   User?   @relation(fields: [userId], references: [id])
-  userId String?
+  userId String? @unique
 }
 
 model User {

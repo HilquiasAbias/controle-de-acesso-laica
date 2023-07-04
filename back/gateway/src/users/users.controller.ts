@@ -33,13 +33,13 @@ export class UsersController {
     return this.usersService.findOne(id)
   }
 
-  @Patch('/:id')
-  updateGeneralData(@Param('id') id: string, @Body() updateGeneralData: UpdateUserGeneralDto) {
-    return this.usersService.updateGeneralData(id, updateGeneralData);
+  @Patch('data/:id')
+  updateGeneralData(@Param('id') id: string, @Body() updateGeneralDataDto: UpdateUserGeneralDto) {
+    return this.usersService.updateGeneralData(id, updateGeneralDataDto);
   }
 
   @Patch('roles/:id')
-  updateRoles(@Param('id') id: string, updateRolesDto: UpdateUserRolesDto) {
+  updateRoles(@Param('id') id: string, @Body() updateRolesDto: UpdateUserRolesDto) {
     return this.usersService.updateRoles(id, updateRolesDto);
   }
 }

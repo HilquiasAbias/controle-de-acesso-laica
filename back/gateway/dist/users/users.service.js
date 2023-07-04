@@ -49,6 +49,7 @@ let UsersService = class UsersService {
         if (!(0, class_validator_1.isUUID)(id)) {
             throw new common_1.BadRequestException('Invalid id input');
         }
+        console.log(updateUserGeneralDto);
         const validFields = ['email', 'name', 'registration', 'password'];
         const invalidFields = Object.keys(updateUserGeneralDto).filter(field => !validFields.includes(field));
         if (invalidFields.length > 0) {
@@ -58,17 +59,17 @@ let UsersService = class UsersService {
         const payload = { id, updateUserGeneralDto };
         return this.usersService.send(pattern, payload);
     }
-    updateRoles(id, updateRolesData) {
+    updateRoles(id, updateUserRolesDto) {
         if (!(0, class_validator_1.isUUID)(id)) {
             throw new common_1.BadRequestException('Invalid id input');
         }
         const validFields = ['rolesToAdd', 'rolesToRemove'];
-        const invalidFields = Object.keys(updateRolesData).filter(field => !validFields.includes(field));
+        const invalidFields = Object.keys(updateUserRolesDto).filter(field => !validFields.includes(field));
         if (invalidFields.length > 0) {
             throw new common_1.BadRequestException(`Invalid fields provided: ${invalidFields.join(', ')}`);
         }
         const pattern = { cmd: "update-roles-data" };
-        const payload = { id, updateRolesData };
+        const payload = { id, updateUserRolesDto };
         return this.usersService.send(pattern, payload);
     }
 };

@@ -37,8 +37,8 @@ let UsersController = class UsersController {
     findOne(id) {
         return this.usersService.findOne(id);
     }
-    updateGeneralData(id, updateGeneralData) {
-        return this.usersService.updateGeneralData(id, updateGeneralData);
+    updateGeneralData(id, updateGeneralDataDto) {
+        return this.usersService.updateGeneralData(id, updateGeneralDataDto);
     }
     updateRoles(id, updateRolesDto) {
         return this.usersService.updateRoles(id, updateRolesDto);
@@ -77,7 +77,7 @@ __decorate([
     __metadata("design:returntype", void 0)
 ], UsersController.prototype, "findOne", null);
 __decorate([
-    (0, common_1.Patch)('/:id'),
+    (0, common_1.Patch)('data/:id'),
     __param(0, (0, common_1.Param)('id')),
     __param(1, (0, common_1.Body)()),
     __metadata("design:type", Function),
@@ -87,6 +87,7 @@ __decorate([
 __decorate([
     (0, common_1.Patch)('roles/:id'),
     __param(0, (0, common_1.Param)('id')),
+    __param(1, (0, common_1.Body)()),
     __metadata("design:type", Function),
     __metadata("design:paramtypes", [String, update_user_roles_dto_1.UpdateUserRolesDto]),
     __metadata("design:returntype", void 0)

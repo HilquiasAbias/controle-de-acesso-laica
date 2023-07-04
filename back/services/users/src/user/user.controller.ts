@@ -3,6 +3,7 @@ import { UserService } from './user.service';
 import { MessagePattern, Payload } from '@nestjs/microservices';
 import { CreateUserDto } from './dto/create-user.dto';
 import { UpdateUserGeneralDto } from './dto/update-user-general.dto';
+import { UpdateUserRolesDto } from './dto/update-user-roles.dto';
 
 @Controller()
 export class UserController {
@@ -39,5 +40,13 @@ export class UserController {
   ) {
     const { id, updateUserGeneralDto } = payload
     return await this.userService.updateGeneralData(id, updateUserGeneralDto)
+  }
+
+  @MessagePattern({ cmd: "update-roles-data" })
+  async updateRolesData(
+    @Payload() payload: { id: string, updateUserRolesDto: UpdateUserRolesDto }
+  ) {
+    const { id, updateUserRolesDto } = payload
+    return await this.userService.updateRolesData(id, updateUserRolesDto)
   }
 }

@@ -14,10 +14,6 @@ const class_validator_1 = require("class-validator");
 class UpdateUserRolesDto {
 }
 __decorate([
-    (0, class_validator_1.IsUUID)(),
-    __metadata("design:type", String)
-], UpdateUserRolesDto.prototype, "userId", void 0);
-__decorate([
     (0, class_validator_1.IsArray)(),
     (0, class_validator_1.ArrayNotEmpty)(),
     (0, class_validator_1.IsIn)(['ADMIN', 'FREQUENTER', 'ENVIRONMENT_MANAGER'], { each: true }),

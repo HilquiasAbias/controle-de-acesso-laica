@@ -11,5 +11,5 @@ export declare class UsersService {
     findAllEnvironmentManager(): import("rxjs").Observable<any>;
     findOne(id: string): import("rxjs").Observable<any>;
     updateGeneralData(id: string, updateUserGeneralDto: UpdateUserGeneralDto): import("rxjs").Observable<any>;
-    updateRoles(id: string, updateRolesData: UpdateUserRolesDto): import("rxjs").Observable<any>;
+    updateRoles(id: string, updateUserRolesDto: UpdateUserRolesDto): import("rxjs").Observable<any>;
 }
