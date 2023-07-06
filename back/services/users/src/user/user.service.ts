@@ -7,6 +7,7 @@ import { RpcException } from '@nestjs/microservices';
 import { isUUID } from 'class-validator';
 import { UpdateUserGeneralDto } from './dto/update-user-general.dto';
 import { UpdateUserRolesDto } from './dto/update-user-roles.dto';
+import { UserStatusDto } from './dto/status-user.dto';
 
 export const roundsOfHashing = 10;
 
@@ -15,7 +16,7 @@ export class UserService {
   constructor(private prisma: PrismaService) {} 
 
   async create(createUserDto: CreateUserDto) {
-    const validFields = ['email', 'name', 'registration', 'password', 'roles', 'tag'];
+    const validFields = ['email', 'name', 'registration', 'password', 'roles', 'tag', 'mac'];
     const invalidFields = Object.keys(createUserDto).filter(
       field => !validFields.includes(field),
     );
@@ -64,9 +65,6 @@ export class UserService {
       }
     }
 
-    console.log(user);
-    console.log(createUserDto.roles);
-
     for (const role of createUserDto.roles) {
       await this.prisma.userRoles.create({
         data: {
@@ -83,34 +81,68 @@ export class UserService {
 
   async findAllFrequenters() {
     return await this.prisma.user.findMany({
-      where: { Roles: {
-        some: {
-          role: 'FREQUENTER'
-        }
-      } },
-      include: { Rfid: true }
+      where: { 
+        Roles: {
+          some: {
+            role: 'FREQUENTER'
+          }
+        },
+        active: true
+      },
+      include: {
+        Rfid: true, 
+        Device: true, 
+        Roles: true
+      }
     });
   }
 
   async findAllAdmins() {
     return await this.prisma.user.findMany({
-      where: { Roles: {
-        some: {
-          role: 'ADMIN'
-        }
-      } },
-      include: { Rfid: true }
+      where: { 
+        Roles: {
+          some: {
+            role: 'ADMIN'
+          }
+        },
+        active: true
+      },
+      include: {
+        Rfid: true, 
+        Device: true, 
+        Roles: true
+      }
     });
   }
 
   async findAllEnvironmentManager() {
     return await this.prisma.user.findMany({
-      where: { Roles: {
-        some: {
-          role: 'ENVIRONMENT_MANAGER'
-        }
-      } },
-      include: { Rfid: true }
+      where: { 
+        Roles: {
+          some: {
+            role: 'ENVIRONMENT_MANAGER'
+          }
+        },
+        active: true
+      },
+      include: {
+        Rfid: true, 
+        Device: true, 
+        Roles: true
+      }
+    });
+  }
+
+  async findAllInactive() {
+    return await this.prisma.user.findMany({
+      where: {
+        active: false
+      },
+      include: {
+        Rfid: true, 
+        Device: true, 
+        Roles: true
+      }
     });
   }
 
@@ -125,8 +157,15 @@ export class UserService {
 
     try {
       return await this.prisma.user.findFirstOrThrow({
-        where: { id },
-        include: { Rfid: true }
+        where: {
+          id,
+          active: true
+        },
+        include: {
+          Rfid: true, 
+          Device: true, 
+          Roles: true
+        }
       });
     } catch (error) {
       console.log(error);
@@ -255,5 +294,89 @@ export class UserService {
     return await this.prisma.userRoles.findMany({
       where: { userId }
     })
+  }
+
+  async changeUserStatus(userId: string, userStatusDto: UserStatusDto) {
+    if (!isUUID(userId)) {
+      throw new RpcException({
+        statusCode: 400,
+        message: 'Invalid id input',
+        error: 'Bad Request',
+      })
+    }
+
+    let user: User
+
+    try {
+      user = await this.prisma.user.findFirstOrThrow({
+        where: { id: userId }
+      })
+    } catch (error) {
+      if (error.code === 'P2025') {
+        throw new RpcException({
+          statusCode: 404,
+          message: error.message,
+          error: 'Not Found',
+        })
+      }
+    }
+
+    const { action } = userStatusDto
+
+    if (action === 'ACTIVATE' && user.active) {
+      throw new RpcException({
+        statusCode: 409,
+        message: 'User is already active',
+        error: 'Conflict',
+      })
+    }
+
+    if (action === 'DEACTIVATE' && !user.active) {
+      throw new RpcException({
+        statusCode: 409,
+        message: 'User is already inactive',
+        error: 'Conflict',
+      })
+    }
+
+    try {
+      user = await this.prisma.user.update({
+        where: { id: userId },
+        data: {
+          active: action === 'ACTIVATE' ? true : false
+        }
+      })
+
+      await this.updateUserRelationsStatus(userId, action)
+
+      return user
+    } catch (error) {
+      throw new RpcException({
+        statusCode: 403,
+        message: "Can't update user status",
+        error: 'Forbidden',
+      });
+    }
+  }
+
+  private async updateUserRelationsStatus(userId: string, action: string) {
+    await this.prisma.$transaction(async (prisma) => {
+      const flag = action === 'ACTIVATE' ? true : false
+
+      await prisma.rfid.updateMany({
+        where: { userId },
+        data: { active: flag },
+      });
+
+      await prisma.mobile.updateMany({
+        where: { userId },
+        data: { active: flag },
+      });
+
+      await prisma.userRoles.updateMany({
+        where: { userId },
+        data: { active: flag },
+      });
+    });
   }
 }

@@ -3,6 +3,7 @@ import { UsersService } from './users.service';
 import { CreateUserDto } from './dto/create-user.dto';
 import { UpdateUserGeneralDto } from './dto/update-user-general.dto';
 import { UpdateUserRolesDto } from './dto/update-user-roles.dto';
+import { UserStatusDto } from './dto/status-user.dto';
 
 @Controller('users')
 export class UsersController {
@@ -28,6 +29,11 @@ export class UsersController {
     return this.usersService.findAllEnvironmentManager()
   }
 
+  @Get('/inactives')
+  findAllInactive() {
+    return this.usersService.findAllInactive()
+  }
+
   @Get('/:id')
   findOne(@Param('id') id: string) {
     return this.usersService.findOne(id)
@@ -41,5 +47,10 @@ export class UsersController {
   @Patch('roles/:id')
   updateRoles(@Param('id') id: string, @Body() updateRolesDto: UpdateUserRolesDto) {
     return this.usersService.updateRoles(id, updateRolesDto);
+  }
+
+  @Patch('status/:id')
+  changeUserStatus(@Param('id') id: string, @Body() userStatusDto: UserStatusDto) {
+    return this.usersService.changeUserStatus(id, userStatusDto);
   }
 }

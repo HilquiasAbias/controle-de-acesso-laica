@@ -36,6 +36,9 @@ let UserController = class UserController {
     async findOne(id) {
         return await this.userService.findOne(id);
     }
+    async findAllInactive() {
+        return await this.userService.findAllInactive();
+    }
     async updateGeneralData(payload) {
         const { id, updateUserGeneralDto } = payload;
         return await this.userService.updateGeneralData(id, updateUserGeneralDto);
@@ -43,6 +46,10 @@ let UserController = class UserController {
     async updateRolesData(payload) {
         const { id, updateUserRolesDto } = payload;
         return await this.userService.updateRolesData(id, updateUserRolesDto);
+    }
+    async changeUserStatus(payload) {
+        const { id, userStatusDto } = payload;
+        return await this.userService.changeUserStatus(id, userStatusDto);
     }
 };
 __decorate([
@@ -78,6 +85,12 @@ __decorate([
     __metadata("design:returntype", Promise)
 ], UserController.prototype, "findOne", null);
 __decorate([
+    (0, microservices_1.MessagePattern)({ cmd: "get-inactives" }),
+    __metadata("design:type", Function),
+    __metadata("design:paramtypes", []),
+    __metadata("design:returntype", Promise)
+], UserController.prototype, "findAllInactive", null);
+__decorate([
     (0, microservices_1.MessagePattern)({ cmd: "update-general-data" }),
     __param(0, (0, microservices_1.Payload)()),
     __metadata("design:type", Function),
@@ -91,6 +104,13 @@ __decorate([
     __metadata("design:paramtypes", [Object]),
     __metadata("design:returntype", Promise)
 ], UserController.prototype, "updateRolesData", null);
+__decorate([
+    (0, microservices_1.MessagePattern)({ cmd: "change-user-status" }),
+    __param(0, (0, microservices_1.Payload)()),
+    __metadata("design:type", Function),
+    __metadata("design:paramtypes", [Object]),
+    __metadata("design:returntype", Promise)
+], UserController.prototype, "changeUserStatus", null);
 UserController = __decorate([
     (0, common_1.Controller)(),
     __metadata("design:paramtypes", [user_service_1.UserService])

@@ -40,6 +40,10 @@ let UsersService = class UsersService {
         const payload = {};
         return this.usersService.send(pattern, payload);
     }
+    findAllInactive() {
+        const pattern = { cmd: 'get-inactives' };
+        return this.usersService.send(pattern, {});
+    }
     findOne(id) {
         const pattern = { cmd: 'get-one' };
         const payload = id;
@@ -70,6 +74,14 @@ let UsersService = class UsersService {
         }
         const pattern = { cmd: "update-roles-data" };
         const payload = { id, updateUserRolesDto };
+        return this.usersService.send(pattern, payload);
+    }
+    changeUserStatus(id, userStatusDto) {
+        const pattern = { cmd: 'change-user-status' };
+        const payload = {
+            id,
+            userStatusDto
+        };
         return this.usersService.send(pattern, payload);
     }
 };

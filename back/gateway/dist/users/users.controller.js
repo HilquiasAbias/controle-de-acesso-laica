@@ -18,6 +18,7 @@ const users_service_1 = require("./users.service");
 const create_user_dto_1 = require("./dto/create-user.dto");
 const update_user_general_dto_1 = require("./dto/update-user-general.dto");
 const update_user_roles_dto_1 = require("./dto/update-user-roles.dto");
+const status_user_dto_1 = require("./dto/status-user.dto");
 let UsersController = class UsersController {
     constructor(usersService) {
         this.usersService = usersService;
@@ -34,6 +35,9 @@ let UsersController = class UsersController {
     findAllEnvironmentManager() {
         return this.usersService.findAllEnvironmentManager();
     }
+    findAllInactive() {
+        return this.usersService.findAllInactive();
+    }
     findOne(id) {
         return this.usersService.findOne(id);
     }
@@ -42,6 +46,9 @@ let UsersController = class UsersController {
     }
     updateRoles(id, updateRolesDto) {
         return this.usersService.updateRoles(id, updateRolesDto);
+    }
+    changeUserStatus(id, userStatusDto) {
+        return this.usersService.changeUserStatus(id, userStatusDto);
     }
 };
 __decorate([
@@ -70,6 +77,12 @@ __decorate([
     __metadata("design:returntype", void 0)
 ], UsersController.prototype, "findAllEnvironmentManager", null);
 __decorate([
+    (0, common_1.Get)('/inactives'),
+    __metadata("design:type", Function),
+    __metadata("design:paramtypes", []),
+    __metadata("design:returntype", void 0)
+], UsersController.prototype, "findAllInactive", null);
+__decorate([
     (0, common_1.Get)('/:id'),
     __param(0, (0, common_1.Param)('id')),
     __metadata("design:type", Function),
@@ -92,6 +105,14 @@ __decorate([
     __metadata("design:paramtypes", [String, update_user_roles_dto_1.UpdateUserRolesDto]),
     __metadata("design:returntype", void 0)
 ], UsersController.prototype, "updateRoles", null);
+__decorate([
+    (0, common_1.Patch)('status/:id'),
+    __param(0, (0, common_1.Param)('id')),
+    __param(1, (0, common_1.Body)()),
+    __metadata("design:type", Function),
+    __metadata("design:paramtypes", [String, status_user_dto_1.UserStatusDto]),
+    __metadata("design:returntype", void 0)
+], UsersController.prototype, "changeUserStatus", null);
 UsersController = __decorate([
     (0, common_1.Controller)('users'),
     __metadata("design:paramtypes", [users_service_1.UsersService])

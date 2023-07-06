@@ -4,6 +4,7 @@ import { CreateUserDto } from "./dto/create-user.dto";
 import { UpdateUserGeneralDto } from "./dto/update-user-general.dto";
 import { UpdateUserRolesDto } from "./dto/update-user-roles.dto";
 import { isUUID } from "class-validator";
+import { UserStatusDto } from "./dto/status-user.dto";
 
 @Injectable()
 export class UsersService {
@@ -35,6 +36,11 @@ export class UsersService {
     const payload = {}
     
     return this.usersService.send(pattern, payload)
+  }
+
+  findAllInactive() {
+    const pattern = { cmd: 'get-inactives' }
+    return this.usersService.send(pattern, {})
   }
 
   findOne(id: string) {
@@ -85,6 +91,16 @@ export class UsersService {
     const pattern = { cmd: "update-roles-data" }
     const payload = { id, updateUserRolesDto }
 
+    return this.usersService.send(pattern, payload)
+  }
+
+  changeUserStatus(id: string, userStatusDto: UserStatusDto) {
+    const pattern = { cmd: 'change-user-status' }
+    const payload = {
+      id, 
+      userStatusDto
+    }
+    
     return this.usersService.send(pattern, payload)
   }
 }
