@@ -14,6 +14,14 @@ import { UsersController } from './users.controller';
           port: 6001
         }
       },
+      {
+        name: 'SECURITY',
+        transport: Transport.TCP,
+        options: {
+          host: '127.0.0.1',
+          port: 6002
+        }
+      },
     ])
   ],
   controllers: [UsersController],

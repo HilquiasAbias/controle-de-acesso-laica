@@ -35,6 +35,11 @@ export class UserController {
     return await this.userService.findOne(id);
   }
 
+  @MessagePattern({ cmd: "get-one-for-auth" })
+  async findOneForAuth(@Payload() payload: { userId: string }) {
+    return await this.userService.findOneForAuth(payload.userId);
+  }
+
   @MessagePattern({ cmd: "get-inactives" })
   async findAllInactive() {
     return await this.userService.findAllInactive();

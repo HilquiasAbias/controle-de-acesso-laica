@@ -4,7 +4,7 @@ import { CreateUserDto } from './dto/create-user.dto';
 import * as bcrypt from 'bcrypt';
 import { PrismaService } from 'src/prisma/prisma.service';
 import { RpcException } from '@nestjs/microservices';
-import { isUUID } from 'class-validator';
+import { isEmail, isUUID } from 'class-validator';
 import { UpdateUserGeneralDto } from './dto/update-user-general.dto';
 import { UpdateUserRolesDto } from './dto/update-user-roles.dto';
 import { UserStatusDto } from './dto/status-user.dto';
@@ -170,6 +170,30 @@ export class UserService {
     } catch (error) {
       console.log(error);
       
+      if (error.code === 'P2025') {
+        throw new RpcException({
+          statusCode: 404,
+          message: error.message,
+          error: 'Not Found',
+        })
+      }
+    }
+  }
+
+  async findOneForAuth(id: string) {
+    try {
+      const user = await this.prisma.user.findFirstOrThrow({
+        where: {
+          id,
+          active: true
+        }
+      });
+
+      return {
+        id: user.id,
+        password: user.password
+      }
+    } catch (error) {
       if (error.code === 'P2025') {
         throw new RpcException({
           statusCode: 404,

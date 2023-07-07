@@ -4,5 +4,8 @@ backend/.env
 back/services/users/node_modules
 back/services/users/.env
 
+back/services/security/node_modules
+back/services/security/.env
+
 back/gateway/node_modules
 back/gateway/.env

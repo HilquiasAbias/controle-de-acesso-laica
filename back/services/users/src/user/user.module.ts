@@ -1,11 +1,23 @@
 import { Module } from '@nestjs/common';
 import { UserService } from './user.service';
-import { UserController } from './user.controller';
-import { PrismaClient } from '@prisma/client';
+import { UserController } from './user.controller'; 
 import { PrismaModule } from 'src/prisma/prisma.module';
+import { ClientsModule, Transport } from '@nestjs/microservices';
 
 @Module({
-  imports: [PrismaModule],
+  imports: [
+    PrismaModule,
+    ClientsModule.register([
+      {
+        name: 'SECURITY',
+        transport: Transport.TCP,
+        options: {
+          host: '127.0.0.1',
+          port: 6002
+        }
+      },
+    ])
+  ],
   controllers: [UserController],
   providers: [UserService]
 })

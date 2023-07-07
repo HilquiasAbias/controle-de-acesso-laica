@@ -9,7 +9,7 @@ async function bootstrap() {
     transport: Transport.TCP,
     options: {
       host: "127.0.0.1",
-      port: 6001
+      port: 6002
     }
   });
   
