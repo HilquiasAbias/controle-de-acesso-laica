@@ -25,6 +25,14 @@ UsersModule = __decorate([
                         port: 6001
                     }
                 },
+                {
+                    name: 'SECURITY',
+                    transport: microservices_1.Transport.TCP,
+                    options: {
+                        host: '127.0.0.1',
+                        port: 6002
+                    }
+                },
             ])
         ],
         controllers: [users_controller_1.UsersController],

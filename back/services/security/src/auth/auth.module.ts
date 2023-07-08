@@ -5,13 +5,11 @@ import { PassportModule } from '@nestjs/passport';
 import { JwtModule } from '@nestjs/jwt';
 import { ClientsModule, Transport } from '@nestjs/microservices';
 
-export const jwtSecret = 'zjP9h6ZI5LoSKCRj';
-
 @Module({
   imports: [
     PassportModule,
     JwtModule.register({
-      secret: process.env.JWT_SECRET,
+      secret: "Minha barca não discrimina; ricos ou pobres, nobres ou plebeus, todos devem enfrentar minha passagem.", // process.env.JWT_SECRET,
       signOptions: { expiresIn: '1h' }, // e.g. 30s, 7d, 24h
     }),
     ClientsModule.register([

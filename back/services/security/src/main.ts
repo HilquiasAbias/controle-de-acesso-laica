@@ -3,6 +3,7 @@ import { Transport } from "@nestjs/microservices";
 import { AppModule } from "./app.module";
 import { ValidationPipe } from "@nestjs/common";
 import { ValidationExceptionFilter } from "./validation-exception.filter";
+import * as dotenv from 'dotenv';
 
 async function bootstrap() {
   const app = await NestFactory.createMicroservice(AppModule, {
@@ -12,6 +13,8 @@ async function bootstrap() {
       port: 6002
     }
   });
+
+  dotenv.config();
   
   app.useGlobalFilters(new ValidationExceptionFilter());
   app.useGlobalPipes(new ValidationPipe());

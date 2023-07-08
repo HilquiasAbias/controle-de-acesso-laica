@@ -168,6 +168,30 @@ let UserService = class UserService {
             }
         }
     }
+    async findOneForAuth(registration) {
+        try {
+            return await this.prisma.user.findFirstOrThrow({
+                where: {
+                    registration,
+                    active: true
+                },
+                select: {
+                    id: true,
+                    registration: true,
+                    password: true,
+                }
+            });
+        }
+        catch (error) {
+            if (error.code === 'P2025') {
+                throw new microservices_1.RpcException({
+                    statusCode: 404,
+                    message: error.message,
+                    error: 'Not Found',
+                });
+            }
+        }
+    }
     async updateGeneralData(id, updateUserGeneralDto) {
         if (!(0, class_validator_1.isUUID)(id)) {
             throw new microservices_1.RpcException({

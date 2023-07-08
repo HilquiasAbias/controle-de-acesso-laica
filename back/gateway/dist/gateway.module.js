@@ -11,12 +11,14 @@ const common_1 = require("@nestjs/common");
 const users_module_1 = require("./users/users.module");
 const core_1 = require("@nestjs/core");
 const microservice_exception_interceptor_1 = require("./microservice-exception.interceptor");
+const auth_module_1 = require("./auth/auth.module");
 let GatewayModule = class GatewayModule {
 };
 GatewayModule = __decorate([
     (0, common_1.Module)({
         imports: [
-            users_module_1.UsersModule
+            users_module_1.UsersModule,
+            auth_module_1.AuthModule
         ],
         providers: [
             {

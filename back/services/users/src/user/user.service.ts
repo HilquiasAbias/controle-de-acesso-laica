@@ -180,19 +180,19 @@ export class UserService {
     }
   }
 
-  async findOneForAuth(id: string) {
+  async findOneForAuth(registration: string) {
     try {
-      const user = await this.prisma.user.findFirstOrThrow({
+      return await this.prisma.user.findFirstOrThrow({
         where: {
-          id,
+          registration,
           active: true
+        },
+        select: {
+          id: true,
+          registration: true,
+          password: true,
         }
       });
-
-      return {
-        id: user.id,
-        password: user.password
-      }
     } catch (error) {
       if (error.code === 'P2025') {
         throw new RpcException({

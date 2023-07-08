@@ -11,11 +11,24 @@ const common_1 = require("@nestjs/common");
 const user_service_1 = require("./user.service");
 const user_controller_1 = require("./user.controller");
 const prisma_module_1 = require("../prisma/prisma.module");
+const microservices_1 = require("@nestjs/microservices");
 let UserModule = class UserModule {
 };
 UserModule = __decorate([
     (0, common_1.Module)({
-        imports: [prisma_module_1.PrismaModule],
+        imports: [
+            prisma_module_1.PrismaModule,
+            microservices_1.ClientsModule.register([
+                {
+                    name: 'SECURITY',
+                    transport: microservices_1.Transport.TCP,
+                    options: {
+                        host: '127.0.0.1',
+                        port: 6002
+                    }
+                },
+            ])
+        ],
         controllers: [user_controller_1.UserController],
         providers: [user_service_1.UserService]
     })

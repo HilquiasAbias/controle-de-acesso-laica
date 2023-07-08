@@ -182,6 +182,11 @@ export declare class UserService {
         createdAt: Date;
         updatedAt: Date;
     }, unknown, never> & {}>;
+    findOneForAuth(registration: string): Promise<{
+        id: string;
+        registration: string;
+        password: string;
+    }>;
     updateGeneralData(id: string, updateUserGeneralDto: UpdateUserGeneralDto): Promise<import("@prisma/client/runtime").GetResult<{
         id: string;
         name: string;
