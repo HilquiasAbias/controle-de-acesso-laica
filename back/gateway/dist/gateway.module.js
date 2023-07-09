@@ -8,10 +8,10 @@ var __decorate = (this && this.__decorate) || function (decorators, target, key,
 Object.defineProperty(exports, "__esModule", { value: true });
 exports.GatewayModule = void 0;
 const common_1 = require("@nestjs/common");
-const users_module_1 = require("./users/users.module");
+const users_module_1 = require("./modules/users/users.module");
 const core_1 = require("@nestjs/core");
 const microservice_exception_interceptor_1 = require("./microservice-exception.interceptor");
-const auth_module_1 = require("./auth/auth.module");
+const auth_module_1 = require("./modules/auth/auth.module");
 let GatewayModule = class GatewayModule {
 };
 GatewayModule = __decorate([
