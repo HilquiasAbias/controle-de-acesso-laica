@@ -1,4 +1,5 @@
 import { IsBoolean, IsIn, IsMACAddress, IsOptional, IsString } from "class-validator"
+import { ApiProperty } from '@nestjs/swagger';
 
 export type ObolType = 'DEVICE_MAC' | 'TAG_RFID' | 'USER_CREDENTIALS'
 export type LogTypes = 'INFO' | 'WARN' | 'DEBUG'
@@ -10,31 +11,23 @@ export type InfoTypes = 'info1' | 'info2' | 'info3'
 
 export class CreateLogDto {
   @IsMACAddress()
+  @ApiProperty()
   caronteMac: string
 
   @IsString()
+  @ApiProperty()
   carontePassword?: string
 
   @IsString()
-  @IsOptional()
-  userRegistration?: string
-
-  @IsString()
-  @IsOptional()
-  userTag?: string
-
-  @IsMACAddress()
-  @IsOptional()
-  userMac?: string
-
-  // @IsString()
-  // @IsIn(['DEVICE_MAC', 'TAG_RFID', 'USER_CREDENTIALS'])
-  //obolType?: string
+  @ApiProperty()
+  topic: string
 
   @IsString()
   @IsIn(['INFO', 'WARN', 'DEBUG'])
+  @ApiProperty()
   type: string
 
   @IsString()
+  @ApiProperty()
   message: string
 }

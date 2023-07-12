@@ -12,7 +12,7 @@ import { JwtStrategy } from './strategies/jwt.strategy';
     PrismaModule,
     PassportModule,
     JwtModule.register({
-      secret: process.env.JWT_SECRET,
+      secret: "algo-muito-secreto", // process.env.JWT_SECRET,
       signOptions: { expiresIn: '15m' }, // 30s, 7d, 24h, 30m
     }),
     UsersModule,

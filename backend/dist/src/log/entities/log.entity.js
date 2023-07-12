@@ -23,10 +23,6 @@ __decorate([
     __metadata("design:type", String)
 ], LogEntity.prototype, "caronteMac", void 0);
 __decorate([
-    (0, swagger_1.ApiProperty)({ required: false, nullable: true }),
-    __metadata("design:type", String)
-], LogEntity.prototype, "userRegistration", void 0);
-__decorate([
     (0, swagger_1.ApiProperty)(),
     __metadata("design:type", String)
 ], LogEntity.prototype, "type", void 0);
@@ -37,7 +33,7 @@ __decorate([
 __decorate([
     (0, swagger_1.ApiProperty)(),
     __metadata("design:type", String)
-], LogEntity.prototype, "obolType", void 0);
+], LogEntity.prototype, "topic", void 0);
 __decorate([
     (0, swagger_1.ApiProperty)(),
     __metadata("design:type", Date)

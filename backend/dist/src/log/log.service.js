@@ -17,36 +17,6 @@ let LogService = exports.LogService = class LogService {
     constructor(prisma) {
         this.prisma = prisma;
     }
-    async getUserForLog(data) {
-        let userRegistration;
-        let obolType;
-        if (data.userTag) {
-            userRegistration = await this.prisma.user.findFirstOrThrow({
-                where: {
-                    rfid: { tag: data.userTag }
-                },
-                select: {
-                    registration: true
-                }
-            });
-            data.userRegistration = userRegistration.registration;
-            obolType = 'TAG_RFID';
-        }
-        if (data.userMac) {
-            userRegistration = await this.prisma.user.findFirstOrThrow({
-                where: {
-                    mac: data.userMac
-                },
-                select: {
-                    registration: true
-                }
-            });
-            data.userRegistration = userRegistration.registration;
-            obolType = 'DEVICE_MAC';
-        }
-        console.log(userRegistration);
-        return { data, obolType };
-    }
     async create(data) {
         const caronte = await this.prisma.caronte.findFirstOrThrow({
             where: {
@@ -58,26 +28,18 @@ let LogService = exports.LogService = class LogService {
             throw new common_1.HttpException('Unauthorized caronte access', common_1.HttpStatus.UNAUTHORIZED);
         }
         let userDataResponse;
-        if (!data.userRegistration) {
-            userDataResponse = await this.getUserForLog(data);
-        }
         try {
             await this.prisma.log.create({
                 data: {
-                    message: userDataResponse.data.message,
-                    obolType: userDataResponse.obolType,
-                    type: userDataResponse.data.type,
-                    caronte: { connect: { esp: userDataResponse.data.caronteMac } },
-                    user: {
-                        connect: {
-                            registration: userDataResponse ? userDataResponse.data.userRegistration : data.userRegistration
-                        }
-                    }
+                    message: data.message,
+                    topic: data.topic,
+                    type: data.type,
+                    caronte: { connect: { esp: data.caronteMac } },
                 }
             });
         }
         catch (error) {
-            console.log(error.code);
+            console.log(error);
             if (error.code === 'P2025') {
                 throw new common_1.HttpException('Not found', common_1.HttpStatus.NOT_FOUND);
             }
@@ -95,14 +57,9 @@ let LogService = exports.LogService = class LogService {
     async findAll() {
         return this.prisma.log.findMany();
     }
-    async findAllByCaronte(caronteMac) {
+    async findAllByCaronte(id) {
         return this.prisma.log.findMany({
-            where: { caronteMac }
-        });
-    }
-    async findAllByUser(userRegistration) {
-        return this.prisma.log.findMany({
-            where: { userRegistration }
+            where: { id }
         });
     }
     async findOne(id) {

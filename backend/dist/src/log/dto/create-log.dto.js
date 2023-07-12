@@ -11,39 +11,34 @@ var __metadata = (this && this.__metadata) || function (k, v) {
 Object.defineProperty(exports, "__esModule", { value: true });
 exports.CreateLogDto = void 0;
 const class_validator_1 = require("class-validator");
+const swagger_1 = require("@nestjs/swagger");
 class CreateLogDto {
 }
 exports.CreateLogDto = CreateLogDto;
 __decorate([
     (0, class_validator_1.IsMACAddress)(),
+    (0, swagger_1.ApiProperty)(),
     __metadata("design:type", String)
 ], CreateLogDto.prototype, "caronteMac", void 0);
 __decorate([
     (0, class_validator_1.IsString)(),
+    (0, swagger_1.ApiProperty)(),
     __metadata("design:type", String)
 ], CreateLogDto.prototype, "carontePassword", void 0);
 __decorate([
     (0, class_validator_1.IsString)(),
-    (0, class_validator_1.IsOptional)(),
+    (0, swagger_1.ApiProperty)(),
     __metadata("design:type", String)
-], CreateLogDto.prototype, "userRegistration", void 0);
-__decorate([
-    (0, class_validator_1.IsString)(),
-    (0, class_validator_1.IsOptional)(),
-    __metadata("design:type", String)
-], CreateLogDto.prototype, "userTag", void 0);
-__decorate([
-    (0, class_validator_1.IsMACAddress)(),
-    (0, class_validator_1.IsOptional)(),
-    __metadata("design:type", String)
-], CreateLogDto.prototype, "userMac", void 0);
+], CreateLogDto.prototype, "topic", void 0);
 __decorate([
     (0, class_validator_1.IsString)(),
     (0, class_validator_1.IsIn)(['INFO', 'WARN', 'DEBUG']),
+    (0, swagger_1.ApiProperty)(),
     __metadata("design:type", String)
 ], CreateLogDto.prototype, "type", void 0);
 __decorate([
     (0, class_validator_1.IsString)(),
+    (0, swagger_1.ApiProperty)(),
     __metadata("design:type", String)
 ], CreateLogDto.prototype, "message", void 0);
 //# sourceMappingURL=create-log.dto.js.map

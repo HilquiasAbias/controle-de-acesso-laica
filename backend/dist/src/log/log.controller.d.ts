@@ -7,5 +7,5 @@ export declare class LogController {
         created: boolean;
     }>;
     findAll(): Promise<import(".prisma/client").Log[]>;
-    findOne(id: string): Promise<import(".prisma/client").Log>;
+    findOne(id: string): Promise<import(".prisma/client").Log[]>;
 }

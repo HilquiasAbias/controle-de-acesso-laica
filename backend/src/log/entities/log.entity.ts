@@ -8,9 +8,6 @@ export class LogEntity implements Log {
   @ApiProperty()
   caronteMac: string
 
-  @ApiProperty({ required: false, nullable: true })
-  userRegistration: string
-
   @ApiProperty()
   type: string
 
@@ -18,7 +15,7 @@ export class LogEntity implements Log {
   message: string
 
   @ApiProperty()
-  obolType: string
+  topic: string
 
   @ApiProperty()
   createdAt: Date

@@ -28,7 +28,7 @@ let LogController = exports.LogController = class LogController {
         return this.logService.findAll();
     }
     findOne(id) {
-        return this.logService.findOne(id);
+        return this.logService.findAllByCaronte(id);
     }
 };
 __decorate([
@@ -45,7 +45,7 @@ __decorate([
     __metadata("design:returntype", void 0)
 ], LogController.prototype, "findAll", null);
 __decorate([
-    (0, common_1.Get)(':id'),
+    (0, common_1.Get)('device/:id'),
     __param(0, (0, common_1.Param)('id')),
     __metadata("design:type", Function),
     __metadata("design:paramtypes", [String]),

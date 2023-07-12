@@ -18,9 +18,9 @@ export class LogController {
     return this.logService.findAll();
   }
 
-  @Get(':id')
+  @Get('device/:id')
   findOne(@Param('id') id: string) {
-    return this.logService.findOne(id);
+    return this.logService.findAllByCaronte(id);
   }
 
 }

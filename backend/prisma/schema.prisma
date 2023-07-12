@@ -4,7 +4,7 @@ generator client {
 
 datasource db {
   provider = "sqlite" // postgres
-  url      = env("DATABASE_URL")
+  url      = "file:./dev.db" // env("DATABASE_URL")
 }
 
 // enum Roles {
@@ -16,59 +16,47 @@ datasource db {
 model Rfid {
   id        String   @id @default(uuid())
   tag       String   @unique
-  active    Boolean
   User      User     @relation(fields: [userId], references: [id])
   userId    String   @unique
   createdAt DateTime @default(now())
   updatedAt DateTime @updatedAt
 }
 
-model EnvAccess {
-  id            String      @id @default(uuid())
-  dayOfWeek     String
-  startTime     DateTime
-  endTime       DateTime
-  active        Boolean
-  User          User        @relation(fields: [userId], references: [id])
-  userId        String
-  Environment   Environment @relation(fields: [environmentId], references: [id])
-  environmentId String
-}
-
-model EnvManager {
-  id            String      @id @default(uuid())
-  active        Boolean
-  User          User        @relation(fields: [userId], references: [id])
-  userId        String
-  Environment   Environment @relation(fields: [environmentId], references: [id])
-  environmentId String
+model AccessTime {
+  id        String   @id @default(uuid())
+  dayOfWeek String
+  startTime DateTime
+  endTime   DateTime
+  User      User     @relation(fields: [userId], references: [id])
+  userId    String
 }
 
 model User {
-  id           String       @id @default(uuid())
-  name         String
-  registration String       @unique
-  password     String
-  role         String // Roles
-  Rfid         Rfid?
-  mac          String?
-  createdAt    DateTime     @default(now())
-  updatedAt    DateTime     @updatedAt
-  Log          Log[]
-  EnvAccess    EnvAccess[]
-  EnvManager   EnvManager[]
+  id                      String       @id @default(uuid())
+  name                    String
+  registration            String       @unique
+  password                String
+  role                    String // Roles
+  rfid                    Rfid?
+  mac                     String?
+  adminEnvironment        Environment? @relation("admins", fields: [environmentAdminId], references: [id])
+  environmentAdminId      String?
+  frequenterEnvironment   Environment? @relation("frequenters", fields: [environmentFrequenterId], references: [id])
+  environmentFrequenterId String?
+  createdAt               DateTime     @default(now())
+  updatedAt               DateTime     @updatedAt
+  accessTimes             AccessTime[]
 }
 
 model Environment {
-  id          String       @id @default(uuid())
-  name        String       @unique
+  id          String    @id @default(uuid())
+  name        String    @unique
   description String?
-  active      Boolean
+  admins      User[]    @relation("admins")
+  frequenters User[]    @relation("frequenters")
   carontes    Caronte[]
-  createdAt   DateTime     @default(now())
-  updatedAt   DateTime     @updatedAt
-  EnvAccess   EnvAccess[]
-  EnvManager  EnvManager[]
+  createdAt   DateTime  @default(now())
+  updatedAt   DateTime  @updatedAt
 }
 
 model Caronte {
@@ -76,7 +64,6 @@ model Caronte {
   ip            String      @unique
   esp           String      @unique
   password      String
-  active        Boolean
   Environment   Environment @relation(fields: [environmentId], references: [id])
   environmentId String
   Log           Log[]
@@ -89,13 +76,11 @@ model Caronte {
 // }
 
 model Log {
-  id               String   @id @default(uuid())
-  Caronte          Caronte  @relation(fields: [caronteMac], references: [esp])
-  caronteMac       String
-  User             User?    @relation(fields: [userRegistration], references: [registration])
-  userRegistration String?
-  type             String // LogTypes
-  message          String
-  obolType         String
-  createdAt        DateTime @default(now())
+  id         String   @id @default(uuid())
+  caronte    Caronte  @relation(fields: [caronteMac], references: [esp])
+  caronteMac String
+  type       String // LogTypes
+  message    String
+  topic      String
+  createdAt  DateTime @default(now())
 }

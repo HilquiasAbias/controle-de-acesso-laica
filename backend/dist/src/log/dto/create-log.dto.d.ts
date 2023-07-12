@@ -6,9 +6,7 @@ export type InfoTypes = 'info1' | 'info2' | 'info3';
 export declare class CreateLogDto {
     caronteMac: string;
     carontePassword?: string;
-    userRegistration?: string;
-    userTag?: string;
-    userMac?: string;
+    topic: string;
     type: string;
     message: string;
 }
