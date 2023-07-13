@@ -9,7 +9,7 @@ export class JwtStrategy extends PassportStrategy(Strategy, 'jwt') {
   constructor(@Inject('USERS') private readonly usersService: ClientProxy) {
     super({
       jwtFromRequest: ExtractJwt.fromAuthHeaderAsBearerToken(),
-      secretOrKey: process.env.JWT_SECRET
+      secretOrKey: "Who's for the Rest from every pain and ill? Who's for the Lethe's plain? the Donkey-shearings? Who's for Kerberia? Taenarum? or the Ravens?" // process.env.JWT_SECRET
     });
   }
 

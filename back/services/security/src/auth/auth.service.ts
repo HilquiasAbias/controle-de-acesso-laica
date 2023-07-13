@@ -15,7 +15,7 @@ export class AuthService {
   ) {}
 
   async login(loginDto: LoginDto): Promise<AuthEntity> {
-    const pattern = { cmd: 'get-one-by-registration' }
+    const pattern = { cmd: 'get-one-for-auth' }
     const payload = loginDto.registration
 
     let user: User
@@ -46,4 +46,6 @@ export class AuthService {
       accessToken: this.jwtService.sign({ userId: user.id }),
     };
   }
+
+  async validateToken(token: string) {}
 }

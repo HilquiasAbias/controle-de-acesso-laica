@@ -11,4 +11,9 @@ export class AuthController {
   login(@Payload() loginDto: LoginDto) {
     return this.authService.login(loginDto);
   }
+
+  @MessagePattern({ cmd: 'validate-token' })
+  validateToken(@Payload() token: string) {
+    return this.authService.validateToken(token)
+  }
 }

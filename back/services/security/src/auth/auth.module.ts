@@ -5,13 +5,11 @@ import { PassportModule } from '@nestjs/passport';
 import { JwtModule } from '@nestjs/jwt';
 import { ClientsModule, Transport } from '@nestjs/microservices';
 
-export const jwtSecret = 'zjP9h6ZI5LoSKCRj';
-
 @Module({
   imports: [
     PassportModule,
     JwtModule.register({
-      secret: process.env.JWT_SECRET,
+      secret: "Who's for the Rest from every pain and ill? Who's for the Lethe's plain? the Donkey-shearings? Who's for Kerberia? Taenarum? or the Ravens?", // process.env.JWT_SECRET,
       signOptions: { expiresIn: '1h' }, // e.g. 30s, 7d, 24h
     }),
     ClientsModule.register([

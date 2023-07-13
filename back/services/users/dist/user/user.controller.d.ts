@@ -148,6 +148,12 @@ export declare class UserController {
         createdAt: Date;
         updatedAt: Date;
     }, unknown, never> & {}>;
+    findOneForAuth(payload: {
+        userId: string;
+    }): Promise<{
+        id: string;
+        password: string;
+    }>;
     findAllInactive(): Promise<({
         Rfid: import("@prisma/client/runtime").GetResult<{
             id: string;

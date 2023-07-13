@@ -36,6 +36,9 @@ let UserController = class UserController {
     async findOne(id) {
         return await this.userService.findOne(id);
     }
+    async findOneForAuth(payload) {
+        return await this.userService.findOneForAuth(payload.userId);
+    }
     async findAllInactive() {
         return await this.userService.findAllInactive();
     }
@@ -84,6 +87,13 @@ __decorate([
     __metadata("design:paramtypes", [String]),
     __metadata("design:returntype", Promise)
 ], UserController.prototype, "findOne", null);
+__decorate([
+    (0, microservices_1.MessagePattern)({ cmd: "get-one-for-auth" }),
+    __param(0, (0, microservices_1.Payload)()),
+    __metadata("design:type", Function),
+    __metadata("design:paramtypes", [Object]),
+    __metadata("design:returntype", Promise)
+], UserController.prototype, "findOneForAuth", null);
 __decorate([
     (0, microservices_1.MessagePattern)({ cmd: "get-inactives" }),
     __metadata("design:type", Function),
