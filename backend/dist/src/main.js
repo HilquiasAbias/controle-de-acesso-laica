@@ -10,7 +10,7 @@ async function bootstrap() {
     app.enableCors({
         origin: '*'
     });
-    app.setGlobalPrefix('/access-ng');
+   app.setGlobalPrefix('access-ng');
     const config = new swagger_1.DocumentBuilder()
         .setTitle('Laica: controle de acesso')
         .setDescription('Documentação da API de controle de acesso do Laica')
@@ -18,7 +18,8 @@ async function bootstrap() {
         .addBearerAuth()
         .build();
     const document = swagger_1.SwaggerModule.createDocument(app, config);
-    swagger_1.SwaggerModule.setup('/', app, document);
+    swagger_1.SwaggerModule.setup('', app, document);
+    app.setGlobalPrefix('');
     const { httpAdapter } = app.get(core_1.HttpAdapterHost);
     app.useGlobalFilters(new prisma_client_exception_filter_1.PrismaClientExceptionFilter(httpAdapter));
     app.useGlobalPipes(new common_1.ValidationPipe());
