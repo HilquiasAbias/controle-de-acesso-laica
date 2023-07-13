@@ -36,8 +36,8 @@ export class UserController {
   }
 
   @MessagePattern({ cmd: "get-one-for-auth" })
-  async findOneForAuth(@Payload() payload: { userId: string }) {
-    return await this.userService.findOneForAuth(payload.userId);
+  async findOneForAuth(@Payload() registration: string) {
+    return await this.userService.findOneForAuth(registration);
   }
 
   @MessagePattern({ cmd: "get-inactives" })

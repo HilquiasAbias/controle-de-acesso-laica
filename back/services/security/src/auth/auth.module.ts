@@ -9,7 +9,7 @@ import { ClientsModule, Transport } from '@nestjs/microservices';
   imports: [
     PassportModule,
     JwtModule.register({
-      secret: "Who's for the Rest from every pain and ill? Who's for the Lethe's plain? the Donkey-shearings? Who's for Kerberia? Taenarum? or the Ravens?", // process.env.JWT_SECRET,
+      secret: "Minha barca não discrimina; ricos ou pobres, nobres ou plebeus, todos devem enfrentar minha passagem.", // process.env.JWT_SECRET,
       signOptions: { expiresIn: '1h' }, // e.g. 30s, 7d, 24h
     }),
     ClientsModule.register([

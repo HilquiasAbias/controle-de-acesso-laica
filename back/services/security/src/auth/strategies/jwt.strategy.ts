@@ -9,12 +9,12 @@ export class JwtStrategy extends PassportStrategy(Strategy, 'jwt') {
   constructor(@Inject('USERS') private readonly usersService: ClientProxy) {
     super({
       jwtFromRequest: ExtractJwt.fromAuthHeaderAsBearerToken(),
-      secretOrKey: "Who's for the Rest from every pain and ill? Who's for the Lethe's plain? the Donkey-shearings? Who's for Kerberia? Taenarum? or the Ravens?" // process.env.JWT_SECRET
+      secretOrKey: "Minha barca não discrimina; ricos ou pobres, nobres ou plebeus, todos devem enfrentar minha passagem." // process.env.JWT_SECRET
     });
   }
 
   async validate(payload: { userId: string }) {
-    const pattern = { cmd: 'get-one-for-auth' }
+    const pattern = { cmd: 'get-one' }
     const user = await firstValueFrom(this.usersService.send(pattern, payload))
 
     if (!user) {
