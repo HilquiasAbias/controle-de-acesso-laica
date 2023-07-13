@@ -1,7 +1,7 @@
 import { Log } from "@prisma/client";
 export declare class LogEntity implements Log {
     id: string;
-    caronteMac: string;
+    deviceMac: string;
     type: string;
     message: string;
     topic: string;

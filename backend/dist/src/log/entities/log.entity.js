@@ -21,7 +21,7 @@ __decorate([
 __decorate([
     (0, swagger_1.ApiProperty)(),
     __metadata("design:type", String)
-], LogEntity.prototype, "caronteMac", void 0);
+], LogEntity.prototype, "deviceMac", void 0);
 __decorate([
     (0, swagger_1.ApiProperty)(),
     __metadata("design:type", String)

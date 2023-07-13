@@ -10,7 +10,6 @@ async function bootstrap() {
     app.enableCors({
         origin: '*'
     });
-   app.setGlobalPrefix('access-ng');
     const config = new swagger_1.DocumentBuilder()
         .setTitle('Laica: controle de acesso')
         .setDescription('Documentação da API de controle de acesso do Laica')

@@ -12,7 +12,6 @@ Object.defineProperty(exports, "__esModule", { value: true });
 exports.LogService = void 0;
 const common_1 = require("@nestjs/common");
 const prisma_service_1 = require("../prisma/prisma.service");
-const bcrypt = require("bcrypt");
 let LogService = exports.LogService = class LogService {
     constructor(prisma) {
         this.prisma = prisma;
@@ -20,21 +19,17 @@ let LogService = exports.LogService = class LogService {
     async create(data) {
         const caronte = await this.prisma.caronte.findFirstOrThrow({
             where: {
-                esp: data.caronteMac
+                esp: data.deviceMac
             },
         });
-        const isPasswordValid = await bcrypt.compare(data.carontePassword, caronte.password);
-        if (!isPasswordValid) {
-            throw new common_1.HttpException('Unauthorized caronte access', common_1.HttpStatus.UNAUTHORIZED);
-        }
-        let userDataResponse;
+        let log;
         try {
-            await this.prisma.log.create({
+            log = await this.prisma.log.create({
                 data: {
                     message: data.message,
                     topic: data.topic,
                     type: data.type,
-                    caronte: { connect: { esp: data.caronteMac } },
+                    caronte: { connect: { esp: data.deviceMac } },
                 }
             });
         }
@@ -50,9 +45,7 @@ let LogService = exports.LogService = class LogService {
                 throw new common_1.HttpException('Failed to create log', common_1.HttpStatus.FORBIDDEN);
             }
         }
-        return {
-            created: true
-        };
+        return log;
     }
     async findAll() {
         return this.prisma.log.findMany();

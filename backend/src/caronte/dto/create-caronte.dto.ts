@@ -11,10 +11,6 @@ export class CreateCaronteDto {
   esp: string
 
   @ApiProperty()
-  @IsString()
-  password: string
-
-  @ApiProperty()
   @IsUUID()
   environmentId: string
 }

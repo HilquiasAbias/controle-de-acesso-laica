@@ -4,8 +4,7 @@ export type DebugTypes = 'debug1' | 'debug2' | 'debug3';
 export type WarnTypes = 'warn1' | 'warn2' | 'warn3';
 export type InfoTypes = 'info1' | 'info2' | 'info3';
 export declare class CreateLogDto {
-    caronteMac: string;
-    carontePassword?: string;
+    deviceMac: string;
     topic: string;
     type: string;
     message: string;

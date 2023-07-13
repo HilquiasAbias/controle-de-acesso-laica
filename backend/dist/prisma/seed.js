@@ -11,7 +11,6 @@ async function seedUsersAndEnvs() {
             registration: '2568824',
             password: await bcrypt.hash('password', roundsOfHashing),
             role: 'ADMIN',
-            mac: '9C:F2:48:87:C2:5A',
         },
     });
     const admin2 = await prisma.user.create({
@@ -20,7 +19,6 @@ async function seedUsersAndEnvs() {
             registration: '2843906',
             password: await bcrypt.hash('password', roundsOfHashing),
             role: 'ADMIN',
-            mac: '32:6E:2E:57:D1:3C',
         },
     });
     const admin3 = await prisma.user.create({
@@ -29,7 +27,15 @@ async function seedUsersAndEnvs() {
             registration: '2576883',
             password: await bcrypt.hash('password', roundsOfHashing),
             role: 'ADMIN',
-            mac: '0E:DC:21:40:EF:B4',
+        },
+    });
+    const env1 = await prisma.environment.create({
+        data: {
+            name: 'Environment 1',
+            description: 'Description for Environment 1',
+            admins: {
+                connect: [{ id: admin1.id }, { id: admin2.id }],
+            },
         },
     });
     const freq1 = await prisma.user.create({
@@ -38,7 +44,6 @@ async function seedUsersAndEnvs() {
             registration: '20201014040081',
             password: await bcrypt.hash('password', roundsOfHashing),
             role: 'FREQUENTER',
-            mac: '18:41:6D:48:0D:DA',
         },
     });
     const freq2 = await prisma.user.create({
@@ -47,7 +52,6 @@ async function seedUsersAndEnvs() {
             registration: '20231151210066',
             password: await bcrypt.hash('password', roundsOfHashing),
             role: 'FREQUENTER',
-            mac: '05:76:22:59:7F:D4',
         },
     });
     const freq3 = await prisma.user.create({
@@ -56,7 +60,18 @@ async function seedUsersAndEnvs() {
             registration: '20231012090022',
             password: await bcrypt.hash('password', roundsOfHashing),
             role: 'FREQUENTER',
-            mac: 'F7:5D:51:88:8A:54',
+        },
+    });
+}
+async function seedCarontes() {
+    const envs = await prisma.environment.findMany();
+    const caronte1 = await prisma.caronte.create({
+        data: {
+            ip: '192.168.1.3',
+            esp: '02:F1:95:7C:C2:EC',
+            Environment: {
+                connect: { id: envs[0].id },
+            }
         },
     });
 }

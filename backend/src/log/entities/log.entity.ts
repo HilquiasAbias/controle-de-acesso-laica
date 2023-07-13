@@ -6,7 +6,7 @@ export class LogEntity implements Log {
   id: string
 
   @ApiProperty()
-  caronteMac: string
+  deviceMac: string
 
   @ApiProperty()
   type: string

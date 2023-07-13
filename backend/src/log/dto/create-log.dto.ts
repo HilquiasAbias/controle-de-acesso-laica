@@ -12,11 +12,7 @@ export type InfoTypes = 'info1' | 'info2' | 'info3'
 export class CreateLogDto {
   @IsMACAddress()
   @ApiProperty()
-  caronteMac: string
-
-  @IsString()
-  @ApiProperty()
-  carontePassword?: string
+  deviceMac: string
 
   @IsString()
   @ApiProperty()

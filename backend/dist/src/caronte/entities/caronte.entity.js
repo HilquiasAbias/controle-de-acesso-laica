@@ -29,9 +29,5 @@ __decorate([
 __decorate([
     (0, swagger_1.ApiProperty)(),
     __metadata("design:type", String)
-], CaronteEntity.prototype, "password", void 0);
-__decorate([
-    (0, swagger_1.ApiProperty)(),
-    __metadata("design:type", String)
 ], CaronteEntity.prototype, "environmentId", void 0);
 //# sourceMappingURL=caronte.entity.js.map

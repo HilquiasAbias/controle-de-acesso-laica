@@ -15,14 +15,12 @@ const prisma_service_1 = require("../prisma/prisma.service");
 const class_validator_1 = require("class-validator");
 const bcrypt = require("bcrypt");
 const log_service_1 = require("../log/log.service");
-const users_service_1 = require("../users/users.service");
 let CaronteService = exports.CaronteService = class CaronteService {
     constructor(prisma, log) {
         this.prisma = prisma;
         this.log = log;
     }
     async create(createCaronteDto) {
-        createCaronteDto.password = await bcrypt.hash(createCaronteDto.password, users_service_1.roundsOfHashing);
         try {
             return await this.prisma.caronte.create({
                 data: createCaronteDto,
@@ -198,10 +196,6 @@ let CaronteService = exports.CaronteService = class CaronteService {
         });
         if (!caronte) {
             throw new common_1.HttpException('Caronte not found', common_1.HttpStatus.UNAUTHORIZED);
-        }
-        const isCarontePasswordValid = await bcrypt.compare(obolForCharon.carontePassword, caronte.password);
-        if (!isCarontePasswordValid) {
-            throw new common_1.HttpException('Unauthorized caronte access', common_1.HttpStatus.UNAUTHORIZED);
         }
         let user;
         if (obolForCharon.userTagRFID) {

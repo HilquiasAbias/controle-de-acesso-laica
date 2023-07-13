@@ -12,8 +12,5 @@ export class CaronteEntity implements Caronte {
   esp: string
 
   @ApiProperty()
-  password: string
-
-  @ApiProperty()
   environmentId: string
 }

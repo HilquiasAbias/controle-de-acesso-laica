@@ -20,11 +20,6 @@ export class CaronteService {
   ) {}
 
   async create(createCaronteDto: CreateCaronteDto) {
-    createCaronteDto.password = await bcrypt.hash(
-      createCaronteDto.password,
-      roundsOfHashing,
-    );
-
     try {
       return await this.prisma.caronte.create({
         data: createCaronteDto,
@@ -238,14 +233,6 @@ export class CaronteService {
     if (!caronte) {
       // TODO: log para caronte fornecido não encontrado
       throw new HttpException('Caronte not found', HttpStatus.UNAUTHORIZED);
-    }
-
-    const isCarontePasswordValid = await bcrypt.compare(
-      obolForCharon.carontePassword, caronte.password
-    )
-
-    if (!isCarontePasswordValid) {
-      throw new HttpException('Unauthorized caronte access', HttpStatus.UNAUTHORIZED);
     }
     
     let user: UserWithAccessTimeWithoutRFID

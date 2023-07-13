@@ -2,7 +2,7 @@ import { Injectable, HttpException, HttpStatus } from '@nestjs/common';
 import { CreateLogDto } from './dto/create-log.dto';
 import { PrismaService } from 'src/prisma/prisma.service';
 import * as bcrypt from 'bcrypt';
-import { User } from '@prisma/client';
+import { Log, User } from '@prisma/client';
 
 @Injectable()
 export class LogService {
@@ -11,26 +11,19 @@ export class LogService {
   async create(data: CreateLogDto) {
     const caronte = await this.prisma.caronte.findFirstOrThrow({
       where: {
-        esp: data.caronteMac
+        esp: data.deviceMac
       },
     })
 
-    const isPasswordValid = await bcrypt.compare(data.carontePassword, caronte.password);
-
-    if (!isPasswordValid) {
-      throw new HttpException('Unauthorized caronte access', HttpStatus.UNAUTHORIZED);
-    }
-
-    let userDataResponse: { data: CreateLogDto }
-
+    let log: Log
 
     try {
-      await this.prisma.log.create({
+      log = await this.prisma.log.create({
         data: {
           message: data.message,
           topic: data.topic,
           type: data.type,
-          caronte: { connect: { esp: data.caronteMac } },
+          caronte: { connect: { esp: data.deviceMac } },
         }
       });
       
@@ -50,9 +43,7 @@ export class LogService {
     //   throw new HttpException('Failed to create log', HttpStatus.FORBIDDEN);
     // }
 
-    return {
-      created: true
-    }
+    return log
   }
 
   async findAll() {

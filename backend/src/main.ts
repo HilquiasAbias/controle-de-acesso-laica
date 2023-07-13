@@ -11,7 +11,7 @@ async function bootstrap() {
     origin: '*'
   })
   
-  app.setGlobalPrefix('/access-ng');
+  app.setGlobalPrefix('access-ng');
   
   const config = new DocumentBuilder()
     .setTitle('Laica: controle de acesso')
@@ -21,7 +21,8 @@ async function bootstrap() {
     .build();
 
   const document = SwaggerModule.createDocument(app, config);
-  SwaggerModule.setup('/', app, document);
+  SwaggerModule.setup('', app, document);
+  app.setGlobalPrefix('');
 
   const { httpAdapter } = app.get(HttpAdapterHost);
   app.useGlobalFilters(new PrismaClientExceptionFilter(httpAdapter));

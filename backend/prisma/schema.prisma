@@ -63,7 +63,6 @@ model Caronte {
   id            String      @id @default(uuid())
   ip            String      @unique
   esp           String      @unique
-  password      String
   Environment   Environment @relation(fields: [environmentId], references: [id])
   environmentId String
   Log           Log[]
@@ -76,11 +75,11 @@ model Caronte {
 // }
 
 model Log {
-  id         String   @id @default(uuid())
-  caronte    Caronte  @relation(fields: [caronteMac], references: [esp])
-  caronteMac String
-  type       String // LogTypes
-  message    String
-  topic      String
-  createdAt  DateTime @default(now())
+  id        String   @id @default(uuid())
+  caronte   Caronte  @relation(fields: [deviceMac], references: [esp])
+  deviceMac String
+  type      String // LogTypes
+  message   String
+  topic     String
+  createdAt DateTime @default(now())
 }
