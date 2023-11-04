@@ -109,9 +109,12 @@ let CaronteService = exports.CaronteService = class CaronteService {
     }
     async findUserByTag(tag, users) {
         let user;
-        user = users.admins.find(admin => admin.rfid.tag === tag);
+        user = users.admins.find(admin => admin.rfid);
         if (!user) {
-            user = users.frequenters.find(frequenter => frequenter.rfid.tag === tag);
+            user = users.frequenters.find(frequenter => frequenter.rfid);
+        }
+        if (user.rfid.tag !== tag) {
+            return undefined;
         }
         return user;
     }
@@ -208,12 +211,28 @@ let CaronteService = exports.CaronteService = class CaronteService {
             user = await this.findUserByData(obolForCharon.userRegistration, obolForCharon.userPassword, caronte.Environment);
         }
         if (!user) {
+            await this.prisma.log.create({
+                data: {
+                    type: 'WARN',
+                    topic: 'Acesso',
+                    message: 'Usuário não encontrado',
+                    caronte: { connect: { id: caronte.id } }
+                }
+            });
             throw new common_1.HttpException('Unauthorized user access', common_1.HttpStatus.UNAUTHORIZED);
         }
         const isUserAccessTimeValid = await this.isCurrentTimeValidForUser(user.accessTimes);
         if (!isUserAccessTimeValid) {
             throw new common_1.HttpException('Unauthorized user access', common_1.HttpStatus.UNAUTHORIZED);
         }
+        await this.prisma.log.create({
+            data: {
+                type: 'INFO',
+                topic: 'Acesso',
+                message: `Usuário ${user.name} acessou pelo caronte ${caronte.esp}`,
+                caronte: { connect: { id: caronte.id } },
+            }
+        });
         return {
             access: true
         };

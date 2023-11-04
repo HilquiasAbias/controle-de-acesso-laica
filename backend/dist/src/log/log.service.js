@@ -47,8 +47,15 @@ let LogService = exports.LogService = class LogService {
         }
         return log;
     }
-    async findAll() {
-        return this.prisma.log.findMany();
+    async findAll(take) {
+        return this.prisma.log.findMany({ take });
+    }
+    async findAllByTopic(topic, amount) {
+        return this.prisma.log.findMany({
+            where: { topic },
+            orderBy: { createdAt: 'desc' },
+            take: amount
+        });
     }
     async findAllByCaronte(id) {
         return this.prisma.log.findMany({
@@ -58,6 +65,11 @@ let LogService = exports.LogService = class LogService {
     async findOne(id) {
         return this.prisma.log.findFirstOrThrow({
             where: { id }
+        });
+    }
+    async clear(topic) {
+        return this.prisma.log.deleteMany({
+            where: { topic }
         });
     }
 };

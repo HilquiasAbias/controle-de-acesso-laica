@@ -1,5 +1,6 @@
 import { Module, NestModule, MiddlewareConsumer } from '@nestjs/common';
 import { PrismaModule } from './prisma/prisma.module';
+import { AppController } from './app.controller';
 import { UsersModule } from './users/users.module';
 import { AuthModule } from './auth/auth.module';
 import { RfidModule } from './rfid/rfid.module';
@@ -17,7 +18,8 @@ import * as cors from 'cors';
     EnvironmentsModule, 
     CaronteModule, 
     LogModule
-  ]
+    ],
+    controllers: [AppController],
 })
 export class AppModule implements NestModule {
   configure(consumer: MiddlewareConsumer) {

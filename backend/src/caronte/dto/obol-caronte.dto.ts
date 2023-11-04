@@ -31,8 +31,7 @@ export class ObolForCharonDto {
   userDeviceMac: string
 
   @ApiProperty()
-  @IsHexadecimal()
-  @Length(8, 16)
+  @IsString()
   @IsOptional()
   userTagRFID: string
 

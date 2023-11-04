@@ -5,11 +5,14 @@ const app_module_1 = require("./app.module");
 const swagger_1 = require("@nestjs/swagger");
 const prisma_client_exception_filter_1 = require("./prisma-client-exception.filter");
 const common_1 = require("@nestjs/common");
+const express = require("express");
 async function bootstrap() {
     const app = await core_1.NestFactory.create(app_module_1.AppModule);
     app.enableCors({
         origin: '*'
     });
+    app.setGlobalPrefix('access-ng');
+    app.use('/uploads', express.static('uploads'));
     const config = new swagger_1.DocumentBuilder()
         .setTitle('Laica: controle de acesso')
         .setDescription('Documentação da API de controle de acesso do Laica')

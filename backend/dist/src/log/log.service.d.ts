@@ -5,7 +5,9 @@ export declare class LogService {
     private readonly prisma;
     constructor(prisma: PrismaService);
     create(data: CreateLogDto): Promise<Log>;
-    findAll(): Promise<Log[]>;
+    findAll(take: number): Promise<Log[]>;
+    findAllByTopic(topic: string, amount: number): Promise<Log[]>;
     findAllByCaronte(id: string): Promise<Log[]>;
     findOne(id: string): Promise<Log>;
+    clear(topic: string): Promise<import(".prisma/client").Prisma.BatchPayload>;
 }

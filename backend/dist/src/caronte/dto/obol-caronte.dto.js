@@ -51,8 +51,7 @@ __decorate([
 ], ObolForCharonDto.prototype, "userDeviceMac", void 0);
 __decorate([
     (0, swagger_1.ApiProperty)(),
-    (0, class_validator_1.IsHexadecimal)(),
-    (0, class_validator_1.Length)(8, 16),
+    (0, class_validator_1.IsString)(),
     (0, class_validator_1.IsOptional)(),
     __metadata("design:type", String)
 ], ObolForCharonDto.prototype, "userTagRFID", void 0);

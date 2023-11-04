@@ -9,6 +9,7 @@ Object.defineProperty(exports, "__esModule", { value: true });
 exports.AppModule = void 0;
 const common_1 = require("@nestjs/common");
 const prisma_module_1 = require("./prisma/prisma.module");
+const app_controller_1 = require("./app.controller");
 const users_module_1 = require("./users/users.module");
 const auth_module_1 = require("./auth/auth.module");
 const rfid_module_1 = require("./rfid/rfid.module");
@@ -31,7 +32,8 @@ exports.AppModule = AppModule = __decorate([
             environments_module_1.EnvironmentsModule,
             caronte_module_1.CaronteModule,
             log_module_1.LogModule
-        ]
+        ],
+        controllers: [app_controller_1.AppController],
     })
 ], AppModule);
 //# sourceMappingURL=app.module.js.map

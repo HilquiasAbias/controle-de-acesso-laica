@@ -117,10 +117,14 @@ export class CaronteService {
   async findUserByTag(tag: string, users: IEnvToFindUser) { //
     let user: UserWithAccessTime
 
-    user = users.admins.find(admin => admin.rfid.tag === tag)
+    user = users.admins.find(admin => admin.rfid)
 
     if (!user) {
-      user = users.frequenters.find(frequenter => frequenter.rfid.tag === tag)
+      user = users.frequenters.find(frequenter => frequenter.rfid)
+    }
+    
+    if (user.rfid.tag !== tag) {
+      return undefined;
     }
 
     return user
@@ -252,40 +256,17 @@ export class CaronteService {
     // const obol = this.getObolType(obolForCharon)
 
     if (!user) {
-      // this.prisma.log.create({
-      //   data: {
-      //     userRegistration: user.registration,
-      //     caronteMac: caronte.esp,
-      //     type: 'WARN',
-      //     message: 'msg1',
-      //     obolType: obol,
-      //   }
-      // })
+      await this.prisma.log.create({
+        data: {
+          type: 'WARN',
+          topic: 'Acesso',
+          message: 'Usuário não encontrado',
+          caronte: { connect: { id: caronte.id } }
+        }
+      })
 
       throw new HttpException('Unauthorized user access', HttpStatus.UNAUTHORIZED);
     }
-
-    // if (!user) {
-    //   log = await this.prisma.log.create({
-    //     data: {
-    //       successful: false,
-    //       caronte: { connect: { id: caronte.id } }
-    //     }
-    //   })
-    //   console.log(log);
-    //   throw new UnauthorizedException('Unauthorized user access');
-    // }
-
-    // log = await this.prisma.log.create({
-    //   data: {
-    //     successful: true,
-    //     caronte: { connect: { id: caronte.id } },
-    //     user: { connect: { id: user.id } }
-    //   }
-    // })
-
-    // console.log(log);
-    
 
     const isUserAccessTimeValid = await this.isCurrentTimeValidForUser(user.accessTimes)
 
@@ -293,15 +274,14 @@ export class CaronteService {
       throw new HttpException('Unauthorized user access', HttpStatus.UNAUTHORIZED);
     }
 
-    // this.prisma.log.create({
-    //   data: {
-    //     userRegistration: user.registration,
-    //     caronteMac: caronte.esp,
-    //     type: 'INFO',
-    //     message: 'msg2',
-    //     obolType: obol
-    //   }
-    // })
+    await this.prisma.log.create({
+      data: {
+        type: 'INFO',
+        topic: 'Acesso',
+        message: `Usuário ${user.name} acessou pelo caronte ${caronte.esp}`,
+        caronte: { connect: { id: caronte.id } },
+      }
+    })
 
     return {
       access: true

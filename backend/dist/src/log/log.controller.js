@@ -24,11 +24,19 @@ let LogController = exports.LogController = class LogController {
     create(createLogDto) {
         return this.logService.create(createLogDto);
     }
-    findAll() {
-        return this.logService.findAll();
+    findAll(amount) {
+        const amountInt = parseInt(amount);
+        return this.logService.findAll(amountInt);
+    }
+    findAllByTopic(topic, amount) {
+        const amountInt = parseInt(amount);
+        return this.logService.findAllByTopic(topic, amountInt);
     }
     findOne(id) {
         return this.logService.findAllByCaronte(id);
+    }
+    clear(topic) {
+        return this.logService.clear(topic);
     }
 };
 __decorate([
@@ -39,11 +47,20 @@ __decorate([
     __metadata("design:returntype", void 0)
 ], LogController.prototype, "create", null);
 __decorate([
-    (0, common_1.Get)(),
+    (0, common_1.Get)(':amount'),
+    __param(0, (0, common_1.Param)('amount')),
     __metadata("design:type", Function),
-    __metadata("design:paramtypes", []),
+    __metadata("design:paramtypes", [String]),
     __metadata("design:returntype", void 0)
 ], LogController.prototype, "findAll", null);
+__decorate([
+    (0, common_1.Get)('topic/:topic/:amount'),
+    __param(0, (0, common_1.Param)('topic')),
+    __param(1, (0, common_1.Param)('amount')),
+    __metadata("design:type", Function),
+    __metadata("design:paramtypes", [String, String]),
+    __metadata("design:returntype", void 0)
+], LogController.prototype, "findAllByTopic", null);
 __decorate([
     (0, common_1.Get)('device/:id'),
     __param(0, (0, common_1.Param)('id')),
@@ -51,6 +68,13 @@ __decorate([
     __metadata("design:paramtypes", [String]),
     __metadata("design:returntype", void 0)
 ], LogController.prototype, "findOne", null);
+__decorate([
+    (0, common_1.Delete)('topic'),
+    __param(0, (0, common_1.Query)('topic')),
+    __metadata("design:type", Function),
+    __metadata("design:paramtypes", [String]),
+    __metadata("design:returntype", void 0)
+], LogController.prototype, "clear", null);
 exports.LogController = LogController = __decorate([
     (0, common_1.Controller)('log'),
     (0, swagger_1.ApiTags)('Log'),
