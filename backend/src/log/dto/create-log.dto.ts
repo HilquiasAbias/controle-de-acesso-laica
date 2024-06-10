@@ -2,7 +2,7 @@ import { IsMACAddress, IsString } from "class-validator"
 import { ApiProperty } from '@nestjs/swagger';
 
 export class CreateLogDto {
-  @IsMACAddress()
+  // @IsMACAddress()
   @ApiProperty()
   deviceMac: string
 
