@@ -3,14 +3,14 @@ import { AppModule } from './app.module';
 import { SwaggerModule, DocumentBuilder } from '@nestjs/swagger';
 import { PrismaClientExceptionFilter } from './prisma-client-exception.filter';
 import { ValidationPipe } from '@nestjs/common';
-import { INestApplication } from '@nestjs/common/interfaces/nest-application.interface';
+import { NestExpressApplication } from '@nestjs/platform-express';
 
 async function bootstrap() {
-  const app = await NestFactory.create(AppModule);
+  const app = await NestFactory.create<NestExpressApplication>(AppModule);
 
   app.enableCors({
     origin: '*'
-  });
+  })
 
   const config = new DocumentBuilder()
     .setTitle('Laica: controle de acesso')
@@ -34,5 +34,4 @@ async function bootstrap() {
 
   await app.listen(3000, '0.0.0.0');
 }
-
 bootstrap();
